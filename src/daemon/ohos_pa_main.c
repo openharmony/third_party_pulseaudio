@@ -382,6 +382,17 @@ fail:
 }
 #endif
 
+void change_permission(const char *path, mode_t mode) {
+    if (!path) {
+        pa_log_error("chmod empty path");
+        return;
+    }
+
+    if (chmod(path, mode)) {
+        pa_log_error("chmod failed for directory: %s", path);
+    }
+}
+
 int ohos_pa_main(int argc, char *argv[]) {
     pa_core *c = NULL;
     pa_strbuf *buf = NULL;
@@ -499,6 +510,10 @@ int ohos_pa_main(int argc, char *argv[]) {
     pa_init_i18n();
 
     conf = pa_daemon_conf_new();
+    if (!conf) {
+        pa_log(_("Failed to create daemon conf."));
+        goto finish;
+    }
 
     if (pa_daemon_conf_load(conf, NULL) < 0)
         goto finish;
@@ -1181,6 +1196,10 @@ int ohos_pa_main(int argc, char *argv[]) {
         daemon_pipe2[1] = -1;
     }
 #endif
+    change_permission("/data/data/.pulse_dir", 0755);
+    change_permission("/data/data/.pulse_dir/runtime", 0755);
+    change_permission("/data/data/.pulse_dir/state", 0755);
+    change_permission("/data/data/.pulse_dir/state/cookie", 0666);
 
     pa_log_info("Daemon startup complete.");
 

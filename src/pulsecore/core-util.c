@@ -1689,7 +1689,7 @@ char *pa_get_runtime_dir(void) {
      * set create a directory in $HOME and link it to a random subdir
      * in /tmp, if it was not explicitly configured. */
 
-    m = pa_in_system_mode() ? 0755U : 0700U;
+    m = pa_in_system_mode() ? 0755U : 0755U;
 
     /* Use the explicitly configured value if it is set */
     d = getenv("PULSE_RUNTIME_PATH");
