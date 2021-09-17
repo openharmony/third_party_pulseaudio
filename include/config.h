@@ -291,9 +291,9 @@
 
 #define PA_SYSTEM_GROUP "pulse"
 
-#define PA_SYSTEM_RUNTIME_PATH "/var/local/run/pulse"
+#define PA_SYSTEM_RUNTIME_PATH "/data/data/.pulse_dir/runtime"
 
-#define PA_SYSTEM_STATE_PATH "/var/local/lib/pulse"
+#define PA_SYSTEM_STATE_PATH "/data/data/.pulse_dir/state"
 
 #define PA_SYSTEM_USER "pulse"
 
