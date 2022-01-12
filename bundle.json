@@ -1,0 +1,39 @@
+{
+    "name": "@ohos/pulseaudio",
+    "version": "",
+    "description": "Pulseaudio is a Sound server system, which is used by multimedia audio subsystem as audio server. It provides playback, record and audio management functionalities.",
+    "homePage": "https://gitee.com/openharmony",
+    "license": "LGPL V2.1",
+    "repository": "https://gitee.com/openharmony/third_party_pulseaudio",
+    "domain": "os",
+    "language": "",
+    "publishAs": "code-segment",
+    "private": false,
+    "scripts": {},
+    "tags": [
+        "third_party"
+    ],
+    "keywords": [
+        "third-party",
+        "pulseaudio"
+    ],
+    "envs": {},
+    "dirs": {},
+    "segment": {
+        "destPath": "third_party/pulseaudio"
+    },
+    "component": {
+        "name": "thirdparty_pulseaudio",
+        "subsystem": "",
+        "syscap": [],
+        "features": [],
+        "adapted_system_type": [],
+        "rom": "",
+        "ram": "",
+        "build": {
+            "sub_component": [],
+            "inner_kits": [],
+            "test": []
+        }
+    }
+}
