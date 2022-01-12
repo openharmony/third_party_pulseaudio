@@ -17,8 +17,8 @@
         "third-party",
         "pulseaudio"
     ],
-    "envs": [],
-    "dirs": [],
+    "envs": {},
+    "dirs": {},
     "segment": {
         "destPath": "third_party/pulseaudio"
     },
