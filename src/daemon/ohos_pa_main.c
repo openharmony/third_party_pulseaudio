@@ -1199,7 +1199,7 @@ int ohos_pa_main(int argc, char *argv[]) {
     change_permission("/data/data/.pulse_dir", 0755);
     change_permission("/data/data/.pulse_dir/runtime", 0755);
     change_permission("/data/data/.pulse_dir/state", 0755);
-    change_permission("/data/data/.pulse_dir/state/cookie", 0666);
+    change_permission("/data/data/.pulse_dir/state/cookie", 0660);
 
     pa_log_info("Daemon startup complete.");
 
