@@ -496,8 +496,6 @@ int ohos_pa_main(int argc, char *argv[]) {
     pa_close_allv(passed_fds);
     pa_xfree(passed_fds);
 #endif
-    pa_reset_sigs(-1);
-    pa_unblock_sigs(-1);
     pa_reset_priority();
 
     /* Load locale from the environment. */
