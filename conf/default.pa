@@ -27,7 +27,6 @@ load-module libmodule-native-protocol-unix.z.so auth-cookie=/data/data/.pulse_di
 ### Load audio drivers statically
 ### (it's probably better to not load these drivers manually, but instead
 ### use module-udev-detect -- see below -- for doing this automatically)
-load-module libmodule-suspend-on-idle.z.so timeout=5
 
 ### Make some devices default
 #set-default-sink output
