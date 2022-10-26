@@ -21,8 +21,10 @@
 .fail
 
 # Load mandatory modules
-load-module libmodule-cli-protocol-unix.z.so
 load-module libmodule-native-protocol-unix.z.so auth-cookie=/data/data/.pulse_dir/cookie
+
+# the module for command line operation like pacmd
+# load-module libmodule-cli-protocol-unix.z.so
 
 ### Load audio drivers statically
 ### (it's probably better to not load these drivers manually, but instead
