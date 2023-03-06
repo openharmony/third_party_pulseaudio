@@ -37,6 +37,7 @@ config("pulsecommon_config") {
     "-Werror",
     "-Wno-implicit-function-declaration",
     "-Wno-unused-function",
+    "-Wno-unused-but-set-variable",
     "-DHAVE_CONFIG_H",
     "-D_GNU_SOURCE",
   ]
