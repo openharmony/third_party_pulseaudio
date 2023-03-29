@@ -290,7 +290,7 @@ void pa_shm_free(pa_shm *m) {
 
 #else
     /* We shouldn't be here without shm or memfd support */
-    pa_assert_not_reached();
+    pa_log("remove pa_assert_not_reached call");
 #endif
 
 finish:
