@@ -120,7 +120,7 @@ ohos_source_set("pulsecommon_sources") {
   configs = [ ":pulsecommon_config" ]
 
   subsystem_name = "multimedia"
-  part_name = "multimedia_audio_framework"
+  part_name = "audio_framework"
 }
 
 ohos_shared_library("pulsecommon") {
@@ -132,26 +132,26 @@ ohos_shared_library("pulsecommon") {
   external_deps = [ "init:libbegetutil" ]
 
   subsystem_name = "multimedia"
-  part_name = "multimedia_audio_framework"
+  part_name = "audio_framework"
 }
 ohos_prebuilt_etc("pa_daemon_config") {
   source = "$pulseaudio_dir/conf/daemon.conf"
 
   subsystem_name = "multimedia"
   module_install_dir = "etc/pulse"
-  part_name = "multimedia_audio_framework"
+  part_name = "audio_framework"
 }
 
 ohos_prebuilt_etc("pa_default_config") {
   source = "$pulseaudio_dir/conf/default.pa"
   subsystem_name = "multimedia"
   module_install_dir = "etc/pulse"
-  part_name = "multimedia_audio_framework"
+  part_name = "audio_framework"
 }
 
 ohos_prebuilt_etc("pa_client_config") {
   source = "$pulseaudio_dir/conf/client.conf"
   subsystem_name = "multimedia"
   module_install_dir = "etc/pulse"
-  part_name = "multimedia_audio_framework"
+  part_name = "audio_framework"
 }
