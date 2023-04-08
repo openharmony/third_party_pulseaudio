@@ -25,6 +25,8 @@
 #include <errno.h>
 
 #include <pulse/xmalloc.h>
+
+#include <pulsecore/core-error.h>
 #include <pulsecore/macro.h>
 
 #include "mutex.h"
@@ -105,7 +107,10 @@ bool pa_mutex_try_lock(pa_mutex *m) {
 void pa_mutex_unlock(pa_mutex *m) {
     pa_assert(m);
 
-    pa_assert_se(pthread_mutex_unlock(&m->mutex) == 0);
+    int err = pthread_mutex_unlock(&m->mutex);
+    if (err != 0) {
+        pa_log("pthread_mutex_unlock() failed: %s", pa_cstrerror(err));
+    }
 }
 
 pa_cond *pa_cond_new(void) {
