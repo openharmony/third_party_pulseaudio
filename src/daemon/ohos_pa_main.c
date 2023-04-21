@@ -1197,7 +1197,7 @@ int ohos_pa_main(int argc, char *argv[]) {
     change_permission("/data/data/.pulse_dir", 0755);
     change_permission("/data/data/.pulse_dir/runtime", 0755);
     change_permission("/data/data/.pulse_dir/state", 0755);
-    change_permission("/data/data/.pulse_dir/state/cookie", 0660);
+    change_permission("/data/data/.pulse_dir/state/cookie", 0664);
     change_permission("/data/data/.pulse_dir/runtime/cli", 0660);
     change_permission("/data/data/.pulse_dir/runtime/native", 0666);
 
