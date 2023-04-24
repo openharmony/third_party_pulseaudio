@@ -74,7 +74,7 @@ ohos_source_set("pulse_sources") {
   configs = [ ":pulse_config" ]
 
   subsystem_name = "multimedia"
-  part_name = "multimedia_audio_framework"
+  part_name = "audio_framework"
 }
 
 ohos_shared_library("pulse") {
@@ -84,7 +84,7 @@ ohos_shared_library("pulse") {
   ]
 
   subsystem_name = "multimedia"
-  part_name = "multimedia_audio_framework"
+  part_name = "audio_framework"
 }
 
 ohos_shared_library("pulse-simple") {
@@ -98,7 +98,7 @@ ohos_shared_library("pulse-simple") {
   ]
 
   subsystem_name = "multimedia"
-  part_name = "multimedia_audio_framework"
+  part_name = "audio_framework"
 }
 
 ohos_shared_library("pulse-mainloop-glib") {
@@ -111,5 +111,5 @@ ohos_shared_library("pulse-mainloop-glib") {
   ]
 
   subsystem_name = "multimedia"
-  part_name = "multimedia_audio_framework"
+  part_name = "audio_framework"
 }
