@@ -68,7 +68,7 @@ ohos_shared_library("module-native-protocol-fd") {
   ]
 
   subsystem_name = "multimedia"
-  part_name = "multimedia_audio_framework"
+  part_name = "audio_framework"
 }
 
 ohos_shared_library("module-native-protocol-tcp") {
@@ -89,7 +89,7 @@ ohos_shared_library("module-native-protocol-tcp") {
   ]
 
   subsystem_name = "multimedia"
-  part_name = "multimedia_audio_framework"
+  part_name = "audio_framework"
 }
 
 ohos_shared_library("module-native-protocol-unix") {
@@ -110,7 +110,7 @@ ohos_shared_library("module-native-protocol-unix") {
   ]
 
   subsystem_name = "multimedia"
-  part_name = "multimedia_audio_framework"
+  part_name = "audio_framework"
 }
 
 ohos_shared_library("module-cli-protocol-unix") {
@@ -131,7 +131,7 @@ ohos_shared_library("module-cli-protocol-unix") {
   ]
 
   subsystem_name = "multimedia"
-  part_name = "multimedia_audio_framework"
+  part_name = "audio_framework"
 }
 
 ohos_shared_library("module-suspend-on-idle") {
@@ -147,5 +147,5 @@ ohos_shared_library("module-suspend-on-idle") {
   deps = [ ":common_deps" ]
 
   subsystem_name = "multimedia"
-  part_name = "multimedia_audio_framework"
+  part_name = "audio_framework"
 }

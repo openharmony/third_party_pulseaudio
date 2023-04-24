@@ -106,7 +106,7 @@ ohos_source_set("pulsecore_sources") {
   configs = [ ":pulsecore_config" ]
 
   subsystem_name = "multimedia"
-  part_name = "multimedia_audio_framework"
+  part_name = "audio_framework"
 }
 
 ohos_shared_library("pulsecore") {
@@ -117,7 +117,7 @@ ohos_shared_library("pulsecore") {
   ]
 
   subsystem_name = "multimedia"
-  part_name = "multimedia_audio_framework"
+  part_name = "audio_framework"
 }
 
 config("modules_internal_lib_config") {
@@ -152,7 +152,7 @@ ohos_shared_library("cli") {
   ]
 
   subsystem_name = "multimedia"
-  part_name = "multimedia_audio_framework"
+  part_name = "audio_framework"
 }
 
 ohos_shared_library("protocol-cli") {
@@ -167,7 +167,7 @@ ohos_shared_library("protocol-cli") {
   ]
 
   subsystem_name = "multimedia"
-  part_name = "multimedia_audio_framework"
+  part_name = "audio_framework"
 }
 
 ohos_shared_library("protocol-native") {
@@ -181,5 +181,5 @@ ohos_shared_library("protocol-native") {
   ]
 
   subsystem_name = "multimedia"
-  part_name = "multimedia_audio_framework"
+  part_name = "audio_framework"
 }

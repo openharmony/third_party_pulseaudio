@@ -47,7 +47,7 @@ ohos_source_set("pulseaudio_sources") {
 
   configs = [ ":daemon_config" ]
 
-  part_name = "multimedia_audio_framework"
+  part_name = "audio_framework"
   subsystem_name = "multimedia"
 }
 
@@ -60,6 +60,6 @@ ohos_shared_library("pulseaudio") {
     "$pulseaudio_build_path/src/pulsecore:pulsecore",
   ]
 
-  part_name = "multimedia_audio_framework"
+  part_name = "audio_framework"
   subsystem_name = "multimedia"
 }
