@@ -54,6 +54,8 @@
 #include <pulsecore/atomic.h>
 #include <pulsecore/mem.h>
 
+#include "log/audio_log.h"
+
 #include "shm.h"
 
 #if defined(__linux__) && !defined(MADV_REMOVE)
@@ -269,6 +271,8 @@ void pa_shm_free(pa_shm *m) {
         privatemem_free(m);
         goto finish;
     }
+
+    AUDIO_INFO_LOG("mem type: %{public}d", m->type);
 
 #if defined(HAVE_SHM_OPEN) || defined(HAVE_MEMFD)
     if (munmap(m->ptr, PA_PAGE_ALIGN(m->size)) < 0)
