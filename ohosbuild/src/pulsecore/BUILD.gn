@@ -30,6 +30,7 @@ config("pulsecore_config") {
     "//third_party/glib/glib",
     "//third_party/glib",
     "$libsndfile_dir/include",
+    "//base/hiviewdfx/hilog/interfaces/native/innerkits/include",
   ]
 
   cflags = [
@@ -116,6 +117,8 @@ ohos_shared_library("pulsecore") {
     "$pulseaudio_build_path/src:pulsecommon",
   ]
 
+  external_deps = [ "hiviewdfx_hilog_native:libhilog" ]
+
   subsystem_name = "multimedia"
   part_name = "audio_framework"
 }
@@ -129,6 +132,7 @@ config("modules_internal_lib_config") {
     "$pulseaudio_dir/src",
     "$pulseaudio_dir",
     "$pulseaudio_build_path/src",
+    "//base/hiviewdfx/hilog/interfaces/native/innerkits/include",
   ]
 
   cflags = [
@@ -180,6 +184,7 @@ ohos_shared_library("protocol-native") {
     "$pulseaudio_build_path/src/pulsecore:pulsecore",
   ]
 
+  external_deps = [ "hiviewdfx_hilog_native:libhilog" ]
   subsystem_name = "multimedia"
   part_name = "audio_framework"
 }

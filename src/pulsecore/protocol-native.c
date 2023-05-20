@@ -58,6 +58,8 @@
 #include <pulsecore/thread-mq.h>
 #include <pulsecore/mem.h>
 
+#include "log/audio_log.h"
+
 #include "protocol-native.h"
 
 /* #define PROTOCOL_NATIVE_DEBUG */
@@ -2468,7 +2470,7 @@ static void setup_srbchannel(pa_native_connection *c, pa_mem_type_t shm_type) {
     pa_memchunk mc;
     pa_tagstruct *t;
     int fdlist[2];
-
+    AUDIO_INFO_LOG("start setup_srbchannel, shm_type: %{public}d", shm_type);
 #ifndef HAVE_CREDS
     pa_log_debug("Disabling srbchannel, reason: No fd passing support");
     return;
@@ -2556,6 +2558,7 @@ static void command_enable_srbchannel(pa_pdispatch *pd, uint32_t command, uint32
 }
 
 static void command_auth(pa_pdispatch *pd, uint32_t command, uint32_t tag, pa_tagstruct *t, void *userdata) {
+    AUDIO_INFO_LOG("start command_authd");
     pa_native_connection *c = PA_NATIVE_CONNECTION(userdata);
     const void*cookie;
     bool memfd_on_remote = false, do_memfd = false;
@@ -2695,6 +2698,9 @@ static void command_auth(pa_pdispatch *pd, uint32_t command, uint32_t tag, pa_ta
             shm_type = PA_MEM_TYPE_SHARED_MEMFD;
         } else
             shm_type = PA_MEM_TYPE_SHARED_POSIX;
+
+        AUDIO_INFO_LOG("Memfd possible: %s", pa_yes_no(pa_memfd_is_locally_supported()));
+        AUDIO_INFO_LOG("Negotiated SHM type: %s", pa_mem_type_to_string(shm_type));
 
         pa_log_debug("Memfd possible: %s", pa_yes_no(pa_memfd_is_locally_supported()));
         pa_log_debug("Negotiated SHM type: %s", pa_mem_type_to_string(shm_type));
