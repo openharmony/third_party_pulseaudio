@@ -30,6 +30,7 @@ config("pulsecommon_config") {
     "$libsndfile_dir/include",
     "$pulseaudio_dir/src/pulse",
     "//base/startup/init/interfaces/innerkits/include",
+    "//base/hiviewdfx/hilog/interfaces/native/innerkits/include",
   ]
 
   cflags = [
@@ -129,7 +130,10 @@ ohos_shared_library("pulsecommon") {
     "$libsndfile_build_path:sndfile",
   ]
 
-  external_deps = [ "init:libbegetutil" ]
+  external_deps = [
+    "hiviewdfx_hilog_native:libhilog",
+    "init:libbegetutil",
+  ]
 
   subsystem_name = "multimedia"
   part_name = "audio_framework"
