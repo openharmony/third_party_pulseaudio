@@ -111,6 +111,10 @@ ohos_source_set("pulsecore_sources") {
 }
 
 ohos_shared_library("pulsecore") {
+  sanitize = {
+    integer_overflow = true
+  }
+
   deps = [
     ":pulsecore_sources",
     "$libsndfile_build_path:sndfile",
