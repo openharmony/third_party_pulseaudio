@@ -121,7 +121,7 @@ static int privatemem_create(pa_shm *m, size_t size) {
 
 #ifdef MAP_ANONYMOUS
     if ((m->ptr = mmap(NULL, m->size, PROT_READ|PROT_WRITE, MAP_ANONYMOUS|MAP_PRIVATE, -1, (off_t) 0)) == MAP_FAILED) {
-        pa_log("mmap() failed: %s", pa_cstrerror(errno));
+        AUDIO_ERR_LOG("mmap() failed: %{public}s", pa_cstrerror(errno));
         return -1;
     }
 #elif defined(HAVE_POSIX_MEMALIGN)
@@ -129,7 +129,7 @@ static int privatemem_create(pa_shm *m, size_t size) {
         int r;
 
         if ((r = posix_memalign(&m->ptr, pa_page_size(), size)) < 0) {
-            pa_log("posix_memalign() failed: %s", pa_cstrerror(r));
+            AUDIO_ERR_LOG("posix_memalign() failed: %{public}s", pa_cstrerror(r));
             return r;
         }
     }
@@ -171,7 +171,7 @@ static int sharedmem_create(pa_shm *m, pa_mem_type_t type, size_t size, mode_t m
     }
 
     if (fd < 0) {
-        pa_log("%s open() failed: %s", pa_mem_type_to_string(type), pa_cstrerror(errno));
+        AUDIO_ERR_LOG("%{public}s open() failed: %{public}s", pa_mem_type_to_string(type), pa_cstrerror(errno));
         goto fail;
     }
 
@@ -180,7 +180,7 @@ static int sharedmem_create(pa_shm *m, pa_mem_type_t type, size_t size, mode_t m
     m->do_unlink = do_unlink;
 
     if (ftruncate(fd, (off_t) m->size) < 0) {
-        pa_log("ftruncate() failed: %s", pa_cstrerror(errno));
+        AUDIO_ERR_LOG("ftruncate() failed: %{public}s", pa_cstrerror(errno));
         goto fail;
     }
 
@@ -189,7 +189,7 @@ static int sharedmem_create(pa_shm *m, pa_mem_type_t type, size_t size, mode_t m
 #endif
 
     if ((m->ptr = mmap(NULL, PA_PAGE_ALIGN(m->size), PROT_READ|PROT_WRITE, MAP_SHARED|MAP_NORESERVE, fd, (off_t) 0)) == MAP_FAILED) {
-        pa_log("mmap() failed: %s", pa_cstrerror(errno));
+        AUDIO_ERR_LOG("mmap() failed: %{public}s", pa_cstrerror(errno));
         goto fail;
     }
 
@@ -250,7 +250,7 @@ static void privatemem_free(pa_shm *m) {
 
 #ifdef MAP_ANONYMOUS
     if (munmap(m->ptr, m->size) < 0)
-        pa_log("munmap() failed: %s", pa_cstrerror(errno));
+        AUDIO_ERR_LOG("munmap() failed: %{public}s", pa_cstrerror(errno));
 #elif defined(HAVE_POSIX_MEMALIGN)
     free(m->ptr);
 #else
@@ -276,7 +276,7 @@ void pa_shm_free(pa_shm *m) {
 
 #if defined(HAVE_SHM_OPEN) || defined(HAVE_MEMFD)
     if (munmap(m->ptr, PA_PAGE_ALIGN(m->size)) < 0)
-        pa_log("munmap() failed: %s", pa_cstrerror(errno));
+        AUDIO_ERR_LOG("munmap() failed: %{public}s", pa_cstrerror(errno));
 
 #ifdef HAVE_SHM_OPEN
     if (m->type == PA_MEM_TYPE_SHARED_POSIX && m->do_unlink) {
@@ -284,7 +284,7 @@ void pa_shm_free(pa_shm *m) {
 
         segment_name(fn, sizeof(fn), m->id);
         if (shm_unlink(fn) < 0)
-            pa_log(" shm_unlink(%s) failed: %s", fn, pa_cstrerror(errno));
+            AUDIO_ERR_LOG(" shm_unlink(%{public}s) failed: %{public}s", fn, pa_cstrerror(errno));
     }
 #endif
 #ifdef HAVE_MEMFD
@@ -294,7 +294,7 @@ void pa_shm_free(pa_shm *m) {
 
 #else
     /* We shouldn't be here without shm or memfd support */
-    pa_log("remove pa_assert_not_reached call");
+    AUDIO_ERR_LOG("remove pa_assert_not_reached call");
 #endif
 
 finish:
@@ -364,7 +364,7 @@ static int shm_attach(pa_shm *m, pa_mem_type_t type, unsigned id, int memfd_fd, 
         segment_name(fn, sizeof(fn), id);
         if ((fd = shm_open(fn, writable ? O_RDWR : O_RDONLY, 0)) < 0) {
             if ((errno != EACCES && errno != ENOENT) || !for_cleanup)
-                pa_log("shm_open() failed: %s", pa_cstrerror(errno));
+                AUDIO_ERR_LOG("shm_open() failed: %{public}s", pa_cstrerror(errno));
             goto fail;
         }
         break;
@@ -380,20 +380,20 @@ static int shm_attach(pa_shm *m, pa_mem_type_t type, unsigned id, int memfd_fd, 
     }
 
     if (fstat(fd, &st) < 0) {
-        pa_log("fstat() failed: %s", pa_cstrerror(errno));
+        AUDIO_ERR_LOG("fstat() failed: %{public}s", pa_cstrerror(errno));
         goto fail;
     }
 
     if (st.st_size <= 0 ||
         st.st_size > (off_t) MAX_SHM_SIZE + (off_t) shm_marker_size(type) ||
         PA_ALIGN((size_t) st.st_size) != (size_t) st.st_size) {
-        pa_log("Invalid shared memory segment size");
+        AUDIO_ERR_LOG("Invalid shared memory segment size");
         goto fail;
     }
 
     prot = writable ? PROT_READ | PROT_WRITE : PROT_READ;
     if ((m->ptr = mmap(NULL, PA_PAGE_ALIGN(st.st_size), prot, MAP_SHARED, fd, (off_t) 0)) == MAP_FAILED) {
-        pa_log("mmap() failed: %s", pa_cstrerror(errno));
+        AUDIO_ERR_LOG("mmap() failed: %{public}s", pa_cstrerror(errno));
         goto fail;
     }
 
@@ -436,7 +436,7 @@ int pa_shm_cleanup(void) {
     struct dirent *de;
 
     if (!(d = opendir(SHM_PATH))) {
-        pa_log_warn("Failed to read "SHM_PATH": %s", pa_cstrerror(errno));
+        AUDIO_WARNING_LOG("Failed to read "SHM_PATH": %s", pa_cstrerror(errno));
         return -1;
     }
 
@@ -488,7 +488,7 @@ int pa_shm_cleanup(void) {
         segment_name(fn, sizeof(fn), id);
 
         if (shm_unlink(fn) < 0 && errno != EACCES && errno != ENOENT)
-            pa_log_warn("Failed to remove SHM segment %s: %s", fn, pa_cstrerror(errno));
+            AUDIO_WARNING_LOG("Failed to remove SHM segment %{public}s: %{public}s", fn, pa_cstrerror(errno));
     }
 
     closedir(d);
