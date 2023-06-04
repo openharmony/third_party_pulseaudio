@@ -63,6 +63,8 @@
 #include <pulsecore/macro.h>
 #include <pulsecore/proplist-util.h>
 
+#include "log/audio_log.h"
+
 #include "internal.h"
 #include "context.h"
 
@@ -561,8 +563,8 @@ static void setup_complete_callback(pa_pdispatch *pd, uint32_t command, uint32_t
                     c->shm_type = PA_MEM_TYPE_SHARED_POSIX;
             }
 
-            pa_log_debug("Memfd possible: %s", pa_yes_no(c->memfd_on_local));
-            pa_log_debug("Negotiated SHM type: %s", pa_mem_type_to_string(c->shm_type));
+            AUDIO_INFO_LOG("Memfd possible: %{public}s", pa_yes_no(c->memfd_on_local));
+            AUDIO_INFO_LOG("Negotiated SHM type: %{public}s", pa_mem_type_to_string(c->shm_type));
 
             reply = pa_tagstruct_command(c, PA_COMMAND_SET_CLIENT_NAME, &tag);
 
