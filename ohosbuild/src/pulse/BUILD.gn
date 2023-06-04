@@ -28,6 +28,7 @@ config("pulse_config") {
     "$pulseaudio_build_path/include",
     "//third_party/glib/glib",
     "//third_party/glib",
+    "//base/hiviewdfx/hilog/interfaces/native/innerkits/include",
   ]
 
   cflags = [
@@ -82,6 +83,8 @@ ohos_shared_library("pulse") {
     ":pulse_sources",
     "$pulseaudio_build_path/src:pulsecommon",
   ]
+
+  external_deps = [ "hiviewdfx_hilog_native:libhilog" ]
 
   subsystem_name = "multimedia"
   part_name = "audio_framework"
