@@ -405,6 +405,7 @@ static int shm_attach(pa_shm *m, pa_mem_type_t type, unsigned id, int memfd_fd, 
     if (type != PA_MEM_TYPE_SHARED_MEMFD)
         pa_assert_se(pa_close(fd) == 0);
 
+    AUDIO_INFO_LOG("shm_attach set mem type %{public}d", type);
     m->type = type;
     m->id = id;
     m->size = (size_t) st.st_size;
@@ -429,7 +430,7 @@ int pa_shm_attach(pa_shm *m, pa_mem_type_t type, unsigned id, int memfd_fd, bool
 }
 
 int pa_shm_cleanup(void) {
-
+    AUDIO_INFO_LOG("start pa_shm_cleanup");
 #ifdef HAVE_SHM_OPEN
 #ifdef SHM_PATH
     DIR *d;
