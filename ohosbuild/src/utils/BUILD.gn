@@ -50,8 +50,8 @@ ohos_executable("pacat") {
     "$pulseaudio_build_path/src/pulse:pulse",
   ]
 
-  subsystem_name = "multimedia"
-  part_name = "audio_framework"
+  subsystem_name = "thirdparty"
+  part_name = "pulseaudio"
 }
 
 ohos_executable("pactl") {
@@ -64,8 +64,8 @@ ohos_executable("pactl") {
     "$pulseaudio_build_path/src:pulsecommon",
     "$pulseaudio_build_path/src/pulse:pulse",
   ]
-  subsystem_name = "multimedia"
-  part_name = "audio_framework"
+  subsystem_name = "thirdparty"
+  part_name = "pulseaudio"
 }
 
 ohos_executable("pacmd") {
@@ -80,6 +80,6 @@ ohos_executable("pacmd") {
     "$pulseaudio_build_path/src/pulse:pulse",
   ]
 
-  subsystem_name = "multimedia"
-  part_name = "audio_framework"
+  subsystem_name = "thirdparty"
+  part_name = "pulseaudio"
 }
