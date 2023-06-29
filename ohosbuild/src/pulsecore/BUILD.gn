@@ -106,8 +106,8 @@ ohos_source_set("pulsecore_sources") {
 
   configs = [ ":pulsecore_config" ]
 
-  subsystem_name = "multimedia"
-  part_name = "audio_framework"
+  subsystem_name = "thirdparty"
+  part_name = "pulseaudio"
 }
 
 ohos_shared_library("pulsecore") {
@@ -123,8 +123,8 @@ ohos_shared_library("pulsecore") {
 
   external_deps = [ "hiviewdfx_hilog_native:libhilog" ]
 
-  subsystem_name = "multimedia"
-  part_name = "audio_framework"
+  subsystem_name = "thirdparty"
+  part_name = "pulseaudio"
 }
 
 config("modules_internal_lib_config") {
@@ -159,8 +159,8 @@ ohos_shared_library("cli") {
     "$pulseaudio_build_path/src/pulsecore:pulsecore",
   ]
 
-  subsystem_name = "multimedia"
-  part_name = "audio_framework"
+  subsystem_name = "thirdparty"
+  part_name = "pulseaudio"
 }
 
 ohos_shared_library("protocol-cli") {
@@ -174,8 +174,8 @@ ohos_shared_library("protocol-cli") {
     "$pulseaudio_build_path/src/pulsecore:pulsecore",
   ]
 
-  subsystem_name = "multimedia"
-  part_name = "audio_framework"
+  subsystem_name = "thirdparty"
+  part_name = "pulseaudio"
 }
 
 ohos_shared_library("protocol-native") {
@@ -189,6 +189,6 @@ ohos_shared_library("protocol-native") {
   ]
 
   external_deps = [ "hiviewdfx_hilog_native:libhilog" ]
-  subsystem_name = "multimedia"
-  part_name = "audio_framework"
+  subsystem_name = "thirdparty"
+  part_name = "pulseaudio"
 }
