@@ -13,11 +13,13 @@
         "en": "README"
     },
     "component": {
-        "name": "thirdparty_pulseaudio",
-        "subsystem": "",
+        "name": "pulseaudio",
+        "subsystem": "thirdparty",
         "syscap": [],
         "features": [],
-        "adapted_system_type": [],
+        "adapted_system_type": [
+            "standard"
+        ],
         "rom": "",
         "ram": "",
         "deps": {

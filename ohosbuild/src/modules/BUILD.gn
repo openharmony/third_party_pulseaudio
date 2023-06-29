@@ -67,8 +67,8 @@ ohos_shared_library("module-native-protocol-fd") {
     "$pulseaudio_build_path/src/pulsecore:protocol-native",
   ]
 
-  subsystem_name = "multimedia"
-  part_name = "audio_framework"
+  subsystem_name = "thirdparty"
+  part_name = "pulseaudio"
 }
 
 ohos_shared_library("module-native-protocol-tcp") {
@@ -88,8 +88,8 @@ ohos_shared_library("module-native-protocol-tcp") {
     "$pulseaudio_build_path/src/pulsecore:protocol-native",
   ]
 
-  subsystem_name = "multimedia"
-  part_name = "audio_framework"
+  subsystem_name = "thirdparty"
+  part_name = "pulseaudio"
 }
 
 ohos_shared_library("module-native-protocol-unix") {
@@ -109,8 +109,8 @@ ohos_shared_library("module-native-protocol-unix") {
     "$pulseaudio_build_path/src/pulsecore:protocol-native",
   ]
 
-  subsystem_name = "multimedia"
-  part_name = "audio_framework"
+  subsystem_name = "thirdparty"
+  part_name = "pulseaudio"
 }
 
 ohos_shared_library("module-cli-protocol-unix") {
@@ -130,8 +130,8 @@ ohos_shared_library("module-cli-protocol-unix") {
     "$pulseaudio_build_path/src/pulsecore:protocol-cli",
   ]
 
-  subsystem_name = "multimedia"
-  part_name = "audio_framework"
+  subsystem_name = "thirdparty"
+  part_name = "pulseaudio"
 }
 
 ohos_shared_library("module-suspend-on-idle") {
@@ -146,6 +146,6 @@ ohos_shared_library("module-suspend-on-idle") {
   configs = [ ":common_config" ]
   deps = [ ":common_deps" ]
 
-  subsystem_name = "multimedia"
-  part_name = "audio_framework"
+  subsystem_name = "thirdparty"
+  part_name = "pulseaudio"
 }
