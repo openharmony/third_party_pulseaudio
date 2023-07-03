@@ -12,21 +12,17 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
-
-pulseaudio_dir = "//third_party/pulseaudio"
-pulseaudio_build_path = "//third_party/pulseaudio/ohosbuild"
 libsndfile_dir = "//third_party/libsnd"
-libsndfile_build_path = "//third_party/libsnd"
 
 config("pulseutils_config") {
   visibility = [ ":*" ]
 
   include_dirs = [
-    "$pulseaudio_dir",
-    "$pulseaudio_dir/include",
-    "$pulseaudio_build_path/src",
-    "$pulseaudio_build_path/include",
-    "$pulseaudio_dir/src",
+    "../../../",
+    "../../../include",
+    "../../src",
+    "../../include",
+    "../../../src",
     "$libsndfile_dir/include",
   ]
 
@@ -40,14 +36,14 @@ config("pulseutils_config") {
 }
 
 ohos_executable("pacat") {
-  sources = [ "$pulseaudio_dir/src/utils/pacat.c" ]
+  sources = [ "../../../src/utils/pacat.c" ]
 
   configs = [ ":pulseutils_config" ]
 
   deps = [
-    "$libsndfile_build_path:sndfile",
-    "$pulseaudio_build_path/src:pulsecommon",
-    "$pulseaudio_build_path/src/pulse:pulse",
+    "$libsndfile_dir:sndfile",
+    "../../src:pulsecommon",
+    "../../src/pulse:pulse",
   ]
 
   subsystem_name = "thirdparty"
@@ -55,14 +51,14 @@ ohos_executable("pacat") {
 }
 
 ohos_executable("pactl") {
-  sources = [ "$pulseaudio_dir/src/utils/pactl.c" ]
+  sources = [ "../../../src/utils/pactl.c" ]
 
   configs = [ ":pulseutils_config" ]
 
   deps = [
-    "$libsndfile_build_path:sndfile",
-    "$pulseaudio_build_path/src:pulsecommon",
-    "$pulseaudio_build_path/src/pulse:pulse",
+    "$libsndfile_dir:sndfile",
+    "../../src:pulsecommon",
+    "../../src/pulse:pulse",
   ]
   subsystem_name = "thirdparty"
   part_name = "pulseaudio"
@@ -71,13 +67,13 @@ ohos_executable("pactl") {
 ohos_executable("pacmd") {
   install_enable = true
 
-  sources = [ "$pulseaudio_dir/src/utils/pacmd.c" ]
+  sources = [ "../../../src/utils/pacmd.c" ]
 
   configs = [ ":pulseutils_config" ]
 
   deps = [
-    "$pulseaudio_build_path/src:pulsecommon",
-    "$pulseaudio_build_path/src/pulse:pulse",
+    "../../src:pulsecommon",
+    "../../src/pulse:pulse",
   ]
 
   subsystem_name = "thirdparty"

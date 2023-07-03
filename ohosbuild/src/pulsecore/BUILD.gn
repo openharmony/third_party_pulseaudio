@@ -12,21 +12,17 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
-
-pulseaudio_dir = "//third_party/pulseaudio"
-pulseaudio_build_path = "//third_party/pulseaudio/ohosbuild"
 libsndfile_dir = "//third_party/libsnd"
-libsndfile_build_path = "//third_party/libsnd"
 
 config("pulsecore_config") {
   visibility = [ ":*" ]
 
   include_dirs = [
-    "$pulseaudio_dir/include",
-    "$pulseaudio_dir",
-    "$pulseaudio_dir/src",
-    "$pulseaudio_build_path/include",
-    "$pulseaudio_build_path/src",
+    "../../../include",
+    "../../../",
+    "../../../src",
+    "../../include",
+    "../../src",
     "//third_party/glib/glib",
     "//third_party/glib",
     "$libsndfile_dir/include",
@@ -47,61 +43,61 @@ config("pulsecore_config") {
 
 ohos_source_set("pulsecore_sources") {
   sources = [
-    "$pulseaudio_build_path/src/pulsecore/ltdl_stub.c",
-    "$pulseaudio_dir/src/pulsecore/asyncmsgq.c",
-    "$pulseaudio_dir/src/pulsecore/asyncq.c",
-    "$pulseaudio_dir/src/pulsecore/auth-cookie.c",
-    "$pulseaudio_dir/src/pulsecore/card.c",
-    "$pulseaudio_dir/src/pulsecore/cli-command.c",
-    "$pulseaudio_dir/src/pulsecore/cli-text.c",
-    "$pulseaudio_dir/src/pulsecore/client.c",
-    "$pulseaudio_dir/src/pulsecore/core-scache.c",
-    "$pulseaudio_dir/src/pulsecore/core-subscribe.c",
-    "$pulseaudio_dir/src/pulsecore/core.c",
-    "$pulseaudio_dir/src/pulsecore/cpu-arm.c",
-    "$pulseaudio_dir/src/pulsecore/database-simple.c",
-    "$pulseaudio_dir/src/pulsecore/database.c",
-    "$pulseaudio_dir/src/pulsecore/device-port.c",
-    "$pulseaudio_dir/src/pulsecore/ffmpeg/resample2.c",
-    "$pulseaudio_dir/src/pulsecore/filter/biquad.c",
-    "$pulseaudio_dir/src/pulsecore/filter/crossover.c",
-    "$pulseaudio_dir/src/pulsecore/filter/lfe-filter.c",
-    "$pulseaudio_dir/src/pulsecore/hook-list.c",
-    "$pulseaudio_dir/src/pulsecore/ltdl-helper.c",
-    "$pulseaudio_dir/src/pulsecore/message-handler.c",
-    "$pulseaudio_dir/src/pulsecore/mix.c",
-    "$pulseaudio_dir/src/pulsecore/modargs.c",
-    "$pulseaudio_dir/src/pulsecore/modinfo.c",
-    "$pulseaudio_dir/src/pulsecore/module.c",
-    "$pulseaudio_dir/src/pulsecore/msgobject.c",
-    "$pulseaudio_dir/src/pulsecore/namereg.c",
-    "$pulseaudio_dir/src/pulsecore/object.c",
-    "$pulseaudio_dir/src/pulsecore/play-memblockq.c",
-    "$pulseaudio_dir/src/pulsecore/play-memchunk.c",
-    "$pulseaudio_dir/src/pulsecore/remap.c",
-    "$pulseaudio_dir/src/pulsecore/resampler.c",
-    "$pulseaudio_dir/src/pulsecore/resampler/ffmpeg.c",
-    "$pulseaudio_dir/src/pulsecore/resampler/peaks.c",
-    "$pulseaudio_dir/src/pulsecore/resampler/trivial.c",
-    "$pulseaudio_dir/src/pulsecore/rtpoll.c",
-    "$pulseaudio_dir/src/pulsecore/sconv-s16be.c",
-    "$pulseaudio_dir/src/pulsecore/sconv-s16le.c",
-    "$pulseaudio_dir/src/pulsecore/sconv.c",
-    "$pulseaudio_dir/src/pulsecore/shared.c",
-    "$pulseaudio_dir/src/pulsecore/sink-input.c",
-    "$pulseaudio_dir/src/pulsecore/sink.c",
-    "$pulseaudio_dir/src/pulsecore/sioman.c",
-    "$pulseaudio_dir/src/pulsecore/sound-file-stream.c",
-    "$pulseaudio_dir/src/pulsecore/sound-file.c",
-    "$pulseaudio_dir/src/pulsecore/source-output.c",
-    "$pulseaudio_dir/src/pulsecore/source.c",
-    "$pulseaudio_dir/src/pulsecore/start-child.c",
-    "$pulseaudio_dir/src/pulsecore/stream-util.c",
-    "$pulseaudio_dir/src/pulsecore/svolume_arm.c",
-    "$pulseaudio_dir/src/pulsecore/svolume_c.c",
-    "$pulseaudio_dir/src/pulsecore/svolume_mmx.c",
-    "$pulseaudio_dir/src/pulsecore/svolume_sse.c",
-    "$pulseaudio_dir/src/pulsecore/thread-mq.c",
+    "../../../src/pulsecore/asyncmsgq.c",
+    "../../../src/pulsecore/asyncq.c",
+    "../../../src/pulsecore/auth-cookie.c",
+    "../../../src/pulsecore/card.c",
+    "../../../src/pulsecore/cli-command.c",
+    "../../../src/pulsecore/cli-text.c",
+    "../../../src/pulsecore/client.c",
+    "../../../src/pulsecore/core-scache.c",
+    "../../../src/pulsecore/core-subscribe.c",
+    "../../../src/pulsecore/core.c",
+    "../../../src/pulsecore/cpu-arm.c",
+    "../../../src/pulsecore/database-simple.c",
+    "../../../src/pulsecore/database.c",
+    "../../../src/pulsecore/device-port.c",
+    "../../../src/pulsecore/ffmpeg/resample2.c",
+    "../../../src/pulsecore/filter/biquad.c",
+    "../../../src/pulsecore/filter/crossover.c",
+    "../../../src/pulsecore/filter/lfe-filter.c",
+    "../../../src/pulsecore/hook-list.c",
+    "../../../src/pulsecore/ltdl-helper.c",
+    "../../../src/pulsecore/message-handler.c",
+    "../../../src/pulsecore/mix.c",
+    "../../../src/pulsecore/modargs.c",
+    "../../../src/pulsecore/modinfo.c",
+    "../../../src/pulsecore/module.c",
+    "../../../src/pulsecore/msgobject.c",
+    "../../../src/pulsecore/namereg.c",
+    "../../../src/pulsecore/object.c",
+    "../../../src/pulsecore/play-memblockq.c",
+    "../../../src/pulsecore/play-memchunk.c",
+    "../../../src/pulsecore/remap.c",
+    "../../../src/pulsecore/resampler.c",
+    "../../../src/pulsecore/resampler/ffmpeg.c",
+    "../../../src/pulsecore/resampler/peaks.c",
+    "../../../src/pulsecore/resampler/trivial.c",
+    "../../../src/pulsecore/rtpoll.c",
+    "../../../src/pulsecore/sconv-s16be.c",
+    "../../../src/pulsecore/sconv-s16le.c",
+    "../../../src/pulsecore/sconv.c",
+    "../../../src/pulsecore/shared.c",
+    "../../../src/pulsecore/sink-input.c",
+    "../../../src/pulsecore/sink.c",
+    "../../../src/pulsecore/sioman.c",
+    "../../../src/pulsecore/sound-file-stream.c",
+    "../../../src/pulsecore/sound-file.c",
+    "../../../src/pulsecore/source-output.c",
+    "../../../src/pulsecore/source.c",
+    "../../../src/pulsecore/start-child.c",
+    "../../../src/pulsecore/stream-util.c",
+    "../../../src/pulsecore/svolume_arm.c",
+    "../../../src/pulsecore/svolume_c.c",
+    "../../../src/pulsecore/svolume_mmx.c",
+    "../../../src/pulsecore/svolume_sse.c",
+    "../../../src/pulsecore/thread-mq.c",
+    "../../src/pulsecore/ltdl_stub.c",
   ]
 
   configs = [ ":pulsecore_config" ]
@@ -117,8 +113,8 @@ ohos_shared_library("pulsecore") {
 
   deps = [
     ":pulsecore_sources",
-    "$libsndfile_build_path:sndfile",
-    "$pulseaudio_build_path/src:pulsecommon",
+    "$libsndfile_dir:sndfile",
+    "../../src:pulsecommon",
   ]
 
   external_deps = [ "hiviewdfx_hilog_native:libhilog" ]
@@ -131,11 +127,11 @@ config("modules_internal_lib_config") {
   visibility = [ ":*" ]
 
   include_dirs = [
-    "$pulseaudio_build_path/include",
-    "$pulseaudio_dir/include",
-    "$pulseaudio_dir/src",
-    "$pulseaudio_dir",
-    "$pulseaudio_build_path/src",
+    "../../include",
+    "../../../include",
+    "../../../src",
+    "../../../",
+    "../../src",
     "//base/hiviewdfx/hilog/interfaces/native/innerkits/include",
   ]
 
@@ -150,13 +146,13 @@ config("modules_internal_lib_config") {
 }
 
 ohos_shared_library("cli") {
-  sources = [ "$pulseaudio_dir/src/pulsecore/cli.c" ]
+  sources = [ "../../../src/pulsecore/cli.c" ]
 
   configs = [ ":modules_internal_lib_config" ]
 
   deps = [
-    "$pulseaudio_build_path/src:pulsecommon",
-    "$pulseaudio_build_path/src/pulsecore:pulsecore",
+    "../../src:pulsecommon",
+    "../../src/pulsecore:pulsecore",
   ]
 
   subsystem_name = "thirdparty"
@@ -164,14 +160,14 @@ ohos_shared_library("cli") {
 }
 
 ohos_shared_library("protocol-cli") {
-  sources = [ "$pulseaudio_dir/src/pulsecore/protocol-cli.c" ]
+  sources = [ "../../../src/pulsecore/protocol-cli.c" ]
 
   configs = [ ":modules_internal_lib_config" ]
 
   deps = [
-    "$pulseaudio_build_path/src:pulsecommon",
-    "$pulseaudio_build_path/src/pulsecore:cli",
-    "$pulseaudio_build_path/src/pulsecore:pulsecore",
+    "../../src:pulsecommon",
+    "../../src/pulsecore:cli",
+    "../../src/pulsecore:pulsecore",
   ]
 
   subsystem_name = "thirdparty"
@@ -179,13 +175,13 @@ ohos_shared_library("protocol-cli") {
 }
 
 ohos_shared_library("protocol-native") {
-  sources = [ "$pulseaudio_dir/src/pulsecore/protocol-native.c" ]
+  sources = [ "../../../src/pulsecore/protocol-native.c" ]
 
   configs = [ ":modules_internal_lib_config" ]
 
   deps = [
-    "$pulseaudio_build_path/src:pulsecommon",
-    "$pulseaudio_build_path/src/pulsecore:pulsecore",
+    "../../src:pulsecommon",
+    "../../src/pulsecore:pulsecore",
   ]
 
   external_deps = [ "hiviewdfx_hilog_native:libhilog" ]
