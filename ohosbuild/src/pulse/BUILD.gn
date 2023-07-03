@@ -13,19 +13,16 @@
 
 import("//build/ohos.gni")
 
-pulseaudio_dir = "//third_party/pulseaudio"
-pulseaudio_build_path = "//third_party/pulseaudio/ohosbuild"
-
 config("pulse_config") {
   visibility = [ ":*" ]
 
   include_dirs = [
-    "$pulseaudio_dir/include",
-    "$pulseaudio_dir/src/pulse",
-    "$pulseaudio_dir/src",
-    "$pulseaudio_dir",
-    "$pulseaudio_build_path/src",
-    "$pulseaudio_build_path/include",
+    "../../../include",
+    "../../../src/pulse",
+    "../../../src",
+    "../../../",
+    "../../src",
+    "../../include",
     "//third_party/glib/glib",
     "//third_party/glib",
     "//base/hiviewdfx/hilog/interfaces/native/innerkits/include",
@@ -44,32 +41,32 @@ config("pulse_config") {
 
 ohos_source_set("pulse_sources") {
   sources = [
-    "$pulseaudio_dir/src/pulse/channelmap.c",
-    "$pulseaudio_dir/src/pulse/context.c",
-    "$pulseaudio_dir/src/pulse/direction.c",
-    "$pulseaudio_dir/src/pulse/error.c",
-    "$pulseaudio_dir/src/pulse/ext-device-manager.c",
-    "$pulseaudio_dir/src/pulse/ext-device-restore.c",
-    "$pulseaudio_dir/src/pulse/ext-stream-restore.c",
-    "$pulseaudio_dir/src/pulse/format.c",
-    "$pulseaudio_dir/src/pulse/internal.h",
-    "$pulseaudio_dir/src/pulse/introspect.c",
-    "$pulseaudio_dir/src/pulse/mainloop-api.c",
-    "$pulseaudio_dir/src/pulse/mainloop-signal.c",
-    "$pulseaudio_dir/src/pulse/mainloop.c",
-    "$pulseaudio_dir/src/pulse/ohos_pa_volume.c",
-    "$pulseaudio_dir/src/pulse/operation.c",
-    "$pulseaudio_dir/src/pulse/proplist.c",
-    "$pulseaudio_dir/src/pulse/rtclock.c",
-    "$pulseaudio_dir/src/pulse/sample.c",
-    "$pulseaudio_dir/src/pulse/scache.c",
-    "$pulseaudio_dir/src/pulse/stream.c",
-    "$pulseaudio_dir/src/pulse/subscribe.c",
-    "$pulseaudio_dir/src/pulse/thread-mainloop.c",
-    "$pulseaudio_dir/src/pulse/timeval.c",
-    "$pulseaudio_dir/src/pulse/utf8.c",
-    "$pulseaudio_dir/src/pulse/util.c",
-    "$pulseaudio_dir/src/pulse/xmalloc.c",
+    "../../../src/pulse/channelmap.c",
+    "../../../src/pulse/context.c",
+    "../../../src/pulse/direction.c",
+    "../../../src/pulse/error.c",
+    "../../../src/pulse/ext-device-manager.c",
+    "../../../src/pulse/ext-device-restore.c",
+    "../../../src/pulse/ext-stream-restore.c",
+    "../../../src/pulse/format.c",
+    "../../../src/pulse/internal.h",
+    "../../../src/pulse/introspect.c",
+    "../../../src/pulse/mainloop-api.c",
+    "../../../src/pulse/mainloop-signal.c",
+    "../../../src/pulse/mainloop.c",
+    "../../../src/pulse/ohos_pa_volume.c",
+    "../../../src/pulse/operation.c",
+    "../../../src/pulse/proplist.c",
+    "../../../src/pulse/rtclock.c",
+    "../../../src/pulse/sample.c",
+    "../../../src/pulse/scache.c",
+    "../../../src/pulse/stream.c",
+    "../../../src/pulse/subscribe.c",
+    "../../../src/pulse/thread-mainloop.c",
+    "../../../src/pulse/timeval.c",
+    "../../../src/pulse/utf8.c",
+    "../../../src/pulse/util.c",
+    "../../../src/pulse/xmalloc.c",
   ]
 
   configs = [ ":pulse_config" ]
@@ -81,7 +78,7 @@ ohos_source_set("pulse_sources") {
 ohos_shared_library("pulse") {
   deps = [
     ":pulse_sources",
-    "$pulseaudio_build_path/src:pulsecommon",
+    "../../src:pulsecommon",
   ]
 
   external_deps = [ "hiviewdfx_hilog_native:libhilog" ]
@@ -92,13 +89,13 @@ ohos_shared_library("pulse") {
 }
 
 ohos_shared_library("pulse-simple") {
-  sources = [ "$pulseaudio_dir/src/pulse/simple.c" ]
+  sources = [ "../../../src/pulse/simple.c" ]
 
   configs = [ ":pulse_config" ]
 
   deps = [
-    "$pulseaudio_build_path/src:pulsecommon",
-    "$pulseaudio_build_path/src/pulse:pulse",
+    "../../src:pulsecommon",
+    "../../src/pulse:pulse",
   ]
 
   subsystem_name = "thirdparty"
@@ -106,11 +103,11 @@ ohos_shared_library("pulse-simple") {
 }
 
 ohos_shared_library("pulse-mainloop-glib") {
-  sources = [ "$pulseaudio_dir/src/pulse/ohos_glib-mainloop.c" ]
+  sources = [ "../../../src/pulse/ohos_glib-mainloop.c" ]
 
   configs = [ ":pulse_config" ]
   deps = [
-    "$pulseaudio_build_path/src:pulsecommon",
+    "../../src:pulsecommon",
     "//third_party/glib:glib",
   ]
 
