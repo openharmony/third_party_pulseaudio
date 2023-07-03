@@ -23,8 +23,14 @@
         "rom": "",
         "ram": "",
         "deps": {
-            "components": [],
-            "third_party": []
+            "components": [
+                "hiviewdfx_hilog_native",
+                "init"
+            ],
+            "third_party": [
+                "glib",
+                "libsnd"
+            ]
         },
         "build": {
             "sub_component": [],
