@@ -127,7 +127,7 @@ ohos_shared_library("pulsecommon") {
   ]
 
   external_deps = [
-    "hiviewdfx_hilog_native:libhilog",
+    "hilog:libhilog",
     "init:libbegetutil",
   ]
 
