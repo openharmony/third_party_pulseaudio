@@ -117,7 +117,7 @@ ohos_shared_library("pulsecore") {
     "../../src:pulsecommon",
   ]
 
-  external_deps = [ "hiviewdfx_hilog_native:libhilog" ]
+  external_deps = [ "hilog:libhilog" ]
 
   subsystem_name = "thirdparty"
   part_name = "pulseaudio"
@@ -184,7 +184,7 @@ ohos_shared_library("protocol-native") {
     "../../src/pulsecore:pulsecore",
   ]
 
-  external_deps = [ "hiviewdfx_hilog_native:libhilog" ]
+  external_deps = [ "hilog:libhilog" ]
   subsystem_name = "thirdparty"
   part_name = "pulseaudio"
 }
