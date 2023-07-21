@@ -24,7 +24,7 @@
         "ram": "",
         "deps": {
             "components": [
-                "hiviewdfx_hilog_native",
+                "hilog",
                 "init"
             ],
             "third_party": [
