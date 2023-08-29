@@ -2643,6 +2643,13 @@ static void command_auth(pa_pdispatch *pd, uint32_t command, uint32_t tag, pa_ta
             if ((ac = pa_auth_cookie_read(c->options->auth_cookie, PA_NATIVE_COOKIE_LENGTH)))
                 if (memcmp(ac, cookie, PA_NATIVE_COOKIE_LENGTH) == 0)
                     success = true;
+
+            /* All user process need to have the capability to connect and create pa stream,
+             * so all of them can get the right cookie through ipc, cookie file check is useless.
+             * We plan to use other way to protect some of the functions, instead of preventing
+             * connection.
+             */
+            success = true;
         }
 
         if (!success) {
