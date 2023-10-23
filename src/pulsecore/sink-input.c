@@ -1580,6 +1580,10 @@ void pa_sink_input_cork(pa_sink_input *i, bool b) {
     pa_assert(PA_SINK_INPUT_IS_LINKED(i->state));
 
     sink_input_set_state(i, b ? PA_SINK_INPUT_CORKED : PA_SINK_INPUT_RUNNING);
+
+    if (b && i->thread_info.resampler) {
+        pa_resampler_reset(i->thread_info.resampler);
+    }
 }
 
 /* Called from main context */
