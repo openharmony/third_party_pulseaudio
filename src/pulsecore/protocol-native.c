@@ -68,7 +68,7 @@
 #define AUTH_TIMEOUT (60 * PA_USEC_PER_SEC)
 
 /* Don't accept more connection than this */
-#define MAX_CONNECTIONS 64
+#define MAX_CONNECTIONS 128
 
 #define MAX_MEMBLOCKQ_LENGTH (4*1024*1024) /* 4MB */
 #define DEFAULT_TLENGTH_MSEC 2000 /* 2s */
