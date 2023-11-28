@@ -2828,7 +2828,7 @@ int pa_sink_process_msg(pa_msgobject *o, int code, void *userdata, int64_t offse
                 delay_bytes = 0;
                 if (i->thread_info.move_start_time > 0) {
                     usec = pa_rtclock_now() - i->thread_info.move_start_time;
-                    pa_log_debug("Move took %lu usec", usec);
+                    pa_log_debug("Move took %llu usec", usec);
                     delay_bytes = pa_usec_to_bytes(usec, &s->sample_spec);
                 }
 
