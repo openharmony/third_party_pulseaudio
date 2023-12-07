@@ -285,6 +285,7 @@ static int rtpoll_work_cb(pa_rtpoll_item *i) {
         pa_log_debug("wi=%lu ri=%lu", (unsigned long) wi, (unsigned long) ri);
 
         sink_delay = pa_sink_get_latency_within_thread(s->sink_input->sink, false);
+        sink_delay += pa_resampler_get_delay_usec(s->sink_input->thread_info.resampler);
         render_delay = pa_bytes_to_usec(pa_memblockq_get_length(s->sink_input->thread_info.render_memblockq), &s->sink_input->sink->sample_spec);
 
         if (ri > render_delay+sink_delay)
@@ -568,7 +569,7 @@ static struct session *session_new(struct userdata *u, const pa_sdp_info *sdp_in
 
     pa_memblock_unref(silence.memblock);
 
-    if (!(s->rtp_context = pa_rtp_context_new_recv(fd, sdp_info->payload, &s->sdp_info.sample_spec)))
+    if (!(s->rtp_context = pa_rtp_context_new_recv(fd, sdp_info->payload, &s->sdp_info.sample_spec, sdp_info->enable_opus)))
         goto fail;
 
     pa_hashmap_put(s->userdata->by_origin, s->sdp_info.origin, s);
