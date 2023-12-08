@@ -3,8 +3,8 @@
         "Name"                  : "pulseaudio",
         "License"               : "LGPL V2.1/BSD-Style/Sun License",
         "License File"          : "LICENSE",
-        "Version Number"        : "14.2",
-        "Upstream URL"          : "https://gitlab.freedesktop.org/pulseaudio/pulseaudio/-/tree/v14.2",
+        "Version Number"        : "16.1",
+        "Upstream URL"          : "https://gitlab.freedesktop.org/pulseaudio/pulseaudio/-/tree/v16.1",
         "Description"           : "Pulseaudio is a Sound server system, which is used by multimedia audio subsystem as audio server. It provides playback, record and audio management functionalities."
     }
 ]
