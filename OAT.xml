@@ -75,6 +75,16 @@ Note:If the text contains special characters, please escape them according to th
                 <filteritem type="filename" name="*.xsl" desc="pulseaudio style sheet file doc"/>
                 <filteritem type="filename" name="git-version-gen" desc="git version check script"/>
                 <filteritem type="filename" name="g711.h" desc="pulseaudio header file"/>
+                <filteritem type="filename" name="copyright" desc="copyright file"/>
+                <filteritem type="filename" name="changelog" desc="sonic changelog file"/>
+                <filteritem type="filename" name="Main.java" desc="sonic main java file"/>
+                <filteritem type="filename" name="Sonic.java" desc="sonic java file"/>
+                <filteritem type="filename" name="sonic.1" desc="sonic .1 file"/>
+                <filteritem type="filename" name="sonic.h" desc="sonic header file"/>
+                <filteritem type="filename" name="sonic.c" desc="sonic source file"/>
+                <filteritem type="filename" name="main.c" desc="sonic main c file"/>
+                <filteritem type="filename" name="wave.h" desc="sonic wave header file"/>
+                <filteritem type="filename" name="wave.c" desc="sonic wave source file"/>
             </filefilter>
         </filefilterlist>
     </oatconfig>
