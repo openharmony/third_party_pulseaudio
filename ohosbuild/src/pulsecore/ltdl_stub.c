@@ -19,7 +19,7 @@
 
 #include "ltdl.h"
 
-#ifdef __aarch64__
+#if (defined(__aarch64__) || defined(__x86_64__))
 #define SYSTEM_LIB_PATH "/system/lib64/"
 #else
 #define SYSTEM_LIB_PATH "/system/lib/"
