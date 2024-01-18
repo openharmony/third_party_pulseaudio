@@ -22,7 +22,7 @@
 
 #undef LOG_DOMAIN
 #undef LOG_TAG
-#define LOG_DOMAIN 0xD002B00
+#define LOG_DOMAIN 0xD002B12
 #define LOG_TAG "AudioFramework"
 
 #define FILENAME (__builtin_strrchr(__FILE__, '/') ? __builtin_strrchr(__FILE__, '/') + 1 : __FILE__)
