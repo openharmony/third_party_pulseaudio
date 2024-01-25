@@ -31,10 +31,14 @@ group("pulseaudio_packages") {
     "src/pulsecore:protocol-cli",
     "src/pulsecore:protocol-native",
     "src/pulsecore:pulsecore",
-    "src/utils:pacat",
-    "src/utils:pacmd",
-    "src/utils:pactl",
   ]
+  if (build_variant == "root") {
+    deps += [
+      "src/utils:pacat",
+      "src/utils:pacmd",
+      "src/utils:pactl",
+    ]
+  }
 }
 
 action("gen_config_header") {
