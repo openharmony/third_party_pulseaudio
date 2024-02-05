@@ -609,7 +609,7 @@ static record_stream* record_stream_new(
 
     pa_idxset_put(c->record_streams, s, &s->index);
 
-    AUDIO_INFO_LOG("Final latency %{public}0.2f ms = %{public}0.2f ms + %{public}0.2f ms",
+    AUDIO_DEBUG_LOG("Final latency %{public}0.2f ms = %{public}0.2f ms + %{public}0.2f ms",
                 ((double) pa_bytes_to_usec(s->buffer_attr.fragsize, &source_output->sample_spec) + (double) s->configured_source_latency) / PA_USEC_PER_MSEC,
                 (double) pa_bytes_to_usec(s->buffer_attr.fragsize, &source_output->sample_spec) / PA_USEC_PER_MSEC,
                 (double) s->configured_source_latency / PA_USEC_PER_MSEC);
@@ -1100,7 +1100,7 @@ static playback_stream* playback_stream_new(
 
     pa_idxset_put(c->output_streams, s, &s->index);
 
-    AUDIO_INFO_LOG("Final latency %{public}0.2f ms = %{public}0.2f ms + 2*%{public}0.2f ms + %{public}0.2f ms",
+    AUDIO_DEBUG_LOG("Final latency %{public}0.2f ms = %{public}0.2f ms + 2*%{public}0.2f ms + %{public}0.2f ms",
                 ((double) pa_bytes_to_usec(s->buffer_attr.tlength, &sink_input->sample_spec) + (double) s->configured_sink_latency) / PA_USEC_PER_MSEC,
                 (double) pa_bytes_to_usec(s->buffer_attr.tlength-s->buffer_attr.minreq*2, &sink_input->sample_spec) / PA_USEC_PER_MSEC,
                 (double) pa_bytes_to_usec(s->buffer_attr.minreq, &sink_input->sample_spec) / PA_USEC_PER_MSEC,
@@ -2635,7 +2635,7 @@ static void command_auth(pa_pdispatch *pd, uint32_t command, uint32_t tag, pa_ta
                 }
             }
 
-            AUDIO_INFO_LOG("Got credentials: uid=%{public}lu gid=%{public}lu success=%{public}i",
+            AUDIO_DEBUG_LOG("Got credentials: uid=%{public}lu gid=%{public}lu success=%{public}i",
                         (unsigned long) creds->uid,
                         (unsigned long) creds->gid,
                         (int) success);

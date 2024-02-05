@@ -829,7 +829,7 @@ static void memblock_replace_import(pa_memblock *b) {
  * TODO-1: Transform the global core mempool to a per-client one
  * TODO-2: Remove global mempools support */
 pa_mempool *pa_mempool_new(pa_mem_type_t type, size_t size, bool per_client) {
-    AUDIO_INFO_LOG("pa_mempool_new:type %{public}d, size %{public}zu, per_client %{public}d,", type, size, per_client);
+    AUDIO_DEBUG_LOG("pa_mempool_new:type %{public}d, size %{public}zu, per_client %{public}d,", type, size, per_client);
     pa_mempool *p;
     char t1[PA_BYTES_SNPRINT_MAX], t2[PA_BYTES_SNPRINT_MAX];
     const size_t page_size = pa_page_size();
