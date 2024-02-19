@@ -53,7 +53,7 @@
 
 #include "client-conf.h"
 
-#define DEFAULT_TIMEOUT (30)
+#define DEFAULT_TIMEOUT (9)
 
 #define PA_PROTOCOL_FLAG_MASK 0xFFFF0000U
 #define PA_PROTOCOL_VERSION_MASK 0x0000FFFFU
