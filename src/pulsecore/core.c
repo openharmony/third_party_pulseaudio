@@ -44,6 +44,8 @@
 #include "log/audio_log.h"
 
 #include "core.h"
+#undef LOG_TAG
+#define LOG_TAG "Core"
 
 PA_DEFINE_PUBLIC_CLASS(pa_core, pa_msgobject);
 
