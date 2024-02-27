@@ -62,6 +62,8 @@
 #include "log/audio_log.h"
 
 #include "protocol-native.h"
+#undef LOG_TAG
+#define LOG_TAG "ProtocolNative"
 
 /* #define PROTOCOL_NATIVE_DEBUG */
 
