@@ -22,6 +22,9 @@
 #include <config.h>
 #endif
 
+#undef LOG_TAG
+#define LOG_TAG "Memblock"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -51,8 +54,6 @@
 #include "log/audio_log.h"
 
 #include "memblock.h"
-#undef LOG_TAG
-#define LOG_TAG "Memblock"
 
 /* We can allocate 64*1024*1024 bytes at maximum. That's 64MB. Please
  * note that the footprint is usually much smaller, since the data is
