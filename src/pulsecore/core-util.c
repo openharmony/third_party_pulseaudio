@@ -23,6 +23,9 @@
 #include <config.h>
 #endif
 
+#undef LOG_TAG
+#define LOG_TAG "CoreUtil"
+
 #include <math.h>
 #include <stdarg.h>
 #include <stdlib.h>
@@ -131,8 +134,7 @@
 #include "log/audio_log.h"
 
 #include "core-util.h"
-#undef LOG_TAG
-#define LOG_TAG "CoreUtil"
+
 /* Not all platforms have this */
 #ifndef MSG_NOSIGNAL
 #define MSG_NOSIGNAL 0
