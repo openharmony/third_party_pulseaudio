@@ -22,6 +22,9 @@
 #include <config.h>
 #endif
 
+#undef LOG_TAG
+#define LOG_TAG "Shm"
+
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -57,8 +60,6 @@
 #include "log/audio_log.h"
 
 #include "shm.h"
-#undef LOG_TAG
-#define LOG_TAG "Shm"
 
 #if defined(__linux__) && !defined(MADV_REMOVE)
 #define MADV_REMOVE 9
