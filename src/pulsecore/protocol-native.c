@@ -22,6 +22,9 @@
 #include <config.h>
 #endif
 
+#undef LOG_TAG
+#define LOG_TAG "ProtocolNative"
+
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -62,8 +65,6 @@
 #include "log/audio_log.h"
 
 #include "protocol-native.h"
-#undef LOG_TAG
-#define LOG_TAG "ProtocolNative"
 
 /* #define PROTOCOL_NATIVE_DEBUG */
 
