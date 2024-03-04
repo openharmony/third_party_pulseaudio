@@ -22,6 +22,9 @@
 #include <config.h>
 #endif
 
+#undef LOG_TAG
+#define LOG_TAG "Context"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -67,8 +70,6 @@
 
 #include "internal.h"
 #include "context.h"
-#undef LOG_TAG
-#define LOG_TAG "Context"
 
 void pa_command_extension(pa_pdispatch *pd, uint32_t command, uint32_t tag, pa_tagstruct *t, void *userdata);
 static void pa_command_enable_srbchannel(pa_pdispatch *pd, uint32_t command, uint32_t tag, pa_tagstruct *t, void *userdata);
