@@ -22,6 +22,9 @@
 #include <config.h>
 #endif
 
+#undef LOG_TAG
+#define LOG_TAG "Core"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <signal.h>
@@ -44,8 +47,6 @@
 #include "log/audio_log.h"
 
 #include "core.h"
-#undef LOG_TAG
-#define LOG_TAG "Core"
 
 PA_DEFINE_PUBLIC_CLASS(pa_core, pa_msgobject);
 
