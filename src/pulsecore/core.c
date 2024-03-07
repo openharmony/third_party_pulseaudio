@@ -22,6 +22,9 @@
 #include <config.h>
 #endif
 
+#undef LOG_TAG
+#define LOG_TAG "Core"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <signal.h>

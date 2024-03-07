@@ -22,6 +22,9 @@
 #include <config.h>
 #endif
 
+#undef LOG_TAG
+#define LOG_TAG "Memblock"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

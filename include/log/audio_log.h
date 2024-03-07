@@ -21,16 +21,11 @@
 #include "hilog/log.h"
 
 #undef LOG_DOMAIN
-#undef LOG_TAG
 #define LOG_DOMAIN 0xD002B12
-#define LOG_TAG "AudioFramework"
-
-#define FILENAME (__builtin_strrchr(__FILE__, '/') ? __builtin_strrchr(__FILE__, '/') + 1 : __FILE__)
-
 #ifndef OHOS_DEBUG
 #define DECORATOR_HILOG(op, fmt, args...) \
     do {                                  \
-        op(LOG_CORE, "[%{public}s] " fmt, FILENAME, ##args);        \
+        op(LOG_CORE, "[%{public}s]" fmt, __FUNCTION__, ##args);        \
     } while (0)
 #else
 #define DECORATOR_HILOG(op, fmt, args...)                                                \
