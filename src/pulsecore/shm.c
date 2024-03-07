@@ -22,6 +22,9 @@
 #include <config.h>
 #endif
 
+#undef LOG_TAG
+#define LOG_TAG "Shm"
+
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
