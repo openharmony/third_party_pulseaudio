@@ -34,7 +34,46 @@
         },
         "build": {
             "sub_component": [],
-            "inner_kits": [],
+            "inner_kits": [
+                {
+                    "header": {
+                        "header_base": "//third_party/pulseaudio/ohosbuild/src/daemon",
+                        "header_files": []
+                    },
+                    "name": "//third_party/pulseaudio/ohosbuild/src/daemon:pulseaudio"
+                },
+                {
+                    "header": {
+                        "header_base": "//third_party/pulseaudio/ohosbuild/src/pulse",
+                        "header_files": []
+                    },
+                    "name": "//third_party/pulseaudio/ohosbuild/src/pulse:pulse"
+                },
+                {
+                    "header": {
+                        "header_base": "//third_party/pulseaudio/ohosbuild/src/pulsecore",
+                        "header_files": []
+                    },
+                    "name": "//third_party/pulseaudio/ohosbuild/src/pulsecore:pulsecore"
+                },
+                {
+                    "header": {
+                        "header_base": "//third_party/pulseaudio/ohosbuild/src",
+                        "header_files": []
+                    },
+                    "name": "//third_party/pulseaudio/ohosbuild/src:pulsecommon"
+                },
+                {
+                    "header": {
+                        "header_base": "//third_party/pulseaudio/sonic",
+                        "header_files": [
+                            "sonic.h",
+                            "wave.h"
+                        ]
+                    },
+                    "name": "//third_party/pulseaudio/sonic:sonic"
+                }
+            ],
             "test": []
         }
     }
