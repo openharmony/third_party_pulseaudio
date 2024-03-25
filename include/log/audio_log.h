@@ -16,6 +16,10 @@
 #ifndef OHOS_AUDIO_LOG_H
 #define OHOS_AUDIO_LOG_H
 
+#ifndef LOG_TAG
+#define LOG_TAG "AudioFramework"
+#endif
+
 #include <stdio.h>
 
 #include "hilog/log.h"
