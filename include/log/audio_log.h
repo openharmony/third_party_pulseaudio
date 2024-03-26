@@ -17,7 +17,7 @@
 #define OHOS_AUDIO_LOG_H
 
 #ifndef LOG_TAG
-#define LOG_TAG "AudioFramework"
+#define LOG_TAG "PulseAudio"
 #endif
 
 #include <stdio.h>
