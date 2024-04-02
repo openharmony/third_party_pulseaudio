@@ -708,7 +708,7 @@ static int context_autospawn(pa_context *c) {
 #else
     if (sa.sa_handler == SIG_IGN) {
 #endif
-        pa_log_debug("Process disabled waitpid(), cannot autospawn.");
+        AUDIO_ERR_LOG("Process disabled waitpid(), cannot autospawn.");
         pa_context_fail(c, PA_ERR_CONNECTIONREFUSED);
         goto fail;
     }
@@ -783,6 +783,7 @@ static int context_autospawn(pa_context *c) {
          * startup worked, even if we cannot know */
 
     } else if (!WIFEXITED(status) || WEXITSTATUS(status) != 0) {
+        AUDIO_ERR_LOG("Connection refused for status");
         pa_context_fail(c, PA_ERR_CONNECTIONREFUSED);
         goto fail;
     }
@@ -887,6 +888,7 @@ static int try_next_connection(pa_context *c) {
                 }
             } else
 #endif
+                AUDIO_ERR_LOG("Connection refused for try connect");
                 pa_context_fail(c, PA_ERR_CONNECTIONREFUSED);
 
             goto finish;
@@ -935,6 +937,7 @@ static void on_connection(pa_socket_client *client, pa_iochannel*io, void *userd
             goto finish;
         }
 
+        AUDIO_ERR_LOG("Connection refused for io");
         pa_context_fail(c, PA_ERR_CONNECTIONREFUSED);
         goto finish;
     }
