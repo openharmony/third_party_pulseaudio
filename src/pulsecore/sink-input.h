@@ -281,6 +281,8 @@ struct pa_sink_input {
     } thread_info;
 
     void *userdata;
+
+    pa_atomic_t isFirstReaded;
 };
 
 PA_DECLARE_PUBLIC_CLASS(pa_sink_input);

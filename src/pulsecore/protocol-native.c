@@ -1489,7 +1489,7 @@ static bool handle_input_underrun(playback_stream *s, bool force) {
          s->drain_request = false;
          pa_asyncmsgq_post(pa_thread_mq_get()->outq, PA_MSGOBJECT(s), PLAYBACK_STREAM_MESSAGE_DRAIN_ACK, PA_UINT_TO_PTR(s->drain_tag), 0, NULL, NULL);
          AUDIO_DEBUG_LOG("Drain acknowledged of '%{public}s'", pa_strnull(pa_proplist_gets(s->sink_input->proplist, PA_PROP_MEDIA_NAME)));
-    } else if (!s->is_underrun) {
+    } else if (force) {
          pa_asyncmsgq_post(pa_thread_mq_get()->outq, PA_MSGOBJECT(s), PLAYBACK_STREAM_MESSAGE_UNDERFLOW, NULL, pa_memblockq_get_read_index(s->memblockq), NULL, NULL);
     }
     s->is_underrun = true;
