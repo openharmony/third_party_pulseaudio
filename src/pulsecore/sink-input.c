@@ -631,6 +631,8 @@ int pa_sink_input_new(
     i->thread_info.dont_rewrite = false;
     i->origin_rewind_bytes = 0;
 
+    pa_atomic_store(&i->isFirstReaded, 0);
+
     pa_assert_se(pa_idxset_put(core->sink_inputs, i, &i->index) == 0);
     pa_assert_se(pa_idxset_put(i->sink->inputs, pa_sink_input_ref(i), NULL) == 0);
 
