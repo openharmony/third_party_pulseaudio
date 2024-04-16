@@ -190,6 +190,9 @@ enum {
     /* Supported since protocol v34 (14.0) */
     PA_COMMAND_SEND_OBJECT_MESSAGE,
 
+    /* SERVER->CLIENT */
+    PA_COMMAND_UNDERFLOW_OHOS,
+
     PA_COMMAND_MAX
 };
 

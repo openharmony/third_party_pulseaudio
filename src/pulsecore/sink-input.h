@@ -238,6 +238,8 @@ struct pa_sink_input {
      * mute status changes. Called from main context */
     void (*mute_changed)(pa_sink_input *i); /* may be NULL */
 
+    bool (*process_underrun_ohos) (pa_sink_input *i);
+
     /* Used to store the rewind amount of the origin sink during a move */
     size_t origin_rewind_bytes;    /* In sink input sample spec */
 
@@ -484,6 +486,8 @@ void pa_sink_input_set_volume_direct(pa_sink_input *i, const pa_cvolume *volume)
 void pa_sink_input_set_reference_ratio(pa_sink_input *i, const pa_cvolume *ratio);
 
 void pa_sink_input_set_preferred_sink(pa_sink_input *i, pa_sink *s);
+
+void pa_sink_input_handle_ohos_underrun(pa_sink_input *i);
 
 #define pa_sink_input_assert_io_context(s) \
     pa_assert(pa_thread_mq_get() || !PA_SINK_INPUT_IS_LINKED((s)->state))

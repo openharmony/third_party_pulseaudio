@@ -208,7 +208,8 @@ static const pa_pdispatch_cb_t command_table[PA_COMMAND_MAX] = {
     [PA_COMMAND_RECORD_STREAM_EVENT] = command_stream_or_client_event,
     [PA_COMMAND_CLIENT_EVENT] = command_stream_or_client_event,
     [PA_COMMAND_PLAYBACK_BUFFER_ATTR_CHANGED] = command_stream_buffer_attr_changed,
-    [PA_COMMAND_RECORD_BUFFER_ATTR_CHANGED] = command_stream_buffer_attr_changed
+    [PA_COMMAND_RECORD_BUFFER_ATTR_CHANGED] = command_stream_buffer_attr_changed,
+    [PA_COMMAND_UNDERFLOW_OHOS] = command_overflow_or_underflow,
 };
 
 struct userdata {

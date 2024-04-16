@@ -607,6 +607,8 @@ int64_t pa_stream_get_underflow_index(const pa_stream *p);
 /** Set the callback function that is called when a buffer underflow happens. (Only for playback streams) */
 void pa_stream_set_underflow_callback(pa_stream *p, pa_stream_notify_cb_t cb, void *userdata);
 
+void pa_stream_set_underflow_ohos_callback(pa_stream *s, pa_stream_notify_cb_t cb, void *userdata);
+
 /** Set the callback function that is called when the server starts
  * playback after an underrun or on initial startup. This only informs
  * that audio is flowing again, it is no indication that audio started
