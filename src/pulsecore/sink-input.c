@@ -348,6 +348,7 @@ static void reset_callbacks(pa_sink_input *i) {
     i->volume_changed = NULL;
     i->mute_changed = NULL;
     i->get_max_rewind_limit = NULL;
+    i->process_underrun_ohos = NULL;
 }
 
 /* Called from main context */
@@ -2744,5 +2745,11 @@ void pa_sink_input_set_preferred_sink(pa_sink_input *i, pa_sink *s) {
     } else {
         set_preferred_sink(i, NULL);
         pa_sink_input_move_to(i, i->core->default_sink, false);
+    }
+}
+
+void pa_sink_input_handle_ohos_underrun(pa_sink_input *i) {
+    if (i->process_underrun_ohos && (pa_atomic_load(&i->isFirstReaded) == 1)) {
+        i->process_underrun_ohos(i);
     }
 }

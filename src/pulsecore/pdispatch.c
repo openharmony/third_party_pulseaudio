@@ -202,6 +202,8 @@ static const char *command_names[PA_COMMAND_MAX] = {
 
     /* Supported since protocol v35 (15.0) */
     [PA_COMMAND_SEND_OBJECT_MESSAGE] = "SEND_OBJECT_MESSAGE",
+
+    [PA_COMMAND_UNDERFLOW] = "UNDERFLOW_OHOS",
 };
 
 #endif
