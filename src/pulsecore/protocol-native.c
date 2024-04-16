@@ -1532,12 +1532,13 @@ static bool handle_input_underrun_ohos(playback_stream *s, bool force) {
 
     if (!s->is_underrun)
         AUDIO_DEBUG_LOG("%{public}s %{public}s of '%{public}s'", force ? "Actual" : "Implicit",
-            s->drain_request ? "drain" : "underrun", pa_strnull(pa_proplist_gets(s->sink_input->proplist, PA_PROP_MEDIA_NAME)));
+            s->drain_request ? "drain" : "underrun",
+            pa_strnull(pa_proplist_gets(s->sink_input->proplist, PA_PROP_MEDIA_NAME)));
 
     send_drain = s->drain_request && (force || pa_sink_input_safe_to_remove(s->sink_input));
-
     if (!send_drain) {
-        pa_asyncmsgq_post(pa_thread_mq_get()->outq, PA_MSGOBJECT(s), PLAYBACK_STREAM_MESSAGE_UNDERFLOW_OHOS, NULL, pa_memblockq_get_read_index(s->memblockq), NULL, NULL);
+        pa_asyncmsgq_post(pa_thread_mq_get()->outq, PA_MSGOBJECT(s), PLAYBACK_STREAM_MESSAGE_UNDERFLOW_OHOS,
+            NULL, pa_memblockq_get_read_index(s->memblockq), NULL, NULL);
     }
     return true;
 }
