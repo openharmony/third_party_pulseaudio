@@ -243,6 +243,8 @@ struct pa_stream {
     void *event_userdata;
     pa_stream_notify_cb_t buffer_attr_callback;
     void *buffer_attr_userdata;
+    pa_stream_notify_cb_t underflow_ohos_callback;
+    void *underflow_ohos_userdata;
 };
 
 typedef void (*pa_operation_cb_t)(void);

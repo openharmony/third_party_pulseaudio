@@ -97,6 +97,7 @@ static const pa_pdispatch_cb_t command_table[PA_COMMAND_MAX] = {
     [PA_COMMAND_ENABLE_SRBCHANNEL] = pa_command_enable_srbchannel,
     [PA_COMMAND_DISABLE_SRBCHANNEL] = pa_command_disable_srbchannel,
     [PA_COMMAND_REGISTER_MEMFD_SHMID] = pa_command_register_memfd_shmid,
+    [PA_COMMAND_UNDERFLOW_OHOS] = pa_command_overflow_or_underflow,
 };
 static void context_free(pa_context *c);
 

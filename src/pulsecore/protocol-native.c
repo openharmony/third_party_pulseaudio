@@ -232,7 +232,8 @@ enum {
     PLAYBACK_STREAM_MESSAGE_OVERFLOW,
     PLAYBACK_STREAM_MESSAGE_DRAIN_ACK,
     PLAYBACK_STREAM_MESSAGE_STARTED,
-    PLAYBACK_STREAM_MESSAGE_UPDATE_TLENGTH
+    PLAYBACK_STREAM_MESSAGE_UPDATE_TLENGTH,
+    PLAYBACK_STREAM_MESSAGE_UNDERFLOW_OHOS,
 };
 
 enum {
@@ -245,6 +246,7 @@ enum {
 };
 
 static bool sink_input_process_underrun_cb(pa_sink_input *i);
+static bool sink_input_process_underrun_ohos_cb(pa_sink_input *i);
 static int sink_input_pop_cb(pa_sink_input *i, size_t length, pa_memchunk *chunk);
 static void sink_input_kill_cb(pa_sink_input *i);
 static void sink_input_suspend_cb(pa_sink_input *i, pa_sink_state_t old_state, pa_suspend_cause_t old_suspend_cause);
@@ -768,6 +770,18 @@ static int playback_stream_process_msg(pa_msgobject *o, int code, void*userdata,
                 pa_pstream_send_tagstruct(s->connection->pstream, t);
             }
 
+        case PLAYBACK_STREAM_MESSAGE_UNDERFLOW_OHOS: {
+            pa_tagstruct *t;
+
+            /* Notify the user we're overflowed*/
+            t = pa_tagstruct_new();
+            pa_tagstruct_putu32(t, PA_COMMAND_UNDERFLOW_OHOS);
+            pa_tagstruct_putu32(t, (uint32_t) -1); /* tag */
+            pa_tagstruct_putu32(t, s->index);
+            pa_pstream_send_tagstruct(s->connection->pstream, t);
+            break;
+        }
+
             break;
     }
 
@@ -1070,6 +1084,8 @@ static playback_stream* playback_stream_new(
     s->sink_input->suspend = sink_input_suspend_cb;
     s->sink_input->send_event = sink_input_send_event_cb;
     s->sink_input->userdata = s;
+
+    s->sink_input->process_underrun_ohos = sink_input_process_underrun_ohos_cb;
 
     start_index = ssync ? pa_memblockq_get_read_index(ssync->memblockq) : 0;
 
@@ -1489,7 +1505,7 @@ static bool handle_input_underrun(playback_stream *s, bool force) {
          s->drain_request = false;
          pa_asyncmsgq_post(pa_thread_mq_get()->outq, PA_MSGOBJECT(s), PLAYBACK_STREAM_MESSAGE_DRAIN_ACK, PA_UINT_TO_PTR(s->drain_tag), 0, NULL, NULL);
          AUDIO_DEBUG_LOG("Drain acknowledged of '%{public}s'", pa_strnull(pa_proplist_gets(s->sink_input->proplist, PA_PROP_MEDIA_NAME)));
-    } else if (force) {
+    } else if (!s->is_underrun) {
          pa_asyncmsgq_post(pa_thread_mq_get()->outq, PA_MSGOBJECT(s), PLAYBACK_STREAM_MESSAGE_UNDERFLOW, NULL, pa_memblockq_get_read_index(s->memblockq), NULL, NULL);
     }
     s->is_underrun = true;
@@ -1506,6 +1522,35 @@ static bool sink_input_process_underrun_cb(pa_sink_input *i) {
     playback_stream_assert_ref(s);
 
     return handle_input_underrun(s, true);
+}
+
+static bool handle_input_underrun_ohos(playback_stream *s, bool force) {
+    bool send_drain;
+
+    if (pa_memblockq_is_readable(s->memblockq))
+        return false;
+
+    if (!s->is_underrun)
+        AUDIO_DEBUG_LOG("%{public}s %{public}s of '%{public}s'", force ? "Actual" : "Implicit",
+            s->drain_request ? "drain" : "underrun",
+            pa_strnull(pa_proplist_gets(s->sink_input->proplist, PA_PROP_MEDIA_NAME)));
+
+    send_drain = s->drain_request && (force || pa_sink_input_safe_to_remove(s->sink_input));
+    if (!send_drain) {
+        pa_asyncmsgq_post(pa_thread_mq_get()->outq, PA_MSGOBJECT(s), PLAYBACK_STREAM_MESSAGE_UNDERFLOW_OHOS,
+            NULL, pa_memblockq_get_read_index(s->memblockq), NULL, NULL);
+    }
+    return true;
+}
+
+static bool sink_input_process_underrun_ohos_cb(pa_sink_input *i) {
+    playback_stream *s;
+
+    pa_sink_input_assert_ref(i);
+    s = PLAYBACK_STREAM(i->userdata);
+    playback_stream_assert_ref(s);
+
+    return handle_input_underrun_ohos(s, true);
 }
 
 /* Called from thread context */
