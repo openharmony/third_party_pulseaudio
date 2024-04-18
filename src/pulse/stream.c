@@ -81,6 +81,8 @@ static void reset_callbacks(pa_stream *s) {
     s->event_userdata = NULL;
     s->buffer_attr_callback = NULL;
     s->buffer_attr_userdata = NULL;
+    s->underflow_ohos_callback = NULL;
+    s->underflow_ohos_userdata = NULL;
 }
 
 static pa_stream *pa_stream_new_with_proplist_internal(
@@ -876,7 +878,8 @@ void pa_command_overflow_or_underflow(pa_pdispatch *pd, uint32_t command, uint32
     int64_t offset = -1;
 
     pa_assert(pd);
-    pa_assert(command == PA_COMMAND_OVERFLOW || command == PA_COMMAND_UNDERFLOW);
+    pa_assert(command == PA_COMMAND_OVERFLOW || command == PA_COMMAND_UNDERFLOW
+        || command == PA_COMMAND_UNDERFLOW_OHOS);
     pa_assert(t);
     pa_assert(c);
     pa_assert(PA_REFCNT_VALUE(c) >= 1);
@@ -905,6 +908,13 @@ void pa_command_overflow_or_underflow(pa_pdispatch *pd, uint32_t command, uint32
 
     if (s->state != PA_STREAM_READY)
         goto finish;
+
+    if (command == PA_COMMAND_UNDERFLOW_OHOS) {
+        if (s->underflow_ohos_callback) {
+            s->underflow_ohos_callback(s, s->underflow_ohos_userdata);
+        }
+        goto finish;
+    }
 
     if (offset != -1)
         s->latest_underrun_at_index = offset;
@@ -2187,6 +2197,20 @@ void pa_stream_set_underflow_callback(pa_stream *s, pa_stream_notify_cb_t cb, vo
 
     s->underflow_callback = cb;
     s->underflow_userdata = userdata;
+}
+
+void pa_stream_set_underflow_ohos_callback(pa_stream *s, pa_stream_notify_cb_t cb, void *userdata) {
+    pa_assert(s);
+    pa_assert(PA_REFCNT_VALUE(s) >= 1);
+
+    if (pa_detect_fork())
+        return;
+
+    if (s->state == PA_STREAM_TERMINATED || s->state == PA_STREAM_FAILED)
+        return;
+
+    s->underflow_ohos_callback = cb;
+    s->underflow_ohos_userdata = userdata;
 }
 
 void pa_stream_set_latency_update_callback(pa_stream *s, pa_stream_notify_cb_t cb, void *userdata) {
