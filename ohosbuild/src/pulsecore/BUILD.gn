@@ -120,6 +120,7 @@ ohos_shared_library("pulsecore") {
   external_deps = [ "hilog:libhilog" ]
 
   subsystem_name = "thirdparty"
+  innerapi_tags = [ "platformsdk*", "chipsetsdk*" ]
   part_name = "pulseaudio"
 }
 
