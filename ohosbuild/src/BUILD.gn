@@ -121,14 +121,12 @@ ohos_source_set("pulsecommon_sources") {
 }
 
 ohos_shared_library("pulsecommon") {
-  deps = [
-    ":pulsecommon_sources",
-    "$libsndfile_dir:sndfile",
-  ]
+  deps = [ ":pulsecommon_sources" ]
 
   external_deps = [
     "hilog:libhilog",
     "init:libbegetutil",
+    "libsnd:sndfile",
   ]
 
   subsystem_name = "thirdparty"

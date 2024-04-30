@@ -29,10 +29,16 @@ config("sonic_config") {
   ]
 }
 
+config("sonic_include_config") {
+  include_dirs = [ "../sonic/" ]
+}
+
 ohos_shared_library("sonic") {
   sources = [ "./sonic.c" ]
 
   configs = [ ":sonic_config" ]
+
+  public_configs = [ ":sonic_include_config" ]
 
   innerapi_tags = [ "platformsdk" ]
   subsystem_name = "thirdparty"

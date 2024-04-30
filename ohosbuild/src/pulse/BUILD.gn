@@ -39,6 +39,14 @@ config("pulse_config") {
   ]
 }
 
+config("pulse_include_config") {
+  visibility = [ ":*" ]
+  include_dirs = [
+    "../../../include",
+    "../../../src",
+  ]
+}
+
 ohos_source_set("pulse_sources") {
   sources = [
     "../../../src/pulse/channelmap.c",
@@ -80,6 +88,8 @@ ohos_shared_library("pulse") {
     ":pulse_sources",
     "../../src:pulsecommon",
   ]
+
+  public_configs = [ ":pulse_include_config" ]
 
   external_deps = [ "hilog:libhilog" ]
 

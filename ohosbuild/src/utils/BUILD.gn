@@ -12,7 +12,6 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
-libsndfile_dir = "//third_party/libsnd"
 
 config("pulseutils_config") {
   visibility = [ ":*" ]
@@ -23,7 +22,6 @@ config("pulseutils_config") {
     "../../src",
     "../../include",
     "../../../src",
-    "$libsndfile_dir/include",
   ]
 
   cflags = [
@@ -41,10 +39,10 @@ ohos_executable("pacat") {
   configs = [ ":pulseutils_config" ]
 
   deps = [
-    "$libsndfile_dir:sndfile",
     "../../src:pulsecommon",
     "../../src/pulse:pulse",
   ]
+  external_deps = [ "libsnd:sndfile" ]
 
   subsystem_name = "thirdparty"
   part_name = "pulseaudio"
@@ -56,10 +54,10 @@ ohos_executable("pactl") {
   configs = [ ":pulseutils_config" ]
 
   deps = [
-    "$libsndfile_dir:sndfile",
     "../../src:pulsecommon",
     "../../src/pulse:pulse",
   ]
+  external_deps = [ "libsnd:sndfile" ]
   subsystem_name = "thirdparty"
   part_name = "pulseaudio"
 }
