@@ -132,7 +132,7 @@ ohos_shared_library("pulsecommon") {
   ]
 
   subsystem_name = "thirdparty"
-  innerapi_tags = [ "platformsdk_indirect" ]
+  innerapi_tags = [ "platformsdk*, "chipsetsdk*" ]
   part_name = "pulseaudio"
 }
 ohos_prebuilt_etc("pa_daemon_config") {
