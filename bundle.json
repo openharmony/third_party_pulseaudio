@@ -25,11 +25,11 @@
         "deps": {
             "components": [
                 "hilog",
-                "init"
+                "init",
+                "libsnd"
             ],
             "third_party": [
-                "glib",
-                "libsnd"
+                "glib"
             ]
         },
         "build": {
