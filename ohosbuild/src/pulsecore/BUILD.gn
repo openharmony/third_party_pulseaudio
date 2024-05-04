@@ -106,6 +106,15 @@ ohos_source_set("pulsecore_sources") {
   part_name = "pulseaudio"
 }
 
+config("export_pulsecore_include") {
+  include_dirs = [
+    "../../../include",
+    "../../../src",
+    "../../include",
+    "../../src",
+  ]
+}
+
 ohos_shared_library("pulsecore") {
   sanitize = {
     integer_overflow = true
@@ -113,11 +122,15 @@ ohos_shared_library("pulsecore") {
 
   deps = [
     ":pulsecore_sources",
-    "$libsndfile_dir:sndfile",
     "../../src:pulsecommon",
   ]
 
-  external_deps = [ "hilog:libhilog" ]
+  public_configs = [ ":export_pulsecore_include" ]
+
+  external_deps = [
+    "hilog:libhilog",
+    "libsnd:sndfile",
+  ]
 
   subsystem_name = "thirdparty"
   part_name = "pulseaudio"
