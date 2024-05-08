@@ -12,7 +12,6 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
-libsndfile_dir = "//third_party/libsnd"
 
 config("pulsecore_config") {
   visibility = [ ":*" ]
@@ -25,8 +24,6 @@ config("pulsecore_config") {
     "../../src",
     "//third_party/glib/glib",
     "//third_party/glib",
-    "$libsndfile_dir/include",
-    "//base/hiviewdfx/hilog/interfaces/native/innerkits/include",
   ]
 
   cflags = [
@@ -102,6 +99,11 @@ ohos_source_set("pulsecore_sources") {
 
   configs = [ ":pulsecore_config" ]
 
+  external_deps = [
+    "hilog:libhilog",
+    "libsnd:sndfile",
+  ]
+
   subsystem_name = "thirdparty"
   part_name = "pulseaudio"
 }
@@ -149,7 +151,6 @@ config("modules_internal_lib_config") {
     "../../../src",
     "../../../",
     "../../src",
-    "//base/hiviewdfx/hilog/interfaces/native/innerkits/include",
   ]
 
   cflags = [
