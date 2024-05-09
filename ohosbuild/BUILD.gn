@@ -12,11 +12,9 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
-libsndfile_dir = "//third_party/libsnd"
 
 group("pulseaudio_packages") {
   deps = [
-    "$libsndfile_dir:sndfile",
     "../sonic:sonic",
     "src:pa_client_config",
     "src:pa_daemon_config",
