@@ -28,9 +28,7 @@
                 "init",
                 "libsnd"
             ],
-            "third_party": [
-                "glib"
-            ]
+            "third_party": []
         },
         "build": {
             "sub_component": [],
