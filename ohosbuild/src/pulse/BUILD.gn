@@ -23,8 +23,6 @@ config("pulse_config") {
     "../../../",
     "../../src",
     "../../include",
-    "//third_party/glib/glib",
-    "//third_party/glib",
   ]
 
   cflags = [
@@ -108,20 +106,6 @@ ohos_shared_library("pulse-simple") {
     "../../src:pulsecommon",
     "../../src/pulse:pulse",
   ]
-
-  subsystem_name = "thirdparty"
-  part_name = "pulseaudio"
-}
-
-ohos_shared_library("pulse-mainloop-glib") {
-  sources = [ "../../../src/pulse/ohos_glib-mainloop.c" ]
-
-  configs = [ ":pulse_config" ]
-  deps = [
-    "../../src:pulsecommon",
-    "//third_party/glib:glib",
-  ]
-  external_deps = [ "hilog:libhilog" ]
 
   subsystem_name = "thirdparty"
   part_name = "pulseaudio"

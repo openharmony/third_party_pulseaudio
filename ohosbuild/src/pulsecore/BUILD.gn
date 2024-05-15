@@ -22,8 +22,6 @@ config("pulsecore_config") {
     "../../../src",
     "../../include",
     "../../src",
-    "//third_party/glib/glib",
-    "//third_party/glib",
   ]
 
   cflags = [

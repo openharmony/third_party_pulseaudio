@@ -23,7 +23,6 @@ group("pulseaudio_packages") {
     "src/daemon:pulseaudio",
     "src/modules:native-modules",
     "src/pulse:pulse",
-    "src/pulse:pulse-mainloop-glib",
     "src/pulse:pulse-simple",
     "src/pulsecore:cli",
     "src/pulsecore:protocol-cli",
