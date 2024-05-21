@@ -22,8 +22,9 @@
 #include <config.h>
 #endif
 
-#undef LOG_TAG
+#ifndef LOG_TAG
 #define LOG_TAG "ProtocolNative"
+#endif
 
 #include <string.h>
 #include <stdio.h>

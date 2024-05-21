@@ -23,8 +23,9 @@
 #include <config.h>
 #endif
 
-#undef LOG_TAG
+#ifndef LOG_TAG
 #define LOG_TAG "CoreUtil"
+#endif
 
 #include <math.h>
 #include <stdarg.h>
