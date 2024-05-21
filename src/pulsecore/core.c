@@ -22,8 +22,9 @@
 #include <config.h>
 #endif
 
-#undef LOG_TAG
+#ifndef LOG_TAG
 #define LOG_TAG "Core"
+#endif
 
 #include <stdlib.h>
 #include <stdio.h>
