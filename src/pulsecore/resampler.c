@@ -36,8 +36,6 @@
 /* Number of samples of extra space we allow the resamplers to return */
 #define EXTRA_FRAMES 128
 
-#define AUDIO_HIGH_QUALITY_RATE 40000
-
 struct ffmpeg_data { /* data specific to ffmpeg */
     struct AVResampleContext *state;
 };
@@ -146,8 +144,7 @@ static pa_resample_method_t choose_auto_resampler(pa_resample_flags_t flags,
     const uint32_t rate_a, const uint32_t rate_b) {
     pa_resample_method_t method;
 
-    if (pa_resample_method_supported(PA_RESAMPLER_SPEEX_FLOAT_BASE + 1) &&
-        (rate_a > AUDIO_HIGH_QUALITY_RATE) && (rate_a != rate_b)) {
+    if (pa_resample_method_supported(PA_RESAMPLER_SPEEX_FLOAT_BASE + 1) && (rate_a != rate_b)) {
         method = PA_RESAMPLER_SPEEX_FLOAT_BASE + 1;
     } else {
         method = PA_RESAMPLER_TRIVIAL;
