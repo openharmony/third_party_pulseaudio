@@ -31,6 +31,10 @@ typedef struct pa_memblock pa_memblock;
 #include <pulsecore/atomic.h>
 #include <pulsecore/memchunk.h>
 #include <pulsecore/mem.h>
+#include <pulsecore/flist.h>
+#include <pulsecore/refcnt.h>
+#include <pulsecore/shm.h>
+#include <pulsecore/memtrap.h>
 
 /* A pa_memblock is a reference counted memory block. PulseAudio
  * passes references to pa_memblocks around instead of copying
@@ -53,6 +57,45 @@ typedef struct pa_mempool_stat pa_mempool_stat;
 typedef struct pa_memimport_segment pa_memimport_segment;
 typedef struct pa_memimport pa_memimport;
 typedef struct pa_memexport pa_memexport;
+
+struct pa_memblock {
+    PA_REFCNT_DECLARE; /* the reference counter */
+    pa_mempool *pool;
+
+    pa_memblock_type_t type;
+
+    bool read_only : 1;
+    bool is_silence : 1;
+
+    pa_atomic_ptr_t data;
+    size_t length;
+
+    pa_atomic_t n_acquired;
+    pa_atomic_t please_signal;
+
+    union {
+        struct {
+            /* If type == PA_MEMBLOCK_USER this points to a function for freeing this memory block */
+            pa_free_cb_t free_cb;
+            /* If type == PA_MEMBLOCK_USER this is passed as free_cb argument */
+            void *free_cb_data;
+        } user;
+
+        struct {
+            uint32_t id;
+            pa_memimport_segment *segment;
+        } imported;
+    } per_type;
+};
+
+struct pa_memimport_segment {
+    pa_memimport *import;
+    pa_shm memory;
+    pa_memtrap *trap;
+    unsigned n_blocks;
+    bool writable;
+};
+
 
 typedef void (*pa_memimport_release_cb_t)(pa_memimport *i, uint32_t block_id, void *userdata);
 typedef void (*pa_memexport_revoke_cb_t)(pa_memexport *e, uint32_t block_id, void *userdata);

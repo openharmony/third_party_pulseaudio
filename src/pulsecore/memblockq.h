@@ -19,10 +19,16 @@
   You should have received a copy of the GNU Lesser General Public
   License along with PulseAudio; if not, see <http://www.gnu.org/licenses/>.
 ***/
+// GCC does not warn for unused *static inline* functions, but clang does.
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-function"
+#endif
 
 #include <sys/types.h>
 #include <inttypes.h>
 
+#include <pulsecore/mcalign.h>
 #include <pulsecore/memblock.h>
 #include <pulsecore/memchunk.h>
 #include <pulse/def.h>
@@ -73,6 +79,76 @@ pa_memblockq* pa_memblockq_new(
         size_t minreq,
         size_t maxrewind,
         pa_memchunk *silence);
+
+struct list_item {
+    struct list_item *next, *prev;
+    int64_t index;
+    pa_memchunk chunk;
+};
+
+PA_STATIC_FLIST_DECLARE(list_items, 0, pa_xfree);
+
+struct pa_memblockq {
+    struct list_item *blocks, *blocks_tail;
+    struct list_item *current_read, *current_write;
+    unsigned n_blocks;
+    size_t maxlength, tlength, base, prebuf, minreq, maxrewind;
+    int64_t read_index, write_index;
+    bool in_prebuf;
+    pa_memchunk silence;
+    pa_mcalign *mcalign;
+    int64_t missing, requested;
+    char *name;
+    pa_sample_spec sample_spec;
+};
+
+static void drop_block(pa_memblockq *bq, struct list_item *q) {
+    pa_assert(bq);
+    pa_assert(q);
+
+    pa_assert(bq->n_blocks >= 1);
+
+    if (q->prev) {
+        q->prev->next = q->next;
+    } else {
+        pa_assert(bq->blocks == q);
+        bq->blocks = q->next;
+    }
+
+    if (q->next) {
+        q->next->prev = q->prev;
+    } else {
+        pa_assert(bq->blocks_tail == q);
+        bq->blocks_tail = q->prev;
+    }
+
+    if (bq->current_write == q) {
+        bq->current_write = q->prev;
+    }
+
+    if (bq->current_read == q) {
+        bq->current_read = q->next;
+    }
+
+    pa_memblock_unref(q->chunk.memblock);
+
+    if (pa_flist_push(PA_STATIC_FLIST_GET(list_items), q) < 0) {
+        pa_xfree(q);
+    }
+
+    bq->n_blocks--;
+}
+
+static void drop_backlog(pa_memblockq *bq) {
+    int64_t boundary;
+    pa_assert(bq);
+
+    boundary = bq->read_index - (int64_t) bq->maxrewind;
+
+    while (bq->blocks && (bq->blocks->index + (int64_t) bq->blocks->chunk.length <= boundary)) {
+        drop_block(bq, bq->blocks);
+    }
+}
 
 void pa_memblockq_free(pa_memblockq*bq);
 

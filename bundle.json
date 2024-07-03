@@ -32,7 +32,13 @@
             "third_party": []
         },
         "build": {
-            "sub_component": [],
+            "sub_component": [
+                "//third_party/pulseaudio/ohosbuild/src/daemon:pulseaudio",
+                "//third_party/pulseaudio/ohosbuild/src/pulse:pulse",
+                "//third_party/pulseaudio/ohosbuild/src/pulsecore:pulsecore",
+                "//third_party/pulseaudio/ohosbuild/src:pulsecommon",
+                "//third_party/pulseaudio/sonic:sonic"
+            ],
             "inner_kits": [
                 {
                     "header": {
@@ -44,14 +50,42 @@
                 {
                     "header": {
                         "header_base": "//third_party/pulseaudio/ohosbuild/src/pulse",
-                        "header_files": []
+                        "header_files": [
+                            "../../../src/pulse/pulseaudio.h",
+                            "../../../src/pulse/rtclock.h",
+                            "../../../src/pulse/timeval.h",
+                            "../../../src/pulse/volume.h>",
+                            "../../../src/pulse/xmalloc.h",
+                            "../../../src/pulse/util.h"
+                        ]
                     },
                     "name": "//third_party/pulseaudio/ohosbuild/src/pulse:pulse"
                 },
                 {
+
+
                     "header": {
                         "header_base": "//third_party/pulseaudio/ohosbuild/src/pulsecore",
-                        "header_files": []
+                        "header_files": [
+                            "../../../src/pulsecore/core.h",
+                            "../../../src/pulsecore/core-util.h",
+                            "../../../src/pulsecore/i18n.h",
+                            "../../../src/pulsecore/log.h",
+                            "../../../src/pulsecore/macro.h",
+                            "../../../src/pulsecore/modargs.h",
+                            "../../../src/pulsecore/module.h",
+                            "../../../src/pulsecore/memblock.h",
+                            "../../../src/pulsecore/memblockq.h",
+                            "../../../src/pulsecore/memchunk.h",
+                            "../../../src/pulsecore/mix.h",
+                            "../../../src/pulsecore/namereg.h",
+                            "../../../src/pulsecore/protocol-native.h",
+                            "../../../src/pulsecore/rtpoll.h",
+                            "../../../src/pulsecore/sink.h",
+                            "../../../src/pulsecore/source.h",
+                            "../../../src/pulsecore/thread-mq.h",
+                            "../../../src/pulsecore/thread.h"
+                        ]
                     },
                     "name": "//third_party/pulseaudio/ohosbuild/src/pulsecore:pulsecore"
                 },
