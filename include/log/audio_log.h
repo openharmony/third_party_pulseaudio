@@ -23,6 +23,10 @@
 #include <stdio.h>
 
 #include "hilog/log.h"
+#ifdef FEATURE_HITRACE_METER
+#include "hitrace_meter_c.h"
+#define HITRACE_AUDIO_TAG (1ULL << 35)
+#endif
 
 #undef LOG_DOMAIN
 #define LOG_DOMAIN 0xD002B12
@@ -74,4 +78,19 @@
         }                                              \
     } while (0)
 
+//  for trace
+// CallEnd is needed. Take care of the goto.
+inline void CallStart(const char *traceName)
+{
+#ifdef FEATURE_HITRACE_METER
+    HiTraceStartTrace(HITRACE_AUDIO_TAG, traceName);
+#endif
+}
+
+inline void CallEnd()
+{
+#ifdef FEATURE_HITRACE_METER
+    HiTraceFinishTrace(HITRACE_AUDIO_TAG);
+#endif
+}
 #endif // OHOS_AUDIO_LOG_H
