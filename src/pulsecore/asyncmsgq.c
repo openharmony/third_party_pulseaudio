@@ -34,6 +34,8 @@
 #include <pulsecore/flist.h>
 
 #include "asyncmsgq.h"
+#include "log/audio_log.h"
+#define PA_SNPRINTF_STR_LENGTH 256
 
 PA_STATIC_FLIST_DECLARE(asyncmsgq, 0, pa_xfree);
 PA_STATIC_FLIST_DECLARE(semaphores, 0, (void(*)(void*)) pa_semaphore_free);
@@ -119,6 +121,10 @@ void pa_asyncmsgq_post(pa_asyncmsgq *a, pa_msgobject *object, int code, const vo
     struct asyncmsgq_item *i;
     pa_assert(PA_REFCNT_VALUE(a) > 0);
 
+    char t[PA_SNPRINTF_STR_LENGTH] = {0};
+    pa_snprintf(t, sizeof(t), "pa_asyncmsgq_post[%d]", code);
+    CallStart(t);
+
     if (!(i = pa_flist_pop(PA_STATIC_FLIST_GET(asyncmsgq))))
         i = pa_xnew(struct asyncmsgq_item, 1);
 
@@ -139,12 +145,16 @@ void pa_asyncmsgq_post(pa_asyncmsgq *a, pa_msgobject *object, int code, const vo
     pa_mutex_lock(a->mutex);
     pa_asyncq_post(a->asyncq, i);
     pa_mutex_unlock(a->mutex);
+    CallEnd();
 }
 
 int pa_asyncmsgq_send(pa_asyncmsgq *a, pa_msgobject *object, int code, const void *userdata, int64_t offset, const pa_memchunk *chunk) {
     struct asyncmsgq_item i;
     pa_assert(PA_REFCNT_VALUE(a) > 0);
 
+    char t[PA_SNPRINTF_STR_LENGTH] = {0};
+    pa_snprintf(t, sizeof(t), "pa_asyncmsgq_send[%d]", code);
+    CallStart(t);
     i.code = code;
     i.object = object;
     i.userdata = (void*) userdata;
@@ -169,13 +179,17 @@ int pa_asyncmsgq_send(pa_asyncmsgq *a, pa_msgobject *object, int code, const voi
 
     if (pa_flist_push(PA_STATIC_FLIST_GET(semaphores), i.semaphore) < 0)
         pa_semaphore_free(i.semaphore);
-
+    CallEnd();
     return i.ret;
 }
 
 int pa_asyncmsgq_get(pa_asyncmsgq *a, pa_msgobject **object, int *code, void **userdata, int64_t *offset, pa_memchunk *chunk, bool wait_op) {
     pa_assert(PA_REFCNT_VALUE(a) > 0);
     pa_assert(!a->current);
+
+    char t[PA_SNPRINTF_STR_LENGTH] = {0};
+    pa_snprintf(t, sizeof(t), "pa_asyncmsgq_get[%d]", code);
+    CallStart(t);
 
     if (!(a->current = pa_asyncq_pop(a->asyncq, wait_op))) {
 /*         pa_log("failure"); */
@@ -205,6 +219,7 @@ int pa_asyncmsgq_get(pa_asyncmsgq *a, pa_msgobject **object, int *code, void **u
 /*                  (void*) a->current->userdata, */
 /*                  (unsigned long) a->current->memchunk.length); */
 
+    CallEnd();
     return 0;
 }
 

@@ -40,7 +40,9 @@
 
 #include "pdispatch.h"
 
-/* #define DEBUG_OPCODES */
+#include "log/audio_log.h"
+
+#define DEBUG_OPCODES
 
 #ifdef DEBUG_OPCODES
 
@@ -203,7 +205,7 @@ static const char *command_names[PA_COMMAND_MAX] = {
     /* Supported since protocol v35 (15.0) */
     [PA_COMMAND_SEND_OBJECT_MESSAGE] = "SEND_OBJECT_MESSAGE",
 
-    [PA_COMMAND_UNDERFLOW] = "UNDERFLOW_OHOS",
+    [PA_COMMAND_UNDERFLOW_OHOS] = "UNDERFLOW_OHOS",
 };
 
 #endif
@@ -321,17 +323,18 @@ int pa_pdispatch_run(pa_pdispatch *pd, pa_packet *packet, pa_cmsg_ancil_data *an
         pa_tagstruct_getu32(ts, &tag) < 0)
         goto finish;
 
+    char const *p = NULL;
 #ifdef DEBUG_OPCODES
 {
     char t[256];
-    char const *p = NULL;
 
     if (command >= PA_COMMAND_MAX || !(p = command_names[command]))
         pa_snprintf((char*) (p = t), sizeof(t), "%u", command);
 
-    pa_log("[%p] Received opcode <%s>", pd, p);
+    // pa_log("[%p] Received opcode <%s>", pd, p);
 }
 #endif
+    CallStart(p);
 
     pd->ancil_data = ancil_data;
 
@@ -351,8 +354,10 @@ int pa_pdispatch_run(pa_pdispatch *pd, pa_packet *packet, pa_cmsg_ancil_data *an
         (*cb)(pd, command, tag, ts, userdata);
     } else {
         pa_log("Received unsupported command %u", command);
+        CallEnd();
         goto finish;
     }
+    CallEnd();
 
     ret = 0;
 
