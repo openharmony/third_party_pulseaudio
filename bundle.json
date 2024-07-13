@@ -25,6 +25,7 @@
         "deps": {
             "components": [
                 "hilog",
+                "hitrace",
                 "init",
                 "libsnd"
             ],

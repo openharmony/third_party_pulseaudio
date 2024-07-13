@@ -92,6 +92,13 @@ ohos_shared_library("pulse") {
 
   external_deps = [ "hilog:libhilog" ]
 
+  defines = []
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.hiviewdfx_hitrace)) {
+    defines += [ "FEATURE_HITRACE_METER" ]
+    external_deps += [ "hitrace:hitrace_meter" ]
+  }
+
   subsystem_name = "thirdparty"
   innerapi_tags = [ "platformsdk_indirect" ]
   part_name = "pulseaudio"
