@@ -102,6 +102,13 @@ ohos_source_set("pulsecore_sources") {
     "libsnd:sndfile",
   ]
 
+  defines = []
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.hiviewdfx_hitrace)) {
+    defines += [ "FEATURE_HITRACE_METER" ]
+    external_deps += [ "hitrace:hitrace_meter" ]
+  }
+
   subsystem_name = "thirdparty"
   part_name = "pulseaudio"
 }
