@@ -40,6 +40,8 @@
 #include <pulsecore/ratelimit.h>
 #include <pulse/rtclock.h>
 
+#include "log/audio_log.h"
+
 #include "rtpoll.h"
 
 /* #define DEBUG_TIMING */
@@ -236,8 +238,10 @@ int pa_rtpoll_run(pa_rtpoll *p) {
         }
 
         if ((k = i->work_cb(i)) != 0) {
-            if (k < 0)
+            if (k < 0) {
                 r = k;
+                AUDIO_ERR_LOG("Error %{public}d in i->work_cb, goto finish", r);
+            }
 #ifdef DEBUG_TIMING
             pa_log("rtpoll finish");
 #endif
@@ -270,8 +274,10 @@ int pa_rtpoll_run(pa_rtpoll *p) {
                 i->after_cb(i);
             }
 
-            if (k < 0)
+            if (k < 0) {
+                AUDIO_ERR_LOG("Error %{public}d in i->before_cb, goto finish", r);
                 r = k;
+            }
 #ifdef DEBUG_TIMING
             pa_log("rtpoll finish");
 #endif
@@ -334,10 +340,12 @@ int pa_rtpoll_run(pa_rtpoll *p) {
 #endif
 
     if (r < 0) {
-        if (errno == EAGAIN || errno == EINTR)
+        if (errno == EAGAIN || errno == EINTR) {
             r = 0;
-        else
+        } else {
+            AUDIO_ERR_LOG("Error %{public}d in ppoll", r);
             pa_log_error("poll(): %s", pa_cstrerror(errno));
+        }
 
         reset_all_revents(p);
     }
