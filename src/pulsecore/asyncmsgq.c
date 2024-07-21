@@ -187,10 +187,6 @@ int pa_asyncmsgq_get(pa_asyncmsgq *a, pa_msgobject **object, int *code, void **u
     pa_assert(PA_REFCNT_VALUE(a) > 0);
     pa_assert(!a->current);
 
-    char t[PA_SNPRINTF_STR_LENGTH] = {0};
-    pa_snprintf(t, sizeof(t), "pa_asyncmsgq_get[%d]", code);
-    CallStart(t);
-
     if (!(a->current = pa_asyncq_pop(a->asyncq, wait_op))) {
 /*         pa_log("failure"); */
         return -1;
@@ -198,6 +194,9 @@ int pa_asyncmsgq_get(pa_asyncmsgq *a, pa_msgobject **object, int *code, void **u
 
 /*     pa_log("success"); */
 
+    char t[PA_SNPRINTF_STR_LENGTH] = {0};
+    pa_snprintf(t, sizeof(t), "pa_asyncmsgq_get[%d]", a->current->code);
+    CallStart(t);
     if (code)
         *code = a->current->code;
     if (userdata)
