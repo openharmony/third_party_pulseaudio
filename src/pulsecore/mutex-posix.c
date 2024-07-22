@@ -31,6 +31,8 @@
 
 #include "mutex.h"
 
+#include "log/audio_log.h"
+
 struct pa_mutex {
     pthread_mutex_t mutex;
 };
@@ -110,7 +112,7 @@ void pa_mutex_unlock(pa_mutex *m) {
     pa_assert(m);
 
     if ((err = pthread_mutex_unlock(&m->mutex)) != 0) {
-        pa_log("pthread_mutex_unlock() failed: %s", pa_cstrerror(err));
+        AUDIO_ERR_LOG("pthread_mutex_unlock() failed: %{public}s", pa_cstrerror(err));
         pa_assert_not_reached();
     }
 }
