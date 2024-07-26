@@ -78,6 +78,57 @@
         }                                              \
     } while (0)
 
+
+#ifndef OHOS_DEBUG
+#define DECORATOR_PRERELEASE_HILOG(op, fmt, args...) \
+    do {                                  \
+        op(LOG_ONLY_PRERELEASE, "[%{public}s]" fmt, __FUNCTION__, ##args);        \
+    } while (0)
+#else
+#define DECORATOR_PRERELEASE_HILOG(op, fmt, args...)                                                \
+    do {                                                                                 \
+        op(LOG_ONLY_PRERELEASE, "{%s()-%s:%d} " fmt, __FUNCTION__, __FILENAME__, __LINE__, ##args); \
+    } while (0)
+#endif
+
+#define AUDIO_PRERELEASE_LOGD(fmt, ...) DECORATOR_PRERELEASE_HILOG(HILOG_DEBUG, fmt, ##__VA_ARGS__)
+#define AUDIO_PRERELEASE_LOGE(fmt, ...) DECORATOR_PRERELEASE_HILOG(HILOG_ERROR, fmt, ##__VA_ARGS__)
+#define AUDIO_PRERELEASE_LOGW(fmt, ...) DECORATOR_PRERELEASE_HILOG(HILOG_WARN, fmt, ##__VA_ARGS__)
+#define AUDIO_PRERELEASE_LOGI(fmt, ...) DECORATOR_PRERELEASE_HILOG(HILOG_INFO, fmt, ##__VA_ARGS__)
+#define AUDIO_PRERELEASE_LOGF(fmt, ...) DECORATOR_PRERELEASE_HILOG(HILOG_FATAL, fmt, ##__VA_ARGS__)
+
+#define CHECK_AND_RETURN_RET_PRELOG(cond, ret, fmt, ...)  \
+    do {                                                  \
+        if (!(cond)) {                                    \
+            AUDIO_PRERELEASE_LOGE(fmt, ##__VA_ARGS__);    \
+            return ret;                                   \
+        }                                                 \
+    } while (0)
+
+#define CHECK_AND_RETURN_PRELOG(cond, fmt, ...)           \
+    do {                                                  \
+        if (!(cond)) {                                    \
+            AUDIO_PRERELEASE_LOGE(fmt, ##__VA_ARGS__);    \
+            return;                                       \
+        }                                                 \
+    } while (0)
+
+#define CHECK_AND_BREAK_PRELOG(cond, fmt, ...)            \
+    if (1) {                                              \
+        if (!(cond)) {                                    \
+            AUDIO_PRERELEASE_LOGE(fmt, ##__VA_ARGS__);    \
+            break;                                        \
+        }                                                 \
+    } else void (0)
+
+#define CHECK_AND_CONTINUE_PRELOG(cond, fmt, ...)         \
+    if (1) {                                              \
+        if (!(cond)) {                                    \
+            AUDIO_PRERELEASE_LOGD(fmt, ##__VA_ARGS__);    \
+            continue;                                     \
+        }                                                 \
+    } else void (0)
+
 //  for trace
 // CallEnd is needed. Take care of the goto.
 inline void CallStart(const char *traceName)
