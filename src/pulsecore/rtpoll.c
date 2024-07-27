@@ -343,7 +343,7 @@ int pa_rtpoll_run(pa_rtpoll *p) {
         if (errno == EAGAIN || errno == EINTR) {
             r = 0;
         } else {
-            AUDIO_ERR_LOG("Error %{public}d in ppoll", r);
+            AUDIO_ERR_LOG("Error %{public}d in ppoll, errno: %{public}s", r, pa_cstrerror(errno));
             pa_log_error("poll(): %s", pa_cstrerror(errno));
         }
 
