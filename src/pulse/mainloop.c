@@ -967,8 +967,7 @@ int pa_mainloop_run(pa_mainloop *m, int *retval) {
     if (r == -2) {
         AUDIO_ERR_LOG("mainloop exit with code -2");
         return 1;
-    }
-    else {
+    } else {
         AUDIO_ERR_LOG("mainloop exit with code -1");
         return -1;
     }
