@@ -50,6 +50,7 @@
 #include <pulsecore/socket.h>
 #include <pulsecore/macro.h>
 
+#include "log/audio_log.h"
 #include "mainloop.h"
 #include "internal.h"
 
@@ -963,10 +964,14 @@ int pa_mainloop_run(pa_mainloop *m, int *retval) {
     while ((r = pa_mainloop_iterate(m, 1, retval)) >= 0)
         ;
 
-    if (r == -2)
+    if (r == -2) {
+        AUDIO_ERR_LOG("mainloop exit with code -2");
         return 1;
-    else
+    }
+    else {
+        AUDIO_ERR_LOG("mainloop exit with code -1");
         return -1;
+    }
 }
 
 void pa_mainloop_quit(pa_mainloop *m, int retval) {

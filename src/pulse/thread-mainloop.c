@@ -39,6 +39,7 @@
 #include <pulsecore/macro.h>
 #include <pulsecore/poll.h>
 
+#include "log/audio_log.h"
 #include "thread-mainloop.h"
 
 struct pa_threaded_mainloop {
@@ -81,6 +82,13 @@ static void thread(void *userdata) {
     (void) pa_mainloop_run(m->real_mainloop, NULL);
 
     pa_mutex_unlock(m->mutex);
+
+    // Once thread OS_RendererML is created, it will not exit.
+    // This code serves as a fallback for exceptions caused by unexpected exits.
+    if (strcmp(m->name, "OS_RendererML") == 0) {
+        AUDIO_ERR_LOG("Thread OS_RendererML exit");
+        _Exit(0);
+    }
 }
 
 pa_threaded_mainloop *pa_threaded_mainloop_new(void) {
