@@ -750,6 +750,65 @@ const char* pa_channel_map_to_name(const pa_channel_map *map) {
     return NULL;
 }
 
+pa_channel_layout_index_t pa_channel_map_to_index(const pa_channel_map *map){
+    pa_bitset_t in_map[PA_BITSET_ELEMENTS(PA_CHANNEL_POSITION_MAX)];
+    unsigned c;
+
+    pa_assert(map);
+
+    pa_return_val_if_fail(pa_channel_map_valid(map), PA_CHANNEL_LAYOUT_OTHER);
+
+    memset(in_map, 0, sizeof(in_map));
+
+    for (c = 0; c < map->channels; c++)
+        pa_bitset_set(in_map, map->map[c], true);
+
+    memset(in_map, 0, sizeof(in_map));
+    if (pa_bitset_equals(in_map, PA_CHANNEL_POSITION_MAX,
+                         PA_CHANNEL_POSITION_LEFT, PA_CHANNEL_POSITION_RIGHT, -1))
+        return PA_CHANNEL_LAYOUT_STEREO;
+    if (pa_bitset_equals(in_map, PA_CHANNEL_POSITION_MAX,
+                         PA_CHANNEL_POSITION_FRONT_LEFT, PA_CHANNEL_POSITION_FRONT_RIGHT,
+                         PA_CHANNEL_POSITION_SIDE_LEFT, PA_CHANNEL_POSITION_SIDE_RIGHT,
+                         PA_CHANNEL_POSITION_FRONT_CENTER, PA_CHANNEL_POSITION_LFE, -1))
+        return PA_CHANNEL_LAYOUT_5POINT1;
+    if (pa_bitset_equals(in_map, PA_CHANNEL_POSITION_MAX,
+                         PA_CHANNEL_POSITION_FRONT_LEFT, PA_CHANNEL_POSITION_FRONT_RIGHT,
+                         PA_CHANNEL_POSITION_SIDE_LEFT, PA_CHANNEL_POSITION_SIDE_RIGHT,
+                         PA_CHANNEL_POSITION_FRONT_CENTER, PA_CHANNEL_POSITION_LFE,
+                         PA_CHANNEL_POSITION_TOP_REAR_LEFT, PA_CHANNEL_POSITION_TOP_REAR_RIGHT,-1))
+        return PA_CHANNEL_LAYOUT_5POINT1POINT2;
+    if (pa_bitset_equals(in_map, PA_CHANNEL_POSITION_MAX,
+                         PA_CHANNEL_POSITION_FRONT_LEFT, PA_CHANNEL_POSITION_FRONT_RIGHT,
+                         PA_CHANNEL_POSITION_SIDE_LEFT, PA_CHANNEL_POSITION_SIDE_RIGHT,
+                         PA_CHANNEL_POSITION_FRONT_CENTER, PA_CHANNEL_POSITION_LFE,
+                         PA_CHANNEL_POSITION_TOP_REAR_LEFT, PA_CHANNEL_POSITION_TOP_REAR_RIGHT,
+                         PA_CHANNEL_POSITION_TOP_FRONT_LEFT, PA_CHANNEL_POSITION_TOP_FRONT_RIGHT, -1))
+        return PA_CHANNEL_LAYOUT_5POINT1POINT4;
+    if (pa_bitset_equals(in_map, PA_CHANNEL_POSITION_MAX,
+                         PA_CHANNEL_POSITION_FRONT_LEFT, PA_CHANNEL_POSITION_FRONT_RIGHT,
+                         PA_CHANNEL_POSITION_SIDE_LEFT, PA_CHANNEL_POSITION_SIDE_RIGHT,
+                         PA_CHANNEL_POSITION_REAR_LEFT, PA_CHANNEL_POSITION_REAR_RIGHT,
+                         PA_CHANNEL_POSITION_FRONT_CENTER, PA_CHANNEL_POSITION_LFE, -1))
+        return PA_CHANNEL_LAYOUT_7POINT1;
+    if (pa_bitset_equals(in_map, PA_CHANNEL_POSITION_MAX,
+                         PA_CHANNEL_POSITION_FRONT_LEFT, PA_CHANNEL_POSITION_FRONT_RIGHT,
+                         PA_CHANNEL_POSITION_SIDE_LEFT, PA_CHANNEL_POSITION_SIDE_RIGHT,
+                         PA_CHANNEL_POSITION_REAR_LEFT, PA_CHANNEL_POSITION_REAR_RIGHT,
+                         PA_CHANNEL_POSITION_FRONT_CENTER, PA_CHANNEL_POSITION_LFE,
+                         PA_CHANNEL_POSITION_TOP_REAR_LEFT,  PA_CHANNEL_POSITION_TOP_REAR_RIGHT, -1))
+        return PA_CHANNEL_LAYOUT_7POINT1POINT2;
+    if (pa_bitset_equals(in_map, PA_CHANNEL_POSITION_MAX,
+                         PA_CHANNEL_POSITION_FRONT_LEFT, PA_CHANNEL_POSITION_FRONT_RIGHT,
+                         PA_CHANNEL_POSITION_SIDE_LEFT, PA_CHANNEL_POSITION_SIDE_RIGHT,
+                         PA_CHANNEL_POSITION_REAR_LEFT, PA_CHANNEL_POSITION_REAR_RIGHT,
+                         PA_CHANNEL_POSITION_FRONT_CENTER, PA_CHANNEL_POSITION_LFE,
+                         PA_CHANNEL_POSITION_TOP_REAR_LEFT,  PA_CHANNEL_POSITION_TOP_REAR_RIGHT,
+                         PA_CHANNEL_POSITION_TOP_FRONT_LEFT, PA_CHANNEL_POSITION_TOP_FRONT_RIGHT, -1))
+        return PA_CHANNEL_LAYOUT_7POINT1POINT4;
+    return PA_CHANNEL_LAYOUT_OTHER;
+}
+
 const char* pa_channel_map_to_pretty_name(const pa_channel_map *map) {
     pa_bitset_t in_map[PA_BITSET_ELEMENTS(PA_CHANNEL_POSITION_MAX)];
     unsigned c;
