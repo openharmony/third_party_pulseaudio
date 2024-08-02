@@ -39,6 +39,233 @@
 struct ffmpeg_data { /* data specific to ffmpeg */
     struct AVResampleContext *state;
 };
+/* coefficient matrix for downmixing */
+/* usage: [output_channel_layout][input_channel][output_channel*/
+const static float channelDownmixMatrix[PA_CHANNEL_LAYOUT_COUNT][PA_CHANNEL_POSITION_MAX][PA_CHANNEL_POSITION_MAX] = {
+    /* Downmix matrix for stereo */
+    [PA_CHANNEL_LAYOUT_STEREO][PA_CHANNEL_POSITION_FRONT_LEFT][PA_CHANNEL_POSITION_FRONT_LEFT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_STEREO][PA_CHANNEL_POSITION_FRONT_RIGHT][PA_CHANNEL_POSITION_FRONT_RIGHT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_STEREO][PA_CHANNEL_POSITION_CENTER][PA_CHANNEL_POSITION_FRONT_LEFT] = 0.7071f,
+    [PA_CHANNEL_LAYOUT_STEREO][PA_CHANNEL_POSITION_CENTER][PA_CHANNEL_POSITION_FRONT_RIGHT] = 0.7071f,
+    [PA_CHANNEL_LAYOUT_STEREO][PA_CHANNEL_POSITION_REAR_LEFT][PA_CHANNEL_POSITION_FRONT_LEFT] = 0.7071f,
+    [PA_CHANNEL_LAYOUT_STEREO][PA_CHANNEL_POSITION_REAR_RIGHT][PA_CHANNEL_POSITION_FRONT_RIGHT] = 0.7071f,
+    [PA_CHANNEL_LAYOUT_STEREO][PA_CHANNEL_POSITION_REAR_CENTER][PA_CHANNEL_POSITION_FRONT_LEFT] = 0.5f,
+    [PA_CHANNEL_LAYOUT_STEREO][PA_CHANNEL_POSITION_REAR_CENTER][PA_CHANNEL_POSITION_FRONT_RIGHT] = 0.5f,
+    [PA_CHANNEL_LAYOUT_STEREO][PA_CHANNEL_POSITION_SIDE_LEFT][PA_CHANNEL_POSITION_FRONT_LEFT] = 0.7071f,
+    [PA_CHANNEL_LAYOUT_STEREO][PA_CHANNEL_POSITION_SIDE_RIGHT][PA_CHANNEL_POSITION_FRONT_RIGHT] = 0.7071f,
+
+    [PA_CHANNEL_LAYOUT_STEREO][PA_CHANNEL_POSITION_FRONT_LEFT_OF_CENTER][PA_CHANNEL_POSITION_FRONT_LEFT] = 0.6057f,
+    [PA_CHANNEL_LAYOUT_STEREO][PA_CHANNEL_POSITION_FRONT_LEFT_OF_CENTER][PA_CHANNEL_POSITION_FRONT_RIGHT] = 0.2509f,
+    [PA_CHANNEL_LAYOUT_STEREO][PA_CHANNEL_POSITION_FRONT_RIGHT_OF_CENTER][PA_CHANNEL_POSITION_FRONT_LEFT] = 0.2509f,
+    [PA_CHANNEL_LAYOUT_STEREO][PA_CHANNEL_POSITION_FRONT_RIGHT_OF_CENTER][PA_CHANNEL_POSITION_FRONT_RIGHT] = 0.6057f,
+
+    [PA_CHANNEL_LAYOUT_STEREO][PA_CHANNEL_POSITION_TOP_CENTER][PA_CHANNEL_POSITION_FRONT_LEFT] = 0.3552f,
+    [PA_CHANNEL_LAYOUT_STEREO][PA_CHANNEL_POSITION_TOP_CENTER][PA_CHANNEL_POSITION_FRONT_RIGHT] = 0.3552f,
+    [PA_CHANNEL_LAYOUT_STEREO][PA_CHANNEL_POSITION_TOP_FRONT_LEFT][PA_CHANNEL_POSITION_FRONT_LEFT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_STEREO][PA_CHANNEL_POSITION_TOP_FRONT_RIGHT][PA_CHANNEL_POSITION_FRONT_RIGHT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_STEREO][PA_CHANNEL_POSITION_TOP_FRONT_CENTER][PA_CHANNEL_POSITION_FRONT_LEFT] = 0.7071f,
+    [PA_CHANNEL_LAYOUT_STEREO][PA_CHANNEL_POSITION_TOP_FRONT_CENTER][PA_CHANNEL_POSITION_FRONT_RIGHT] = 0.7071f,
+    [PA_CHANNEL_LAYOUT_STEREO][PA_CHANNEL_POSITION_TOP_REAR_LEFT][PA_CHANNEL_POSITION_FRONT_LEFT] = 0.7071f,
+    [PA_CHANNEL_LAYOUT_STEREO][PA_CHANNEL_POSITION_TOP_REAR_RIGHT][PA_CHANNEL_POSITION_FRONT_RIGHT] = 0.7071f,
+    [PA_CHANNEL_LAYOUT_STEREO][PA_CHANNEL_POSITION_TOP_REAR_CENTER][PA_CHANNEL_POSITION_FRONT_LEFT] = 0.3544f,
+    [PA_CHANNEL_LAYOUT_STEREO][PA_CHANNEL_POSITION_TOP_REAR_CENTER][PA_CHANNEL_POSITION_FRONT_RIGHT] = 0.3544f,
+    
+    /*Downmix matrix for 5POINT1*/
+    [PA_CHANNEL_LAYOUT_5POINT1][PA_CHANNEL_POSITION_FRONT_LEFT][PA_CHANNEL_POSITION_FRONT_LEFT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_5POINT1][PA_CHANNEL_POSITION_FRONT_RIGHT][PA_CHANNEL_POSITION_FRONT_RIGHT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_5POINT1][PA_CHANNEL_POSITION_FRONT_CENTER][PA_CHANNEL_POSITION_FRONT_CENTER] = 1.0f,
+    [PA_CHANNEL_LAYOUT_5POINT1][PA_CHANNEL_POSITION_LFE][PA_CHANNEL_POSITION_LFE] = 1.0f,
+
+    [PA_CHANNEL_LAYOUT_5POINT1][PA_CHANNEL_POSITION_REAR_LEFT][PA_CHANNEL_POSITION_SIDE_LEFT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_5POINT1][PA_CHANNEL_POSITION_REAR_RIGHT][PA_CHANNEL_POSITION_SIDE_LEFT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_5POINT1][PA_CHANNEL_POSITION_SIDE_LEFT][PA_CHANNEL_POSITION_SIDE_LEFT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_5POINT1][PA_CHANNEL_POSITION_SIDE_RIGHT][PA_CHANNEL_POSITION_SIDE_LEFT] = 1.0f,
+
+    [PA_CHANNEL_LAYOUT_5POINT1][PA_CHANNEL_POSITION_FRONT_LEFT_OF_CENTER][PA_CHANNEL_POSITION_FRONT_LEFT] = 0.5946f,
+    [PA_CHANNEL_LAYOUT_5POINT1][PA_CHANNEL_POSITION_FRONT_LEFT_OF_CENTER][PA_CHANNEL_POSITION_FRONT_CENTER] = 0.7071f,
+    [PA_CHANNEL_LAYOUT_5POINT1][PA_CHANNEL_POSITION_FRONT_RIGHT_OF_CENTER][PA_CHANNEL_POSITION_FRONT_RIGHT] = 0.5946f,
+    [PA_CHANNEL_LAYOUT_5POINT1][PA_CHANNEL_POSITION_FRONT_RIGHT_OF_CENTER][PA_CHANNEL_POSITION_FRONT_CENTER] = 0.7071f,
+
+    [PA_CHANNEL_LAYOUT_5POINT1][PA_CHANNEL_POSITION_REAR_CENTER][PA_CHANNEL_POSITION_SIDE_LEFT] = 0.7071f,
+    [PA_CHANNEL_LAYOUT_5POINT1][PA_CHANNEL_POSITION_REAR_CENTER][PA_CHANNEL_POSITION_SIDE_RIGHT] = 0.7071f,
+
+    [PA_CHANNEL_LAYOUT_5POINT1][PA_CHANNEL_POSITION_TOP_CENTER][PA_CHANNEL_POSITION_SIDE_LEFT] = 0.5,
+    [PA_CHANNEL_LAYOUT_5POINT1][PA_CHANNEL_POSITION_TOP_CENTER][PA_CHANNEL_POSITION_SIDE_RIGHT] = 0.5,
+    [PA_CHANNEL_LAYOUT_5POINT1][PA_CHANNEL_POSITION_TOP_CENTER][PA_CHANNEL_POSITION_FRONT_CENTER] = 0.5,
+
+    [PA_CHANNEL_LAYOUT_5POINT1][PA_CHANNEL_POSITION_TOP_FRONT_LEFT][PA_CHANNEL_POSITION_FRONT_LEFT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_5POINT1][PA_CHANNEL_POSITION_TOP_FRONT_RIGHT][PA_CHANNEL_POSITION_FRONT_RIGHT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_5POINT1][PA_CHANNEL_POSITION_TOP_FRONT_CENTER][PA_CHANNEL_POSITION_FRONT_CENTER] = 1.0f,
+
+    [PA_CHANNEL_LAYOUT_5POINT1][PA_CHANNEL_POSITION_TOP_REAR_LEFT][PA_CHANNEL_POSITION_SIDE_LEFT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_5POINT1][PA_CHANNEL_POSITION_TOP_REAR_RIGHT][PA_CHANNEL_POSITION_SIDE_RIGHT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_5POINT1][PA_CHANNEL_POSITION_TOP_REAR_CENTER][PA_CHANNEL_POSITION_SIDE_LEFT] = 0.7071f,
+    [PA_CHANNEL_LAYOUT_5POINT1][PA_CHANNEL_POSITION_TOP_REAR_CENTER][PA_CHANNEL_POSITION_SIDE_RIGHT] = 0.7071f,
+
+    /*Downmix table for 5POINT1POINT2 */
+    [PA_CHANNEL_LAYOUT_5POINT1POINT2][PA_CHANNEL_POSITION_FRONT_LEFT][PA_CHANNEL_POSITION_FRONT_LEFT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_5POINT1POINT2][PA_CHANNEL_POSITION_FRONT_RIGHT][PA_CHANNEL_POSITION_FRONT_RIGHT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_5POINT1POINT2][PA_CHANNEL_POSITION_FRONT_CENTER][PA_CHANNEL_POSITION_FRONT_CENTER] = 1.0f,
+    [PA_CHANNEL_LAYOUT_5POINT1POINT2][PA_CHANNEL_POSITION_LFE][PA_CHANNEL_POSITION_LFE] = 1.0f,
+
+    [PA_CHANNEL_LAYOUT_5POINT1POINT2][PA_CHANNEL_POSITION_REAR_LEFT][PA_CHANNEL_POSITION_SIDE_LEFT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_5POINT1POINT2][PA_CHANNEL_POSITION_REAR_RIGHT][PA_CHANNEL_POSITION_SIDE_LEFT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_5POINT1POINT2][PA_CHANNEL_POSITION_SIDE_LEFT][PA_CHANNEL_POSITION_SIDE_LEFT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_5POINT1POINT2][PA_CHANNEL_POSITION_SIDE_RIGHT][PA_CHANNEL_POSITION_SIDE_LEFT] = 1.0f,
+
+    [PA_CHANNEL_LAYOUT_5POINT1POINT2][PA_CHANNEL_POSITION_FRONT_LEFT_OF_CENTER][PA_CHANNEL_POSITION_FRONT_LEFT] = 0.5946f,
+    [PA_CHANNEL_LAYOUT_5POINT1POINT2][PA_CHANNEL_POSITION_FRONT_LEFT_OF_CENTER][PA_CHANNEL_POSITION_FRONT_CENTER] = 0.7071f,
+    [PA_CHANNEL_LAYOUT_5POINT1POINT2][PA_CHANNEL_POSITION_FRONT_RIGHT_OF_CENTER][PA_CHANNEL_POSITION_FRONT_RIGHT] = 0.5946f,
+    [PA_CHANNEL_LAYOUT_5POINT1POINT2][PA_CHANNEL_POSITION_FRONT_RIGHT_OF_CENTER][PA_CHANNEL_POSITION_FRONT_CENTER] = 0.7071f,
+
+    [PA_CHANNEL_LAYOUT_5POINT1POINT2][PA_CHANNEL_POSITION_REAR_CENTER][PA_CHANNEL_POSITION_SIDE_LEFT] = 0.7071f,
+    [PA_CHANNEL_LAYOUT_5POINT1POINT2][PA_CHANNEL_POSITION_REAR_CENTER][PA_CHANNEL_POSITION_SIDE_RIGHT] = 0.7071f,
+
+    [PA_CHANNEL_LAYOUT_5POINT1POINT2][PA_CHANNEL_POSITION_TOP_CENTER][PA_CHANNEL_POSITION_TOP_REAR_LEFT] = 0.7071f,
+    [PA_CHANNEL_LAYOUT_5POINT1POINT2][PA_CHANNEL_POSITION_TOP_CENTER][PA_CHANNEL_POSITION_TOP_REAR_RIGHT] = 0.7071f,
+
+    [PA_CHANNEL_LAYOUT_5POINT1POINT2][PA_CHANNEL_POSITION_TOP_FRONT_LEFT][PA_CHANNEL_POSITION_FRONT_LEFT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_5POINT1POINT2][PA_CHANNEL_POSITION_TOP_FRONT_RIGHT][PA_CHANNEL_POSITION_FRONT_RIGHT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_5POINT1POINT2][PA_CHANNEL_POSITION_TOP_FRONT_CENTER][PA_CHANNEL_POSITION_FRONT_CENTER] = 1.0f,
+
+    [PA_CHANNEL_LAYOUT_5POINT1POINT2][PA_CHANNEL_POSITION_TOP_REAR_LEFT][PA_CHANNEL_POSITION_TOP_REAR_LEFT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_5POINT1POINT2][PA_CHANNEL_POSITION_TOP_REAR_RIGHT][PA_CHANNEL_POSITION_TOP_REAR_RIGHT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_5POINT1POINT2][PA_CHANNEL_POSITION_TOP_REAR_CENTER][PA_CHANNEL_POSITION_REAR_LEFT] = 0.7071f,
+    [PA_CHANNEL_LAYOUT_5POINT1POINT2][PA_CHANNEL_POSITION_TOP_REAR_CENTER][PA_CHANNEL_POSITION_REAR_RIGHT] = 0.7071f,
+
+    /*Downmix table for 5POINT1POINT4*/
+    [PA_CHANNEL_LAYOUT_5POINT1POINT4][PA_CHANNEL_POSITION_FRONT_LEFT][PA_CHANNEL_POSITION_FRONT_LEFT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_5POINT1POINT4][PA_CHANNEL_POSITION_FRONT_RIGHT][PA_CHANNEL_POSITION_FRONT_RIGHT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_5POINT1POINT4][PA_CHANNEL_POSITION_FRONT_CENTER][PA_CHANNEL_POSITION_FRONT_CENTER] = 1.0f,
+    [PA_CHANNEL_LAYOUT_5POINT1POINT4][PA_CHANNEL_POSITION_LFE][PA_CHANNEL_POSITION_LFE] = 1.0f,
+
+    [PA_CHANNEL_LAYOUT_5POINT1POINT4][PA_CHANNEL_POSITION_REAR_LEFT][PA_CHANNEL_POSITION_SIDE_LEFT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_5POINT1POINT4][PA_CHANNEL_POSITION_REAR_RIGHT][PA_CHANNEL_POSITION_SIDE_LEFT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_5POINT1POINT4][PA_CHANNEL_POSITION_SIDE_LEFT][PA_CHANNEL_POSITION_SIDE_LEFT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_5POINT1POINT4][PA_CHANNEL_POSITION_SIDE_RIGHT][PA_CHANNEL_POSITION_SIDE_LEFT] = 1.0f,
+
+    [PA_CHANNEL_LAYOUT_5POINT1POINT4][PA_CHANNEL_POSITION_FRONT_LEFT_OF_CENTER][PA_CHANNEL_POSITION_FRONT_LEFT] = 0.5946f,
+    [PA_CHANNEL_LAYOUT_5POINT1POINT4][PA_CHANNEL_POSITION_FRONT_LEFT_OF_CENTER][PA_CHANNEL_POSITION_FRONT_CENTER] = 0.7071f,
+    [PA_CHANNEL_LAYOUT_5POINT1POINT4][PA_CHANNEL_POSITION_FRONT_RIGHT_OF_CENTER][PA_CHANNEL_POSITION_FRONT_RIGHT] = 0.5946f,
+    [PA_CHANNEL_LAYOUT_5POINT1POINT4][PA_CHANNEL_POSITION_FRONT_RIGHT_OF_CENTER][PA_CHANNEL_POSITION_FRONT_CENTER] = 0.7071f,
+
+    [PA_CHANNEL_LAYOUT_5POINT1POINT4][PA_CHANNEL_POSITION_REAR_CENTER][PA_CHANNEL_POSITION_SIDE_LEFT] = 0.7071f,
+    [PA_CHANNEL_LAYOUT_5POINT1POINT4][PA_CHANNEL_POSITION_REAR_CENTER][PA_CHANNEL_POSITION_SIDE_RIGHT] = 0.7071f,
+
+    [PA_CHANNEL_LAYOUT_5POINT1POINT4][PA_CHANNEL_POSITION_TOP_CENTER][PA_CHANNEL_POSITION_TOP_FRONT_LEFT] = 0.5f,
+    [PA_CHANNEL_LAYOUT_5POINT1POINT4][PA_CHANNEL_POSITION_TOP_CENTER][PA_CHANNEL_POSITION_TOP_FRONT_RIGHT] = 0.5f,
+    [PA_CHANNEL_LAYOUT_5POINT1POINT4][PA_CHANNEL_POSITION_TOP_CENTER][PA_CHANNEL_POSITION_TOP_REAR_LEFT] = 0.5f,
+    [PA_CHANNEL_LAYOUT_5POINT1POINT4][PA_CHANNEL_POSITION_TOP_CENTER][PA_CHANNEL_POSITION_TOP_REAR_RIGHT] = 0.5f,
+
+    [PA_CHANNEL_LAYOUT_5POINT1POINT4][PA_CHANNEL_POSITION_TOP_FRONT_LEFT][PA_CHANNEL_POSITION_TOP_FRONT_LEFT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_5POINT1POINT4][PA_CHANNEL_POSITION_TOP_FRONT_RIGHT][PA_CHANNEL_POSITION_TOP_FRONT_RIGHT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_5POINT1POINT4][PA_CHANNEL_POSITION_TOP_FRONT_CENTER][PA_CHANNEL_POSITION_TOP_FRONT_LEFT] = 0.7071f,
+    [PA_CHANNEL_LAYOUT_5POINT1POINT4][PA_CHANNEL_POSITION_TOP_FRONT_CENTER][PA_CHANNEL_POSITION_TOP_FRONT_RIGHT] = 0.7071f,
+
+    [PA_CHANNEL_LAYOUT_5POINT1POINT4][PA_CHANNEL_POSITION_TOP_REAR_LEFT][PA_CHANNEL_POSITION_TOP_REAR_LEFT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_5POINT1POINT4][PA_CHANNEL_POSITION_TOP_REAR_RIGHT][PA_CHANNEL_POSITION_TOP_REAR_RIGHT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_5POINT1POINT4][PA_CHANNEL_POSITION_TOP_REAR_CENTER][PA_CHANNEL_POSITION_TOP_REAR_LEFT] = 0.7071f,
+    [PA_CHANNEL_LAYOUT_5POINT1POINT4][PA_CHANNEL_POSITION_TOP_REAR_CENTER][PA_CHANNEL_POSITION_TOP_REAR_RIGHT] = 0.7071f,
+
+    /* Downmix table for 7POINT1 */
+    [PA_CHANNEL_LAYOUT_7POINT1][PA_CHANNEL_POSITION_FRONT_LEFT][PA_CHANNEL_POSITION_FRONT_LEFT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_7POINT1][PA_CHANNEL_POSITION_FRONT_RIGHT][PA_CHANNEL_POSITION_FRONT_RIGHT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_7POINT1][PA_CHANNEL_POSITION_FRONT_CENTER][PA_CHANNEL_POSITION_FRONT_CENTER] = 1.0f,
+    [PA_CHANNEL_LAYOUT_7POINT1][PA_CHANNEL_POSITION_LFE][PA_CHANNEL_POSITION_LFE] = 1.0f,
+
+    [PA_CHANNEL_LAYOUT_7POINT1][PA_CHANNEL_POSITION_REAR_LEFT][PA_CHANNEL_POSITION_REAR_LEFT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_7POINT1][PA_CHANNEL_POSITION_REAR_RIGHT][PA_CHANNEL_POSITION_REAR_RIGHT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_7POINT1][PA_CHANNEL_POSITION_SIDE_RIGHT][PA_CHANNEL_POSITION_SIDE_RIGHT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_7POINT1][PA_CHANNEL_POSITION_SIDE_LEFT][PA_CHANNEL_POSITION_SIDE_LEFT] = 1.0f,
+
+    [PA_CHANNEL_LAYOUT_7POINT1][PA_CHANNEL_POSITION_FRONT_LEFT_OF_CENTER][PA_CHANNEL_POSITION_FRONT_LEFT] = 0.5946f,
+    [PA_CHANNEL_LAYOUT_7POINT1][PA_CHANNEL_POSITION_FRONT_LEFT_OF_CENTER][PA_CHANNEL_POSITION_FRONT_CENTER] = 0.7071f,
+    [PA_CHANNEL_LAYOUT_7POINT1][PA_CHANNEL_POSITION_FRONT_RIGHT_OF_CENTER][PA_CHANNEL_POSITION_FRONT_RIGHT] = 0.5946f,
+    [PA_CHANNEL_LAYOUT_7POINT1][PA_CHANNEL_POSITION_FRONT_RIGHT_OF_CENTER][PA_CHANNEL_POSITION_FRONT_CENTER] = 0.7071f,
+
+    [PA_CHANNEL_LAYOUT_7POINT1][PA_CHANNEL_POSITION_REAR_CENTER][PA_CHANNEL_POSITION_REAR_LEFT] = 0.7071f,
+    [PA_CHANNEL_LAYOUT_7POINT1][PA_CHANNEL_POSITION_REAR_CENTER][PA_CHANNEL_POSITION_REAR_RIGHT] = 0.7071f,
+
+    [PA_CHANNEL_LAYOUT_7POINT1][PA_CHANNEL_POSITION_TOP_CENTER][PA_CHANNEL_POSITION_FRONT_CENTER] = 0.5f,
+    [PA_CHANNEL_LAYOUT_7POINT1][PA_CHANNEL_POSITION_TOP_CENTER][PA_CHANNEL_POSITION_SIDE_LEFT] = 0.5f,
+    [PA_CHANNEL_LAYOUT_7POINT1][PA_CHANNEL_POSITION_TOP_CENTER][PA_CHANNEL_POSITION_SIDE_RIGHT] = 0.5f,
+
+    [PA_CHANNEL_LAYOUT_7POINT1][PA_CHANNEL_POSITION_TOP_FRONT_LEFT][PA_CHANNEL_POSITION_FRONT_LEFT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_7POINT1][PA_CHANNEL_POSITION_TOP_FRONT_RIGHT][PA_CHANNEL_POSITION_FRONT_RIGHT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_7POINT1][PA_CHANNEL_POSITION_TOP_FRONT_CENTER][PA_CHANNEL_POSITION_FRONT_CENTER] = 1.0f,
+
+    [PA_CHANNEL_LAYOUT_7POINT1][PA_CHANNEL_POSITION_TOP_REAR_LEFT][PA_CHANNEL_POSITION_REAR_LEFT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_7POINT1][PA_CHANNEL_POSITION_TOP_REAR_RIGHT][PA_CHANNEL_POSITION_REAR_RIGHT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_7POINT1][PA_CHANNEL_POSITION_TOP_REAR_CENTER][PA_CHANNEL_POSITION_REAR_LEFT] = 0.7071f,
+    [PA_CHANNEL_LAYOUT_7POINT1][PA_CHANNEL_POSITION_TOP_REAR_CENTER][PA_CHANNEL_POSITION_REAR_RIGHT] = 0.7071f,
+
+    /* downmix table for 7POINT1POINT2 */
+    [PA_CHANNEL_LAYOUT_7POINT1POINT2][PA_CHANNEL_POSITION_FRONT_LEFT][PA_CHANNEL_POSITION_FRONT_LEFT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_7POINT1POINT2][PA_CHANNEL_POSITION_FRONT_RIGHT][PA_CHANNEL_POSITION_FRONT_RIGHT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_7POINT1POINT2][PA_CHANNEL_POSITION_FRONT_CENTER][PA_CHANNEL_POSITION_FRONT_CENTER] = 1.0f,
+    [PA_CHANNEL_LAYOUT_7POINT1POINT2][PA_CHANNEL_POSITION_LFE][PA_CHANNEL_POSITION_LFE] = 1.0f,
+
+    [PA_CHANNEL_LAYOUT_7POINT1POINT2][PA_CHANNEL_POSITION_REAR_LEFT][PA_CHANNEL_POSITION_REAR_LEFT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_7POINT1POINT2][PA_CHANNEL_POSITION_REAR_RIGHT][PA_CHANNEL_POSITION_REAR_RIGHT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_7POINT1POINT2][PA_CHANNEL_POSITION_SIDE_RIGHT][PA_CHANNEL_POSITION_SIDE_RIGHT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_7POINT1POINT2][PA_CHANNEL_POSITION_SIDE_LEFT][PA_CHANNEL_POSITION_SIDE_LEFT] = 1.0f,
+
+    [PA_CHANNEL_LAYOUT_7POINT1POINT2][PA_CHANNEL_POSITION_FRONT_LEFT_OF_CENTER][PA_CHANNEL_POSITION_FRONT_LEFT] = 0.5946f,
+    [PA_CHANNEL_LAYOUT_7POINT1POINT2][PA_CHANNEL_POSITION_FRONT_LEFT_OF_CENTER][PA_CHANNEL_POSITION_FRONT_CENTER] = 0.7071f,
+    [PA_CHANNEL_LAYOUT_7POINT1POINT2][PA_CHANNEL_POSITION_FRONT_RIGHT_OF_CENTER][PA_CHANNEL_POSITION_FRONT_RIGHT] = 0.5946f,
+    [PA_CHANNEL_LAYOUT_7POINT1POINT2][PA_CHANNEL_POSITION_FRONT_RIGHT_OF_CENTER][PA_CHANNEL_POSITION_FRONT_CENTER] = 0.7071f,
+
+    [PA_CHANNEL_LAYOUT_7POINT1POINT2][PA_CHANNEL_POSITION_REAR_CENTER][PA_CHANNEL_POSITION_REAR_LEFT] = 0.7071f,
+    [PA_CHANNEL_LAYOUT_7POINT1POINT2][PA_CHANNEL_POSITION_REAR_CENTER][PA_CHANNEL_POSITION_REAR_RIGHT] = 0.7071f,
+
+    [PA_CHANNEL_LAYOUT_7POINT1POINT2][PA_CHANNEL_POSITION_TOP_CENTER][PA_CHANNEL_POSITION_TOP_REAR_LEFT] = 0.7071f,
+    [PA_CHANNEL_LAYOUT_7POINT1POINT2][PA_CHANNEL_POSITION_TOP_CENTER][PA_CHANNEL_POSITION_TOP_REAR_RIGHT] = 0.7071f,
+
+    [PA_CHANNEL_LAYOUT_7POINT1POINT2][PA_CHANNEL_POSITION_TOP_FRONT_LEFT][PA_CHANNEL_POSITION_FRONT_LEFT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_7POINT1POINT2][PA_CHANNEL_POSITION_TOP_FRONT_RIGHT][PA_CHANNEL_POSITION_FRONT_RIGHT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_7POINT1POINT2][PA_CHANNEL_POSITION_TOP_FRONT_CENTER][PA_CHANNEL_POSITION_FRONT_CENTER] = 1.0f,
+
+
+    [PA_CHANNEL_LAYOUT_7POINT1POINT2][PA_CHANNEL_POSITION_TOP_REAR_LEFT][PA_CHANNEL_POSITION_TOP_REAR_LEFT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_7POINT1POINT2][PA_CHANNEL_POSITION_TOP_REAR_RIGHT][PA_CHANNEL_POSITION_TOP_REAR_RIGHT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_7POINT1POINT2][PA_CHANNEL_POSITION_TOP_REAR_CENTER][PA_CHANNEL_POSITION_TOP_REAR_LEFT] = 0.7071f,
+    [PA_CHANNEL_LAYOUT_7POINT1POINT2][PA_CHANNEL_POSITION_TOP_REAR_CENTER][PA_CHANNEL_POSITION_TOP_REAR_RIGHT] = 0.7071f,
+
+    /* downmix table for 7POINT1POINT4*/
+    [PA_CHANNEL_LAYOUT_7POINT1POINT4][PA_CHANNEL_POSITION_FRONT_LEFT][PA_CHANNEL_POSITION_FRONT_LEFT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_7POINT1POINT4][PA_CHANNEL_POSITION_FRONT_RIGHT][PA_CHANNEL_POSITION_FRONT_RIGHT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_7POINT1POINT4][PA_CHANNEL_POSITION_FRONT_CENTER][PA_CHANNEL_POSITION_FRONT_CENTER] = 1.0f,
+    [PA_CHANNEL_LAYOUT_7POINT1POINT4][PA_CHANNEL_POSITION_LFE][PA_CHANNEL_POSITION_LFE] = 1.0f,
+
+    [PA_CHANNEL_LAYOUT_7POINT1POINT4][PA_CHANNEL_POSITION_REAR_LEFT][PA_CHANNEL_POSITION_REAR_LEFT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_7POINT1POINT4][PA_CHANNEL_POSITION_REAR_RIGHT][PA_CHANNEL_POSITION_REAR_RIGHT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_7POINT1POINT4][PA_CHANNEL_POSITION_SIDE_RIGHT][PA_CHANNEL_POSITION_SIDE_RIGHT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_7POINT1POINT4][PA_CHANNEL_POSITION_SIDE_LEFT][PA_CHANNEL_POSITION_SIDE_LEFT] = 1.0f,
+
+    [PA_CHANNEL_LAYOUT_7POINT1POINT4][PA_CHANNEL_POSITION_FRONT_LEFT_OF_CENTER][PA_CHANNEL_POSITION_FRONT_LEFT] = 0.5946f,
+    [PA_CHANNEL_LAYOUT_7POINT1POINT4][PA_CHANNEL_POSITION_FRONT_LEFT_OF_CENTER][PA_CHANNEL_POSITION_FRONT_CENTER] = 0.7071f,
+    [PA_CHANNEL_LAYOUT_7POINT1POINT4][PA_CHANNEL_POSITION_FRONT_RIGHT_OF_CENTER][PA_CHANNEL_POSITION_FRONT_RIGHT] = 0.5946f,
+    [PA_CHANNEL_LAYOUT_7POINT1POINT4][PA_CHANNEL_POSITION_FRONT_RIGHT_OF_CENTER][PA_CHANNEL_POSITION_FRONT_CENTER] = 0.7071f,
+
+    [PA_CHANNEL_LAYOUT_7POINT1POINT4][PA_CHANNEL_POSITION_REAR_CENTER][PA_CHANNEL_POSITION_REAR_LEFT] = 0.7071f,
+    [PA_CHANNEL_LAYOUT_7POINT1POINT4][PA_CHANNEL_POSITION_REAR_CENTER][PA_CHANNEL_POSITION_REAR_RIGHT] = 0.7071f,
+
+    [PA_CHANNEL_LAYOUT_7POINT1POINT4][PA_CHANNEL_POSITION_TOP_CENTER][PA_CHANNEL_POSITION_TOP_FRONT_LEFT] = 0.5f,
+    [PA_CHANNEL_LAYOUT_7POINT1POINT4][PA_CHANNEL_POSITION_TOP_CENTER][PA_CHANNEL_POSITION_TOP_FRONT_RIGHT] = 0.5f,
+    [PA_CHANNEL_LAYOUT_7POINT1POINT4][PA_CHANNEL_POSITION_TOP_CENTER][PA_CHANNEL_POSITION_TOP_REAR_LEFT] = 0.5f,
+    [PA_CHANNEL_LAYOUT_7POINT1POINT4][PA_CHANNEL_POSITION_TOP_CENTER][PA_CHANNEL_POSITION_TOP_REAR_RIGHT] = 0.5f,
+
+    [PA_CHANNEL_LAYOUT_7POINT1POINT4][PA_CHANNEL_POSITION_TOP_FRONT_LEFT][PA_CHANNEL_POSITION_TOP_FRONT_LEFT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_7POINT1POINT4][PA_CHANNEL_POSITION_TOP_FRONT_RIGHT][PA_CHANNEL_POSITION_TOP_FRONT_RIGHT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_7POINT1POINT4][PA_CHANNEL_POSITION_TOP_FRONT_CENTER][PA_CHANNEL_POSITION_TOP_FRONT_LEFT] = 0.7071f,
+    [PA_CHANNEL_LAYOUT_7POINT1POINT4][PA_CHANNEL_POSITION_TOP_FRONT_CENTER][PA_CHANNEL_POSITION_TOP_FRONT_RIGHT] = 0.7071f,
+
+    [PA_CHANNEL_LAYOUT_7POINT1POINT4][PA_CHANNEL_POSITION_TOP_REAR_LEFT][PA_CHANNEL_POSITION_TOP_REAR_LEFT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_7POINT1POINT4][PA_CHANNEL_POSITION_TOP_REAR_RIGHT][PA_CHANNEL_POSITION_TOP_REAR_RIGHT] = 1.0f,
+    [PA_CHANNEL_LAYOUT_7POINT1POINT4][PA_CHANNEL_POSITION_TOP_REAR_CENTER][PA_CHANNEL_POSITION_TOP_REAR_LEFT] = 0.7071f,
+    [PA_CHANNEL_LAYOUT_7POINT1POINT4][PA_CHANNEL_POSITION_TOP_REAR_CENTER][PA_CHANNEL_POSITION_TOP_REAR_RIGHT] = 0.7071f,
+};
+
 
 static int copy_init(pa_resampler *r);
 
@@ -925,12 +1152,12 @@ static bool on_side(pa_channel_position_t p) {
         p == PA_CHANNEL_POSITION_TOP_CENTER;
 }
 
-enum {
+typedef enum pa_channel_direction{
     ON_FRONT,
     ON_REAR,
     ON_SIDE,
     ON_OTHER
-};
+} pa_channel_direction_t;
 
 static int front_rear_side(pa_channel_position_t p) {
     if (on_front(p))
@@ -941,6 +1168,18 @@ static int front_rear_side(pa_channel_position_t p) {
         return ON_SIDE;
     return ON_OTHER;
 }
+
+/* For downmixing other output format, usage [direction_of_input_channel][direction_of_output_channel] */
+/*           layout            */
+/*       front side rear       */
+/* front |     |    |    |     */
+/* side  |     |    |    |     */
+/* rear  |     |    |    |     */
+static const float directionDownMixMatrix[ON_OTHER][ON_OTHER] = {
+    {1.0f, 0.7071f, 0.5f},
+    {0.7071f, 1.0f, 0.5f},
+    {0.5f, 0.7071f, 1.0f},
+};
 
 /* Fill a map of which output channels should get mono from input, not including
  * LFE output channels. (The LFE output channels are mapped separately.)
@@ -1109,8 +1348,6 @@ static void setup_remap(const pa_resampler *r, pa_remap_t *m, bool *lfe_remixed)
             ic_left = 0,
             ic_right = 0,
             ic_center = 0,
-            ic_unconnected_left = 0,
-            ic_unconnected_right = 0,
             ic_unconnected_center = 0,
             ic_unconnected_lfe = 0;
         bool ic_unconnected_center_mixed_in = 0;
@@ -1127,6 +1364,7 @@ static void setup_remap(const pa_resampler *r, pa_remap_t *m, bool *lfe_remixed)
 
         setup_oc_mono_map(r, oc_mono_map);
 
+        // mono ouput or input channel = output channel
         for (oc = 0; oc < n_oc; oc++) {
             bool oc_connected = false;
             pa_channel_position_t b = r->o_cm.map[oc];
@@ -1153,27 +1391,28 @@ static void setup_remap(const pa_resampler *r, pa_remap_t *m, bool *lfe_remixed)
                     ic_connected[ic] = true;
                 }
             }
+            /* separate rear/side */
+            // REAR = SIDE?
+            // if (!oc_connected) {
+            //     /* Maybe it is due to 5.1 rear/side confustion? */
+            //     for (ic = 0; ic < n_ic; ic++) {
+            //         pa_channel_position_t a = r->i_cm.map[ic];
+            //         if (ic_connected[ic])
+            //             continue;
 
-            if (!oc_connected) {
-                /* Maybe it is due to 5.1 rear/side confustion? */
-                for (ic = 0; ic < n_ic; ic++) {
-                    pa_channel_position_t a = r->i_cm.map[ic];
-                    if (ic_connected[ic])
-                        continue;
+            //         if ((a == PA_CHANNEL_POSITION_REAR_LEFT && b == PA_CHANNEL_POSITION_SIDE_LEFT) ||
+            //             (a == PA_CHANNEL_POSITION_SIDE_LEFT && b == PA_CHANNEL_POSITION_REAR_LEFT) ||
+            //             (a == PA_CHANNEL_POSITION_REAR_RIGHT && b == PA_CHANNEL_POSITION_SIDE_RIGHT) ||
+            //             (a == PA_CHANNEL_POSITION_SIDE_RIGHT && b == PA_CHANNEL_POSITION_REAR_RIGHT)) {
 
-                    if ((a == PA_CHANNEL_POSITION_REAR_LEFT && b == PA_CHANNEL_POSITION_SIDE_LEFT) ||
-                        (a == PA_CHANNEL_POSITION_SIDE_LEFT && b == PA_CHANNEL_POSITION_REAR_LEFT) ||
-                        (a == PA_CHANNEL_POSITION_REAR_RIGHT && b == PA_CHANNEL_POSITION_SIDE_RIGHT) ||
-                        (a == PA_CHANNEL_POSITION_SIDE_RIGHT && b == PA_CHANNEL_POSITION_REAR_RIGHT)) {
+            //             m->map_table_f[oc][ic] = 1.0f;
 
-                        m->map_table_f[oc][ic] = 1.0f;
-
-                        oc_connected = true;
-                        ic_connected[ic] = true;
-                    }
-                }
-            }
-
+            //             oc_connected = true;
+            //             ic_connected[ic] = true;
+            //         }
+            //     }
+            // }
+            // output channel has no relating input channel, upmix here
             if (!oc_connected) {
                 /* Try to find matching input ports for this output port */
 
@@ -1251,75 +1490,101 @@ static void setup_remap(const pa_resampler *r, pa_remap_t *m, bool *lfe_remixed)
                     *lfe_remixed = true;
                 }
             }
-        }
-
+        } /* upmix done, so far every output should be connected*/
+        /* downmix here, connect unconnected input here */
+        /* check if output format is supported with downmix table */
+        pa_channel_layout_index_t output_layout_index = pa_channel_map_to_index(&r->o_cm);
+        
         for (ic = 0; ic < n_ic; ic++) {
-            pa_channel_position_t a = r->i_cm.map[ic];
-
-            if (ic_connected[ic])
-                continue;
-
-            if (on_left(a))
-                ic_unconnected_left++;
-            else if (on_right(a))
-                ic_unconnected_right++;
-            else if (on_center(a))
-                ic_unconnected_center++;
-            else if (on_lfe(a))
-                ic_unconnected_lfe++;
-        }
-
-        for (ic = 0; ic < n_ic; ic++) {
-            pa_channel_position_t a = r->i_cm.map[ic];
-
-            if (ic_connected[ic])
-                continue;
-
-            for (oc = 0; oc < n_oc; oc++) {
-                pa_channel_position_t b = r->o_cm.map[oc];
-
-                if (on_left(a) && on_left(b))
-                    m->map_table_f[oc][ic] = (1.f/9.f) / (float) ic_unconnected_left;
-
-                else if (on_right(a) && on_right(b))
-                    m->map_table_f[oc][ic] = (1.f/9.f) / (float) ic_unconnected_right;
-
-                else if (on_center(a) && on_center(b)) {
-                    m->map_table_f[oc][ic] = (1.f/9.f) / (float) ic_unconnected_center;
-                    ic_unconnected_center_mixed_in = true;
-
-                } else if (on_lfe(a) && (r->flags & PA_RESAMPLER_CONSUME_LFE))
-                    m->map_table_f[oc][ic] = .375f / (float) ic_unconnected_lfe;
-            }
-        }
-
-        if (ic_unconnected_center > 0 && !ic_unconnected_center_mixed_in) {
-            unsigned ncenter[PA_CHANNELS_MAX];
-            bool found_frs[PA_CHANNELS_MAX];
-
-            memset(ncenter, 0, sizeof(ncenter));
-            memset(found_frs, 0, sizeof(found_frs));
-
-            /* Hmm, as it appears there was no center channel we
-               could mix our center channel in. In this case, mix it into
-               left and right. Using .5 as the factor. */
-
-            for (ic = 0; ic < n_ic; ic++) {
+                pa_channel_position_t a = r->i_cm.map[ic];
 
                 if (ic_connected[ic])
                     continue;
 
-                if (!on_center(r->i_cm.map[ic]))
+                else if (on_center(a))
+                    ic_unconnected_center++;
+                else if (on_lfe(a))
+                    ic_unconnected_lfe++;
+        }
+
+        if(output_layout_index != PA_CHANNEL_LAYOUT_OTHER){
+            for(ic=0; ic<n_ic; ic++){
+                if (ic_connected[ic])
+                    continue;
+                pa_channel_position_t a = r->i_cm.map[ic];
+                
+                for(oc=0; oc<n_oc; oc++){
+                    pa_channel_position_t b = r->o_cm.map[oc];
+                    m->map_table_f[oc][ic] = channelDownmixMatrix[output_layout_index][a][b];
+                    
+                    if(on_lfe(a) && (r->flags & PA_RESAMPLER_CONSUME_LFE))
+                        m->map_table_f[oc][ic] = 1.f/(float)ic_unconnected_lfe;
+                }
+            }
+            
+        }
+        else{
+            for (ic = 0; ic < n_ic; ic++) {
+                pa_channel_position_t a = r->i_cm.map[ic];
+                pa_channel_direction_t ic_direction = front_rear_side(r->i_cm.map[ic]);
+                if (ic_connected[ic])
                     continue;
 
                 for (oc = 0; oc < n_oc; oc++) {
+                    pa_channel_position_t b = r->o_cm.map[oc];
+                    pa_channel_direction_t oc_direction = front_rear_side(r->o_cm.map[oc]);
+                    if (on_left(a) && on_left(b))
+                        m->map_table_f[oc][ic] = directionDownMixMatrix[ic_direction][oc_direction];
 
-                    if (!on_left(r->o_cm.map[oc]) && !on_right(r->o_cm.map[oc]))
+                    else if (on_right(a) && on_right(b))
+                        m->map_table_f[oc][ic] = m->map_table_f[oc][ic] = directionDownMixMatrix[ic_direction][oc_direction];
+
+                    else if (on_center(a) && on_center(b)) {
+                        m->map_table_f[oc][ic] = m->map_table_f[oc][ic] = directionDownMixMatrix[ic_direction][oc_direction];;
+                        ic_unconnected_center_mixed_in = true;
+
+                    } else if (on_lfe(a) && (r->flags & PA_RESAMPLER_CONSUME_LFE))
+                        m->map_table_f[oc][ic] = 1.f / (float) ic_unconnected_lfe;
+                }
+            }
+
+            if (ic_unconnected_center > 0 && !ic_unconnected_center_mixed_in) {
+                unsigned ncenter[PA_CHANNELS_MAX];
+                bool found_frs[PA_CHANNELS_MAX];
+
+                memset(ncenter, 0, sizeof(ncenter));
+                memset(found_frs, 0, sizeof(found_frs));
+
+                /* Hmm, as it appears there was no center channel we
+                could mix our center channel in. In this case, mix it into
+                left and right. Using .5 as the factor. */
+
+                for (ic = 0; ic < n_ic; ic++) {
+
+                    if (ic_connected[ic])
                         continue;
 
-                    if (front_rear_side(r->i_cm.map[ic]) == front_rear_side(r->o_cm.map[oc])) {
-                        found_frs[ic] = true;
-                        break;
+                    if (!on_center(r->i_cm.map[ic]))
+                        continue;
+
+                    for (oc = 0; oc < n_oc; oc++) {
+
+                        if (!on_left(r->o_cm.map[oc]) && !on_right(r->o_cm.map[oc]))
+                            continue;
+
+                        if (front_rear_side(r->i_cm.map[ic]) == front_rear_side(r->o_cm.map[oc])) {
+                            found_frs[ic] = true;
+                            break;
+                        }
+                    }
+
+                    for (oc = 0; oc < n_oc; oc++) {
+
+                        if (!on_left(r->o_cm.map[oc]) && !on_right(r->o_cm.map[oc]))
+                            continue;
+
+                        if (!found_frs[ic] || front_rear_side(r->i_cm.map[ic]) == front_rear_side(r->o_cm.map[oc]))
+                            ncenter[oc]++;
                     }
                 }
 
@@ -1328,39 +1593,38 @@ static void setup_remap(const pa_resampler *r, pa_remap_t *m, bool *lfe_remixed)
                     if (!on_left(r->o_cm.map[oc]) && !on_right(r->o_cm.map[oc]))
                         continue;
 
-                    if (!found_frs[ic] || front_rear_side(r->i_cm.map[ic]) == front_rear_side(r->o_cm.map[oc]))
-                        ncenter[oc]++;
-                }
-            }
-
-            for (oc = 0; oc < n_oc; oc++) {
-
-                if (!on_left(r->o_cm.map[oc]) && !on_right(r->o_cm.map[oc]))
-                    continue;
-
-                if (ncenter[oc] <= 0)
-                    continue;
-
-                for (ic = 0; ic < n_ic; ic++) {
-
-                    if (!on_center(r->i_cm.map[ic]))
+                    if (ncenter[oc] <= 0)
                         continue;
 
-                    if (!found_frs[ic] || front_rear_side(r->i_cm.map[ic]) == front_rear_side(r->o_cm.map[oc]))
-                        m->map_table_f[oc][ic] = .5f / (float) ncenter[oc];
+                    for (ic = 0; ic < n_ic; ic++) {
+
+                        if (!on_center(r->i_cm.map[ic]))
+                            continue;
+
+                        if (!found_frs[ic] || front_rear_side(r->i_cm.map[ic]) == front_rear_side(r->o_cm.map[oc]))
+                            m->map_table_f[oc][ic] = .5f / (float) ncenter[oc];
+                    }
                 }
             }
         }
+        
     }
+
+    // uniform with maximum sum
+    float max_sum = 0.0f;
 
     for (oc = 0; oc < n_oc; oc++) {
         float sum = 0.0f;
         for (ic = 0; ic < n_ic; ic++)
             sum += m->map_table_f[oc][ic];
 
-        if (sum > 1.0f)
-            for (ic = 0; ic < n_ic; ic++)
-                m->map_table_f[oc][ic] /= sum;
+        if(sum > max_sum) max_sum = sum;
+    }
+
+    for(oc = 0; oc<n_oc; oc++){
+        for(ic=0; ic<n_ic; ic++){
+            m->map_table_f[oc][ic] /= max_sum;
+        }
     }
 
     /* make an 16:16 int version of the matrix */
