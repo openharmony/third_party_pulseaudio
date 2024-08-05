@@ -763,7 +763,7 @@ pa_channel_layout_index_t pa_channel_map_to_index(const pa_channel_map *map){
     for (c = 0; c < map->channels; c++)
         pa_bitset_set(in_map, map->map[c], true);
 
-    memset(in_map, 0, sizeof(in_map));
+
     if (pa_bitset_equals(in_map, PA_CHANNEL_POSITION_MAX,
                          PA_CHANNEL_POSITION_LEFT, PA_CHANNEL_POSITION_RIGHT, -1))
         return PA_CHANNEL_LAYOUT_STEREO;
