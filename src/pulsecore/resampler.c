@@ -1171,14 +1171,14 @@ static int front_rear_side(pa_channel_position_t p) {
 
 /* For downmixing other output format, usage [direction_of_input_channel][direction_of_output_channel] */
 /*           layout            */
-/*       front side rear       */
+/*        front rear side      */
 /* front |     |    |    |     */
-/* side  |     |    |    |     */
 /* rear  |     |    |    |     */
+/* side  |     |    |    |     */
 static const float directionDownMixMatrix[ON_OTHER][ON_OTHER] = {
-    {1.0f, 0.7071f, 0.5f},
-    {0.7071f, 1.0f, 0.5f},
-    {0.5f, 0.7071f, 1.0f},
+    {1.0f, 0.5f, 0.7071f},
+    {0.5f, 1.0f, 0.7071f},
+    {0.7071f, 0.7071f, 1.0f},
 };
 
 /* Fill a map of which output channels should get mono from input, not including
@@ -1523,7 +1523,8 @@ static void setup_remap(const pa_resampler *r, pa_remap_t *m, bool *lfe_remixed)
             }
             
         }
-        else{
+        /* channels that are not supported by downmix table */
+        else{ 
             for (ic = 0; ic < n_ic; ic++) {
                 pa_channel_position_t a = r->i_cm.map[ic];
                 pa_channel_direction_t ic_direction = front_rear_side(r->i_cm.map[ic]);
@@ -1606,8 +1607,7 @@ static void setup_remap(const pa_resampler *r, pa_remap_t *m, bool *lfe_remixed)
                     }
                 }
             }
-        }
-        
+        }   
     }
 
     // uniform with maximum sum
