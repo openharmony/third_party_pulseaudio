@@ -40,17 +40,13 @@
 #include <pulse/xmalloc.h>
 #include <pulse/def.h>
 
-#include <pulsecore/shm.h>
 #include <pulsecore/log.h>
 #include <pulsecore/hashmap.h>
 #include <pulsecore/semaphore.h>
 #include <pulsecore/mutex.h>
 #include <pulsecore/macro.h>
-#include <pulsecore/refcnt.h>
 #include <pulsecore/llist.h>
-#include <pulsecore/flist.h>
 #include <pulsecore/core-util.h>
-#include <pulsecore/memtrap.h>
 
 #include "log/audio_log.h"
 
@@ -67,45 +63,6 @@
 
 #define PA_MEMIMPORT_SLOTS_MAX 160
 #define PA_MEMIMPORT_SEGMENTS_MAX 16
-
-struct pa_memblock {
-    PA_REFCNT_DECLARE; /* the reference counter */
-    pa_mempool *pool;
-
-    pa_memblock_type_t type;
-
-    bool read_only:1;
-    bool is_silence:1;
-
-    pa_atomic_ptr_t data;
-    size_t length;
-
-    pa_atomic_t n_acquired;
-    pa_atomic_t please_signal;
-
-    union {
-        struct {
-            /* If type == PA_MEMBLOCK_USER this points to a function for freeing this memory block */
-            pa_free_cb_t free_cb;
-            /* If type == PA_MEMBLOCK_USER this is passed as free_cb argument */
-            void *free_cb_data;
-        } user;
-
-        struct {
-            uint32_t id;
-            pa_memimport_segment *segment;
-        } imported;
-    } per_type;
-};
-
-struct pa_memimport_segment {
-    pa_memimport *import;
-    pa_shm memory;
-    pa_memtrap *trap;
-    unsigned n_blocks;
-    bool writable;
-};
-
 /*
  * If true, this segment's lifetime will not be limited by the
  * number of active blocks (seg->n_blocks) using its shared memory.
