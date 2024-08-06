@@ -224,12 +224,14 @@ int pa_scache_add_file(pa_core *c, const char *name, const char *filename, uint3
 
     p = pa_proplist_new();
     pa_proplist_sets(p, PA_PROP_MEDIA_FILENAME, filename);
-
+#ifdef SNDFILE_ENABLE
     if (pa_sound_file_load(c->mempool, filename, &ss, &map, &chunk, p) < 0) {
         pa_proplist_free(p);
         return -1;
     }
-
+#else
+    return -1;
+#endif
     r = pa_scache_add_item(c, name, &ss, &map, &chunk, p, idx);
     pa_memblock_unref(chunk.memblock);
     pa_proplist_free(p);
@@ -319,10 +321,12 @@ int pa_scache_play_item(pa_core *c, const char *name, pa_sink *sink, pa_volume_t
 
     if (e->lazy && !e->memchunk.memblock) {
         pa_channel_map old_channel_map = e->channel_map;
-
+#ifdef SNDFILE_ENABLE
         if (pa_sound_file_load(c->mempool, e->filename, &e->sample_spec, &e->channel_map, &e->memchunk, merged) < 0)
             goto fail;
-
+#else
+            goto fail;
+#endif
         pa_subscription_post(c, PA_SUBSCRIPTION_EVENT_SAMPLE_CACHE|PA_SUBSCRIPTION_EVENT_CHANGE, e->index);
 
         if (e->volume_is_set) {
