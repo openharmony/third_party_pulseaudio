@@ -81,8 +81,6 @@ ohos_source_set("pulsecore_sources") {
     "../../../src/pulsecore/sink-input.c",
     "../../../src/pulsecore/sink.c",
     "../../../src/pulsecore/sioman.c",
-    "../../../src/pulsecore/sound-file-stream.c",
-    "../../../src/pulsecore/sound-file.c",
     "../../../src/pulsecore/source-output.c",
     "../../../src/pulsecore/source.c",
     "../../../src/pulsecore/start-child.c",
@@ -97,10 +95,7 @@ ohos_source_set("pulsecore_sources") {
 
   configs = [ ":pulsecore_config" ]
 
-  external_deps = [
-    "hilog:libhilog",
-    "libsnd:sndfile",
-  ]
+  external_deps = [ "hilog:libhilog" ]
 
   defines = []
   if (defined(global_parts_info) &&
@@ -134,10 +129,7 @@ ohos_shared_library("pulsecore") {
 
   public_configs = [ ":export_pulsecore_include" ]
 
-  external_deps = [
-    "hilog:libhilog",
-    "libsnd:sndfile",
-  ]
+  external_deps = [ "hilog:libhilog" ]
 
   defines = []
   if (defined(global_parts_info) &&
