@@ -220,6 +220,7 @@ typedef enum pa_channel_layout_index{
 #define PA_CHANNEL_POSITION_TOP_REAR_CENTER PA_CHANNEL_POSITION_TOP_REAR_CENTER
 #define PA_CHANNEL_POSITION_MAX PA_CHANNEL_POSITION_MAX
 
+
 #define PA_CHANNEL_LAYOUT_OTHER PA_CHANNEL_LAYOUT_OTHER
 #define PA_CHANNEL_LAYOUT_STEREO PA_CHANNEL_LAYOUT_STEREO
 #define PA_CHANNEL_LAYOUT_5POINT1 PA_CHANNEL_LAYOUT_5POINT1
@@ -375,6 +376,7 @@ int pa_channel_map_can_lfe_balance(const pa_channel_map *map) PA_GCC_PURE;
  * mapping is unknown NULL will be returned. This name can be parsed
  * with pa_channel_map_parse() \since 0.9.15 */
 const char* pa_channel_map_to_name(const pa_channel_map *map) PA_GCC_PURE;
+
 /* check if input channel map is supported by downmix matrix, otherwise return PA_FORMAT_OTHER*/
 pa_channel_layout_index_t pa_channel_map_to_index(const pa_channel_map *map) PA_GCC_PURE;
 
@@ -389,6 +391,7 @@ int pa_channel_map_has_position(const pa_channel_map *map, pa_channel_position_t
 
 /** Generates a bit mask from a channel map. \since 0.9.16 */
 pa_channel_position_mask_t pa_channel_map_mask(const pa_channel_map *map) PA_GCC_PURE;
+
 
 PA_C_DECL_END
 
