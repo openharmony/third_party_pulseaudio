@@ -148,18 +148,7 @@ typedef enum pa_channel_position {
     PA_CHANNEL_POSITION_MAX
 } pa_channel_position_t;
 
-/* formats that can be downmixed with channelMixMatrix */
-typedef enum pa_channel_layout_index{
-    PA_CHANNEL_LAYOUT_OTHER = -1,
-    PA_CHANNEL_LAYOUT_STEREO = 0,
-    PA_CHANNEL_LAYOUT_5POINT1,
-    PA_CHANNEL_LAYOUT_5POINT1POINT2,
-    PA_CHANNEL_LAYOUT_5POINT1POINT4,
-    PA_CHANNEL_LAYOUT_7POINT1,
-    PA_CHANNEL_LAYOUT_7POINT1POINT2,
-    PA_CHANNEL_LAYOUT_7POINT1POINT4,
-    PA_CHANNEL_LAYOUT_COUNT
-}pa_channel_layout_index_t;
+
 
 /** \cond fulldocs */
 #define PA_CHANNEL_POSITION_INVALID PA_CHANNEL_POSITION_INVALID
@@ -221,15 +210,7 @@ typedef enum pa_channel_layout_index{
 #define PA_CHANNEL_POSITION_MAX PA_CHANNEL_POSITION_MAX
 
 
-#define PA_CHANNEL_LAYOUT_OTHER PA_CHANNEL_LAYOUT_OTHER
-#define PA_CHANNEL_LAYOUT_STEREO PA_CHANNEL_LAYOUT_STEREO
-#define PA_CHANNEL_LAYOUT_5POINT1 PA_CHANNEL_LAYOUT_5POINT1
-#define PA_CHANNEL_LAYOUT_5POINT1POINT2 PA_CHANNEL_LAYOUT_5POINT1POINT2
-#define PA_CHANNEL_LAYOUT_5POINT1POINT4 PA_CHANNEL_LAYOUT_5POINT1POINT4
-#define PA_CHANNEL_LAYOUT_7POINT1 PA_CHANNEL_LAYOUT_7POINT1
-#define PA_CHANNEL_LAYOUT_7POINT1POINT2 PA_CHANNEL_LAYOUT_7POINT1POINT2
-#define PA_CHANNEL_LAYOUT_7POINT1POINT4 PA_CHANNEL_LAYOUT_7POINT1POINT4
-#define PA_CHANNEL_LAYOUT_COUNT PA_CHANNEL_LAYOUT_COUNT
+
 /** \endcond */
 
 
@@ -376,9 +357,6 @@ int pa_channel_map_can_lfe_balance(const pa_channel_map *map) PA_GCC_PURE;
  * mapping is unknown NULL will be returned. This name can be parsed
  * with pa_channel_map_parse() \since 0.9.15 */
 const char* pa_channel_map_to_name(const pa_channel_map *map) PA_GCC_PURE;
-
-/* check if input channel map is supported by downmix matrix, otherwise return PA_FORMAT_OTHER*/
-pa_channel_layout_index_t pa_channel_map_to_index(const pa_channel_map *map) PA_GCC_PURE;
 
 /** Tries to find a human readable text label for this channel
 mapping, i.e.\ "Stereo", "Surround 7.1" and so on. If the channel
