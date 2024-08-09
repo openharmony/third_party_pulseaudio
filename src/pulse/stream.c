@@ -346,6 +346,10 @@ pa_stream_state_t pa_stream_get_state(const pa_stream *s) {
     return s->state;
 }
 
+void pa_stream_terminate(pa_stream *s) {
+    pa_stream_set_state(s, PA_STREAM_TERMINATED);
+}
+
 pa_context* pa_stream_get_context(const pa_stream *s) {
     pa_assert(s);
     pa_assert(PA_REFCNT_VALUE(s) >= 1);
