@@ -52,6 +52,7 @@ ohos_source_set("pulsecore_sources") {
     "../../../src/pulsecore/database-simple.c",
     "../../../src/pulsecore/database.c",
     "../../../src/pulsecore/device-port.c",
+    "../../../src/pulsecore/downmix.c",
     "../../../src/pulsecore/ffmpeg/resample2.c",
     "../../../src/pulsecore/filter/biquad.c",
     "../../../src/pulsecore/filter/crossover.c",

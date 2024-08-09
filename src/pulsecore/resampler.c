@@ -32,7 +32,7 @@
 #include <pulsecore/core-util.h>
 
 #include "resampler.h"
-#include "channelMix.h"
+#include "downmix.h"
 
 /* Number of samples of extra space we allow the resamplers to return */
 #define EXTRA_FRAMES 128
@@ -1300,7 +1300,7 @@ static void setup_remap(const pa_resampler *r, pa_remap_t *m, bool *lfe_remixed)
                 for(oc=0; oc<n_oc; oc++){
                     pa_channel_position_t b = r->o_cm.map[oc];
                     int b_downmix = pa_to_downmix_position(b);
-                    m->map_table_f[oc][ic] = channelDownmixMatrix[output_layout_index][a_downmix][b_downmix];
+                    m->map_table_f[oc][ic] = (float)channelDownmixMatrix[output_layout_index][a_downmix][b_downmix]/(float)RESCALE_COEF;
                     if(on_lfe(a) && (r->flags & PA_RESAMPLER_CONSUME_LFE))
                         m->map_table_f[oc][ic] = 1.f/(float)ic_unconnected_lfe;
                 }
