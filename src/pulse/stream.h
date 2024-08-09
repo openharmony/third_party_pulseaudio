@@ -344,6 +344,8 @@ pa_stream *pa_stream_ref(pa_stream *s);
 /** Return the current state of the stream. */
 pa_stream_state_t pa_stream_get_state(const pa_stream *p);
 
+void pa_stream_terminate(pa_stream *s);
+
 /** Return the context this stream is attached to. */
 pa_context* pa_stream_get_context(const pa_stream *p);
 
