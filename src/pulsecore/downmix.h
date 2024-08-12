@@ -1,5 +1,5 @@
-#ifndef foochannelMixhfoo
-#define foochannelMixhfoo
+#ifndef foodownmixhfoo
+#define foodownmixhfoo
 #include <pulse/channelmap.h>
 
 /* formats that can be downmixed with channelMixMatrix */
@@ -57,6 +57,8 @@ extern const uint16_t channelDownmixMatrix[PA_CHANNEL_LAYOUT_COUNT][PA_DOWNMIX_C
 
 /* check if input channel map is supported by downmix matrix, otherwise return PA_FORMAT_OTHER*/
 pa_channel_layout_index_t pa_channel_map_to_index(const pa_channel_map *map) PA_GCC_PURE;
+/* map pa_channel_position_t to pa_downmix_position */
+int pa_to_downmix_position(const pa_channel_position_t channel_position);
 
 
 #endif
