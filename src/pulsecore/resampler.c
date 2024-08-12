@@ -955,16 +955,6 @@ static const float directionDownMixMatrix[ON_OTHER][ON_OTHER] = {
     {0.7071f, 0.7071f, 1.0f},
 };
 
-int pa_to_downmix_position(const pa_channel_position_t channel_position){
-    if(channel_position < PA_CHANNEL_POSITION_AUX0) return channel_position;
-    /* skip AUX0 - AUX31 */
-    else if(channel_position > PA_CHANNEL_POSITION_AUX31) return channel_position - 32; 
-    /* AUX0 - AUX31, which are not in use now */ 
-    /* do nothing to map table */
-    else return 0;
-}
-
-
 /* Fill a map of which output channels should get mono from input, not including
  * LFE output channels. (The LFE output channels are mapped separately.)
  */
