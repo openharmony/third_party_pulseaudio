@@ -31,6 +31,8 @@
 #include <pulsecore/strbuf.h>
 #include <pulsecore/core-util.h>
 
+#include "log/audio_log.h"
+
 #include "resampler.h"
 
 /* Number of samples of extra space we allow the resamplers to return */
@@ -345,7 +347,7 @@ pa_resampler* pa_resampler_new(
         const pa_channel_map *am,
         const pa_sample_spec *b,
         const pa_channel_map *bm,
-	unsigned crossover_freq,
+        unsigned crossover_freq,
         pa_resample_method_t method,
         pa_resample_flags_t flags) {
 
@@ -434,11 +436,14 @@ pa_resampler* pa_resampler_new(
     }
     r->w_fz = pa_sample_size_of_format(r->work_format) * r->work_channels;
 
-    pa_log_debug("Resampler:");
-    pa_log_debug("  rate %d -> %d (method %s)", a->rate, b->rate, pa_resample_method_to_string(r->method));
-    pa_log_debug("  format %s -> %s (intermediate %s)", pa_sample_format_to_string(a->format),
-                 pa_sample_format_to_string(b->format), pa_sample_format_to_string(r->work_format));
-    pa_log_debug("  channels %d -> %d (resampling %d)", a->channels, b->channels, r->work_channels);
+    AUDIO_INFO_LOG("Resampler:");
+    AUDIO_INFO_LOG("  rate %{public}d -> %{public}d (method %{public}s)",
+        a->rate, b->rate, pa_resample_method_to_string(r->method));
+    AUDIO_INFO_LOG("  format %{public}s -> %{public}s (intermediate %{public}s)",
+        pa_sample_format_to_string(a->format), pa_sample_format_to_string(b->format),
+        pa_sample_format_to_string(r->work_format));
+    AUDIO_INFO_LOG("  channels %{public}d -> %{public}d (resampling %{public}d)",
+        a->channels, b->channels, r->work_channels);
 
     /* set up the remap structure */
     if (r->map_required)
