@@ -1291,11 +1291,12 @@ static void setup_remap(const pa_resampler *r, pa_remap_t *m, bool *lfe_remixed)
                     pa_channel_position_t b = r->o_cm.map[oc];
                     int b_downmix = pa_to_downmix_position(b);
                     m->map_table_f[oc][ic] = (float)channelDownmixMatrix[output_layout_index][a_downmix][b_downmix]/(float)RESCALE_COEF;
-                    if(on_lfe(a) && (r->flags & PA_RESAMPLER_CONSUME_LFE))
-                        m->map_table_f[oc][ic] = 1.f/(float)ic_unconnected_lfe;
+                    /* force lfe downmix*/
+                    // if(on_lfe(a) && (r->flags & PA_RESAMPLER_CONSUME_LFE))
+                    if(on_lfe(a))
+                        m->map_table_f[oc][ic] = .375f/(float)ic_unconnected_lfe;
                 }
             }
-            
         }
         /* channels that are not supported by downmix table */
         else{ 
@@ -1318,8 +1319,10 @@ static void setup_remap(const pa_resampler *r, pa_remap_t *m, bool *lfe_remixed)
                         m->map_table_f[oc][ic] = m->map_table_f[oc][ic] = directionDownMixMatrix[ic_direction][oc_direction];;
                         ic_unconnected_center_mixed_in = true;
 
-                    } else if (on_lfe(a) && (r->flags & PA_RESAMPLER_CONSUME_LFE))
-                        m->map_table_f[oc][ic] = 1.f / (float) ic_unconnected_lfe;
+                    // } else if (on_lfe(a) && (r->flags & PA_RESAMPLER_CONSUME_LFE))
+                    /* force lfe downmix */
+                    } else if (on_lfe(a))
+                        m->map_table_f[oc][ic] = .375f / (float) ic_unconnected_lfe;
                 }
             }
 
