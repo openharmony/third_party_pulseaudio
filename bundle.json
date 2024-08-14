@@ -34,8 +34,20 @@
         "build": {
             "sub_component": [
                 "//third_party/pulseaudio/ohosbuild/src/daemon:pulseaudio",
+                "//third_party/pulseaudio/ohosbuild/src/modules:module-cli-protocol-unix",
+                "//third_party/pulseaudio/ohosbuild/src/modules:module-native-protocol-fd",
+                "//third_party/pulseaudio/ohosbuild/src/modules:module-native-protocol-tcp",
+                "//third_party/pulseaudio/ohosbuild/src/modules:module-native-protocol-unix",
+                "//third_party/pulseaudio/ohosbuild/src/modules:module-suspend-on-idle",
+                "//third_party/pulseaudio/ohosbuild/src/pulse:pulse-simple",
                 "//third_party/pulseaudio/ohosbuild/src/pulse:pulse",
+                "//third_party/pulseaudio/ohosbuild/src/pulsecore:cli",
+                "//third_party/pulseaudio/ohosbuild/src/pulsecore:protocol-cli",
+                "//third_party/pulseaudio/ohosbuild/src/pulsecore:protocol-native",
                 "//third_party/pulseaudio/ohosbuild/src/pulsecore:pulsecore",
+                "//third_party/pulseaudio/ohosbuild/src:pa_daemon_config",
+                "//third_party/pulseaudio/ohosbuild/src:pa_default_config",
+                "//third_party/pulseaudio/ohosbuild/src:pa_client_config",
                 "//third_party/pulseaudio/ohosbuild/src:pulsecommon",
                 "//third_party/pulseaudio/sonic:sonic"
             ],
@@ -46,6 +58,48 @@
                         "header_files": []
                     },
                     "name": "//third_party/pulseaudio/ohosbuild/src/daemon:pulseaudio"
+                },
+                {
+                    "header": {
+                        "header_base": "//third_party/pulseaudio/ohosbuild/src/modules",
+                        "header_files": []
+                    },
+                    "name": "//third_party/pulseaudio/ohosbuild/src/modules:module-cli-protocol-unix"
+                },
+                {
+                    "header": {
+                        "header_base": "//third_party/pulseaudio/ohosbuild/src/modules",
+                        "header_files": []
+                    },
+                    "name": "//third_party/pulseaudio/ohosbuild/src/modules:module-native-protocol-fd"
+                },
+                {
+                    "header": {
+                        "header_base": "//third_party/pulseaudio/ohosbuild/src/modules",
+                        "header_files": []
+                    },
+                    "name": "//third_party/pulseaudio/ohosbuild/src/modules:module-native-protocol-tcp"
+                },
+                {
+                    "header": {
+                        "header_base": "//third_party/pulseaudio/ohosbuild/src/modules",
+                        "header_files": []
+                    },
+                    "name": "//third_party/pulseaudio/ohosbuild/src/modules:module-native-protocol-unix"
+                },
+                {
+                    "header": {
+                        "header_base": "//third_party/pulseaudio/ohosbuild/src/modules",
+                        "header_files": []
+                    },
+                    "name": "//third_party/pulseaudio/ohosbuild/src/modules:module-suspend-on-idle"
+                },
+                {
+                    "header": {
+                        "header_base": "//third_party/pulseaudio/ohosbuild/src/pulse",
+                        "header_files": []
+                    },
+                    "name": "//third_party/pulseaudio/ohosbuild/src/pulse:pulse-simple"
                 },
                 {
                     "header": {
@@ -62,8 +116,27 @@
                     "name": "//third_party/pulseaudio/ohosbuild/src/pulse:pulse"
                 },
                 {
-
-
+                    "header": {
+                        "header_base": "//third_party/pulseaudio/ohosbuild/src/pulsecore",
+                        "header_files": []
+                    },
+                    "name": "//third_party/pulseaudio/ohosbuild/src/pulsecore:cli"
+                },
+                {
+                    "header": {
+                        "header_base": "//third_party/pulseaudio/ohosbuild/src/pulsecore",
+                        "header_files": []
+                    },
+                    "name": "//third_party/pulseaudio/ohosbuild/src/pulsecore:protocol-cli"
+                },
+                {
+                    "header": {
+                        "header_base": "//third_party/pulseaudio/ohosbuild/src/pulsecore",
+                        "header_files": []
+                    },
+                    "name": "//third_party/pulseaudio/ohosbuild/src/pulsecore:protocol-native"
+                },
+                {
                     "header": {
                         "header_base": "//third_party/pulseaudio/ohosbuild/src/pulsecore",
                         "header_files": [
@@ -88,6 +161,34 @@
                         ]
                     },
                     "name": "//third_party/pulseaudio/ohosbuild/src/pulsecore:pulsecore"
+                },
+                {
+                    "header": {
+                        "header_base": "//third_party/pulseaudio/ohosbuild/src",
+                        "header_files": []
+                    },
+                    "name": "//third_party/pulseaudio/ohosbuild/src:pa_daemon_config"
+                },
+                {
+                    "header": {
+                        "header_base": "//third_party/pulseaudio/ohosbuild/src",
+                        "header_files": []
+                    },
+                    "name": "//third_party/pulseaudio/ohosbuild/src:pa_default_config"
+                },
+                {
+                    "header": {
+                        "header_base": "//third_party/pulseaudio/ohosbuild/src",
+                        "header_files": []
+                    },
+                    "name": "//third_party/pulseaudio/ohosbuild/src:pa_client_config"
+                },
+                {
+                    "header": {
+                        "header_base": "//third_party/pulseaudio/ohosbuild/src/daemon",
+                        "header_files": []
+                    },
+                    "name": "//third_party/pulseaudio/ohosbuild/src/daemon:pulseaudio"
                 },
                 {
                     "header": {
