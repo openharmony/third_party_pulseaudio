@@ -45,9 +45,6 @@
                 "//third_party/pulseaudio/ohosbuild/src/pulsecore:protocol-cli",
                 "//third_party/pulseaudio/ohosbuild/src/pulsecore:protocol-native",
                 "//third_party/pulseaudio/ohosbuild/src/pulsecore:pulsecore",
-                "//third_party/pulseaudio/ohosbuild/src:pa_daemon_config",
-                "//third_party/pulseaudio/ohosbuild/src:pa_default_config",
-                "//third_party/pulseaudio/ohosbuild/src:pa_client_config",
                 "//third_party/pulseaudio/ohosbuild/src:pulsecommon",
                 "//third_party/pulseaudio/sonic:sonic"
             ],
@@ -108,7 +105,7 @@
                             "../../../src/pulse/pulseaudio.h",
                             "../../../src/pulse/rtclock.h",
                             "../../../src/pulse/timeval.h",
-                            "../../../src/pulse/volume.h>",
+                            "../../../src/pulse/volume.h",
                             "../../../src/pulse/xmalloc.h",
                             "../../../src/pulse/util.h"
                         ]
@@ -161,27 +158,6 @@
                         ]
                     },
                     "name": "//third_party/pulseaudio/ohosbuild/src/pulsecore:pulsecore"
-                },
-                {
-                    "header": {
-                        "header_base": "//third_party/pulseaudio/ohosbuild/src",
-                        "header_files": []
-                    },
-                    "name": "//third_party/pulseaudio/ohosbuild/src:pa_daemon_config"
-                },
-                {
-                    "header": {
-                        "header_base": "//third_party/pulseaudio/ohosbuild/src",
-                        "header_files": []
-                    },
-                    "name": "//third_party/pulseaudio/ohosbuild/src:pa_default_config"
-                },
-                {
-                    "header": {
-                        "header_base": "//third_party/pulseaudio/ohosbuild/src",
-                        "header_files": []
-                    },
-                    "name": "//third_party/pulseaudio/ohosbuild/src:pa_client_config"
                 },
                 {
                     "header": {

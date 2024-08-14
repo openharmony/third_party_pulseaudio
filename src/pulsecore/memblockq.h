@@ -102,7 +102,8 @@ struct pa_memblockq {
     pa_sample_spec sample_spec;
 };
 
-static void drop_block(pa_memblockq *bq, struct list_item *q) {
+static void drop_block(pa_memblockq *bq, struct list_item *q)
+{
     pa_assert(bq);
     pa_assert(q);
 
@@ -139,7 +140,8 @@ static void drop_block(pa_memblockq *bq, struct list_item *q) {
     bq->n_blocks--;
 }
 
-static void drop_backlog(pa_memblockq *bq) {
+static void drop_backlog(pa_memblockq *bq)
+{
     int64_t boundary;
     pa_assert(bq);
 
