@@ -228,7 +228,8 @@ enum {
 };
 
 /* Called from IO context */
-static void playback_stream_request_bytes(playback_stream *s) {
+static void playback_stream_request_bytes(playback_stream *s)
+{
     size_t m;
 
     playback_stream_assert_ref(s);
@@ -247,9 +248,10 @@ static void playback_stream_request_bytes(playback_stream *s) {
     pa_log("request_bytes(%lu)", (unsigned long) m);
 #endif
 
-    if (pa_atomic_add(&s->missing, (int) m) <= 0)
+    if (pa_atomic_add(&s->missing, (int) m) <= 0) {
         pa_asyncmsgq_post(pa_thread_mq_get()->outq, PA_MSGOBJECT(s),
             PLAYBACK_STREAM_MESSAGE_REQUEST_DATA, NULL, 0, NULL, NULL);
+    }
 }
 
 pa_native_protocol* pa_native_protocol_get(pa_core *core);
