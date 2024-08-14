@@ -436,13 +436,13 @@ pa_resampler* pa_resampler_new(
     }
     r->w_fz = pa_sample_size_of_format(r->work_format) * r->work_channels;
 
-    AUDIO_INFO_LOG("Resampler:");
-    AUDIO_INFO_LOG("  rate %{public}d -> %{public}d (method %{public}s)",
+    AUDIO_DEBUG_LOG("Resampler:");
+    AUDIO_DEBUG_LOG("  rate %{public}d -> %{public}d (method %{public}s)",
         a->rate, b->rate, pa_resample_method_to_string(r->method));
-    AUDIO_INFO_LOG("  format %{public}s -> %{public}s (intermediate %{public}s)",
+    AUDIO_DEBUG_LOG("  format %{public}s -> %{public}s (intermediate %{public}s)",
         pa_sample_format_to_string(a->format), pa_sample_format_to_string(b->format),
         pa_sample_format_to_string(r->work_format));
-    AUDIO_INFO_LOG("  channels %{public}d -> %{public}d (resampling %{public}d)",
+    AUDIO_DEBUG_LOG("  channels %{public}d -> %{public}d (resampling %{public}d)",
         a->channels, b->channels, r->work_channels);
 
     /* set up the remap structure */
