@@ -1165,27 +1165,6 @@ static void setup_remap(const pa_resampler *r, pa_remap_t *m, bool *lfe_remixed)
                     ic_connected[ic] = true;
                 }
             }
-            /* separate rear/side */
-            // REAR = SIDE?
-            // if (!oc_connected) {
-            //     /* Maybe it is due to 5.1 rear/side confustion? */
-            //     for (ic = 0; ic < n_ic; ic++) {
-            //         pa_channel_position_t a = r->i_cm.map[ic];
-            //         if (ic_connected[ic])
-            //             continue;
-
-            //         if ((a == PA_CHANNEL_POSITION_REAR_LEFT && b == PA_CHANNEL_POSITION_SIDE_LEFT) ||
-            //             (a == PA_CHANNEL_POSITION_SIDE_LEFT && b == PA_CHANNEL_POSITION_REAR_LEFT) ||
-            //             (a == PA_CHANNEL_POSITION_REAR_RIGHT && b == PA_CHANNEL_POSITION_SIDE_RIGHT) ||
-            //             (a == PA_CHANNEL_POSITION_SIDE_RIGHT && b == PA_CHANNEL_POSITION_REAR_RIGHT)) {
-
-            //             m->map_table_f[oc][ic] = 1.0f;
-
-            //             oc_connected = true;
-            //             ic_connected[ic] = true;
-            //         }
-            //     }
-            // }
             // output channel has no relating input channel, upmix here
             if (!oc_connected) {
                 /* Try to find matching input ports for this output port */
@@ -1281,19 +1260,19 @@ static void setup_remap(const pa_resampler *r, pa_remap_t *m, bool *lfe_remixed)
                     ic_unconnected_lfe++;
         }
 
-        if(output_layout_index != PA_CHANNEL_LAYOUT_OTHER){
-            for(ic=0; ic<n_ic; ic++){
+        if (output_layout_index != PA_CHANNEL_LAYOUT_OTHER){
+            for (ic = 0; ic < n_ic; ic++){
                 if (ic_connected[ic])
                     continue;
                 pa_channel_position_t a = r->i_cm.map[ic];
                 int a_downmix = pa_to_downmix_position(a);
-                for(oc=0; oc<n_oc; oc++){
+                for (oc = 0; oc < n_oc; oc++){
                     pa_channel_position_t b = r->o_cm.map[oc];
                     int b_downmix = pa_to_downmix_position(b);
                     m->map_table_f[oc][ic] = (float)channelDownmixMatrix[output_layout_index][a_downmix][b_downmix]/(float)RESCALE_COEF;
                     /* force lfe downmix*/
                     // if(on_lfe(a) && (r->flags & PA_RESAMPLER_CONSUME_LFE))
-                    if(on_lfe(a))
+                    if (on_lfe(a))
                         m->map_table_f[oc][ic] = .375f/(float)ic_unconnected_lfe;
                 }
             }
@@ -1398,8 +1377,8 @@ static void setup_remap(const pa_resampler *r, pa_remap_t *m, bool *lfe_remixed)
         if(sum > max_sum) max_sum = sum;
     }
 
-    for(oc = 0; oc<n_oc; oc++){
-        for(ic=0; ic<n_ic; ic++){
+    for (oc = 0; oc < n_oc; oc++){
+        for (ic = 0; ic < n_ic; ic++){
             m->map_table_f[oc][ic] /= max_sum;
         }
     }
