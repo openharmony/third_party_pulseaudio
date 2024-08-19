@@ -229,7 +229,7 @@ const uint16_t channelDownmixMatrix[PA_CHANNEL_LAYOUT_COUNT][PA_DOWNMIX_CHANNEL_
 };
 
 
-pa_channel_layout_index_t pa_channel_map_to_index(const pa_channel_map *map){
+pa_channel_layout_index_t pa_channel_map_to_index(const pa_channel_map *map) {
     pa_bitset_t in_map[PA_BITSET_ELEMENTS(PA_CHANNEL_POSITION_MAX)];
     unsigned c;
 
@@ -288,11 +288,14 @@ pa_channel_layout_index_t pa_channel_map_to_index(const pa_channel_map *map){
     return PA_CHANNEL_LAYOUT_OTHER;
 }
 
-int pa_to_downmix_position(const pa_channel_position_t channel_position){
-    if (channel_position < PA_CHANNEL_POSITION_AUX0) return channel_position;
+int pa_to_downmix_position(const pa_channel_position_t channel_position) {
+    if (channel_position < PA_CHANNEL_POSITION_AUX0)
+        return channel_position;
     /* skip AUX0 - AUX31 */
-    else if (channel_position > PA_CHANNEL_POSITION_AUX31) return channel_position - 32; 
+    else if (channel_position > PA_CHANNEL_POSITION_AUX31)
+        return channel_position - 32; 
     /* AUX0 - AUX31, which are not in use now */ 
     /* do nothing to map table */
-    else return 0;
+    else
+        return 0;
 }
