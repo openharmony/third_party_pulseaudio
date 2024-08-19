@@ -926,7 +926,7 @@ static bool on_side(pa_channel_position_t p) {
         p == PA_CHANNEL_POSITION_TOP_CENTER;
 }
 
-typedef enum pa_channel_direction{
+typedef enum pa_channel_direction {
     ON_FRONT,
     ON_REAR,
     ON_SIDE,

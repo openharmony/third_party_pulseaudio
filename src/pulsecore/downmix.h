@@ -17,16 +17,13 @@ typedef enum pa_channel_layout_index {
 
 enum channel_position_downmix {
     PA_DOWNMIX_POSITION_TOP_CENTER = PA_CHANNEL_POSITION_TOP_CENTER - 32,   /* AUX0 - AUX31 unused */           
-
     PA_DOWNMIX_POSITION_TOP_FRONT_LEFT,           /**< Apple calls this 'Vertical Height Left' */
     PA_DOWNMIX_POSITION_TOP_FRONT_RIGHT,          /**< Apple calls this 'Vertical Height Right' */
     PA_DOWNMIX_POSITION_TOP_FRONT_CENTER,         /**< Apple calls this 'Vertical Height Center' */
-
     PA_DOWNMIX_POSITION_TOP_REAR_LEFT,            /**< Microsoft and Apple call this 'Top Back Left' */
     PA_DOWNMIX_POSITION_TOP_REAR_RIGHT,           /**< Microsoft and Apple call this 'Top Back Right' */
     PA_DOWNMIX_POSITION_TOP_REAR_CENTER,          /**< Microsoft and Apple call this 'Top Back Center' */
     PA_DOWNMIX_CHANNEL_MAX
-
 };
 
 extern const uint16_t channelDownmixMatrix[PA_CHANNEL_LAYOUT_COUNT][PA_DOWNMIX_CHANNEL_MAX][PA_DOWNMIX_CHANNEL_MAX];
