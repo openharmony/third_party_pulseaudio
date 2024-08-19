@@ -3,7 +3,7 @@
 #include <pulse/channelmap.h>
 
 /* formats that can be downmixed with channelMixMatrix */
-typedef enum pa_channel_layout_index{
+typedef enum pa_channel_layout_index {
     PA_CHANNEL_LAYOUT_OTHER = -1,
     PA_CHANNEL_LAYOUT_STEREO = 0,
     PA_CHANNEL_LAYOUT_5POINT1,
@@ -15,9 +15,7 @@ typedef enum pa_channel_layout_index{
     PA_CHANNEL_LAYOUT_COUNT
 } pa_channel_layout_index_t;
 
-
-
-enum channel_position_downmix{
+enum channel_position_downmix {
     PA_DOWNMIX_POSITION_TOP_CENTER = PA_CHANNEL_POSITION_TOP_CENTER - 32,   /* AUX0 - AUX31 unused */           
 
     PA_DOWNMIX_POSITION_TOP_FRONT_LEFT,           /**< Apple calls this 'Vertical Height Left' */
@@ -36,8 +34,6 @@ extern const uint16_t channelDownmixMatrix[PA_CHANNEL_LAYOUT_COUNT][PA_DOWNMIX_C
 
 /* check if input channel map is supported by downmix matrix, otherwise return PA_FORMAT_OTHER*/
 pa_channel_layout_index_t pa_channel_map_to_index(const pa_channel_map *map) PA_GCC_PURE;
-/* map pa_channel_position_t to pa_downmix_position */
 int pa_to_downmix_position(const pa_channel_position_t channel_position);
-
 
 #endif

@@ -1250,23 +1250,21 @@ static void setup_remap(const pa_resampler *r, pa_remap_t *m, bool *lfe_remixed)
         
         for (ic = 0; ic < n_ic; ic++) {
                 pa_channel_position_t a = r->i_cm.map[ic];
-
                 if (ic_connected[ic])
                     continue;
-
                 else if (on_center(a))
                     ic_unconnected_center++;
                 else if (on_lfe(a))
                     ic_unconnected_lfe++;
         }
 
-        if (output_layout_index != PA_CHANNEL_LAYOUT_OTHER){
-            for (ic = 0; ic < n_ic; ic++){
+        if (output_layout_index != PA_CHANNEL_LAYOUT_OTHER) {
+            for (ic = 0; ic < n_ic; ic++) {
                 if (ic_connected[ic])
                     continue;
                 pa_channel_position_t a = r->i_cm.map[ic];
                 int a_downmix = pa_to_downmix_position(a);
-                for (oc = 0; oc < n_oc; oc++){
+                for (oc = 0; oc < n_oc; oc++) {
                     pa_channel_position_t b = r->o_cm.map[oc];
                     int b_downmix = pa_to_downmix_position(b);
                     m->map_table_f[oc][ic] = (float)channelDownmixMatrix[output_layout_index][a_downmix][b_downmix]/(float)RESCALE_COEF;
@@ -1374,11 +1372,11 @@ static void setup_remap(const pa_resampler *r, pa_remap_t *m, bool *lfe_remixed)
         for (ic = 0; ic < n_ic; ic++)
             sum += m->map_table_f[oc][ic];
 
-        if(sum > max_sum) max_sum = sum;
+        if (sum > max_sum) max_sum = sum;
     }
 
-    for (oc = 0; oc < n_oc; oc++){
-        for (ic = 0; ic < n_ic; ic++){
+    for (oc = 0; oc < n_oc; oc++) {
+        for (ic = 0; ic < n_ic; ic++) {
             m->map_table_f[oc][ic] /= max_sum;
         }
     }
