@@ -15,6 +15,7 @@
 #ifndef foodownmixhfoo
 #define foodownmixhfoo
 #include <pulse/channelmap.h>
+#include <config.h>
 #include <pulsecore/bitset.h>
 
 /* formats that can be downmixed with channelMixMatrix */
