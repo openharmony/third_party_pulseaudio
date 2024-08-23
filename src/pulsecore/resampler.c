@@ -1267,16 +1267,14 @@ static void setup_remap(const pa_resampler *r, pa_remap_t *m, bool *lfe_remixed)
                 for (oc = 0; oc < n_oc; oc++) {
                     pa_channel_position_t b = r->o_cm.map[oc];
                     int b_downmix = pa_to_downmix_position(b);
-                    m->map_table_f[oc][ic] = (float)channelDownmixMatrix[output_layout_index][a_downmix][b_downmix]/(float)RESCALE_COEF;
+                    m->map_table_f[oc][ic] =
+                    (float)channelDownmixMatrix[output_layout_index][a_downmix][b_downmix]/(float)RESCALE_COEF;
                     /* force lfe downmix*/
-                    // if(on_lfe(a) && (r->flags & PA_RESAMPLER_CONSUME_LFE))
                     if (on_lfe(a))
                         m->map_table_f[oc][ic] = .375f/(float)ic_unconnected_lfe;
                 }
             }
-        }
-        /* channels that are not supported by downmix table */
-        else{ 
+        } else { /* channels that are not supported by downmix table */
             for (ic = 0; ic < n_ic; ic++) {
                 pa_channel_position_t a = r->i_cm.map[ic];
                 pa_channel_direction_t ic_direction = front_rear_side(r->i_cm.map[ic]);
@@ -1290,13 +1288,12 @@ static void setup_remap(const pa_resampler *r, pa_remap_t *m, bool *lfe_remixed)
                         m->map_table_f[oc][ic] = directionDownMixMatrix[ic_direction][oc_direction];
 
                     else if (on_right(a) && on_right(b))
-                        m->map_table_f[oc][ic] = m->map_table_f[oc][ic] = directionDownMixMatrix[ic_direction][oc_direction];
+                        m->map_table_f[oc][ic] = directionDownMixMatrix[ic_direction][oc_direction];
 
                     else if (on_center(a) && on_center(b)) {
-                        m->map_table_f[oc][ic] = m->map_table_f[oc][ic] = directionDownMixMatrix[ic_direction][oc_direction];;
+                        m->map_table_f[oc][ic] = directionDownMixMatrix[ic_direction][oc_direction];
                         ic_unconnected_center_mixed_in = true;
 
-                    // } else if (on_lfe(a) && (r->flags & PA_RESAMPLER_CONSUME_LFE))
                     /* force lfe downmix */
                     } else if (on_lfe(a))
                         m->map_table_f[oc][ic] = .375f / (float) ic_unconnected_lfe;
@@ -1361,7 +1358,7 @@ static void setup_remap(const pa_resampler *r, pa_remap_t *m, bool *lfe_remixed)
                     }
                 }
             }
-        }   
+        }
     }
 
     // uniform with maximum sum
