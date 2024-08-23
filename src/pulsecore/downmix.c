@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 #include "downmix.h"
-#include <config.h>
 
 /* coefficient matrix for downmixing */
 /* usage: [output_channel_layout][input_channel][output_channel*/
