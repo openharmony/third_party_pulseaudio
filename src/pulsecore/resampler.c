@@ -1249,19 +1249,19 @@ static void setup_remap(const pa_resampler *r, pa_remap_t *m, bool *lfe_remixed)
         pa_channel_layout_index_t output_layout_index = pa_channel_map_to_index(&r->o_cm);
         
         for (ic = 0; ic < n_ic; ic++) {
-                pa_channel_position_t a = r->i_cm.map[ic];
-                if (ic_connected[ic])
-                    continue;
-                else if (on_center(a))
-                    ic_unconnected_center++;
-                else if (on_lfe(a))
-                    ic_unconnected_lfe++;
+            pa_channel_position_t a = r->i_cm.map[ic];
+            if (ic_connected[ic]) {
+                continue;
+            } else if (on_center(a)) {
+                ic_unconnected_center++;
+            } else if (on_lfe(a)) {
+                ic_unconnected_lfe++;
+            }
         }
 
         if (output_layout_index != PA_CHANNEL_LAYOUT_OTHER) {
             for (ic = 0; ic < n_ic; ic++) {
-                if (ic_connected[ic])
-                    continue;
+                if (ic_connected[ic]) { continue; }
                 pa_channel_position_t a = r->i_cm.map[ic];
                 int a_downmix = pa_to_downmix_position(a);
                 for (oc = 0; oc < n_oc; oc++) {
@@ -1278,28 +1278,25 @@ static void setup_remap(const pa_resampler *r, pa_remap_t *m, bool *lfe_remixed)
             for (ic = 0; ic < n_ic; ic++) {
                 pa_channel_position_t a = r->i_cm.map[ic];
                 pa_channel_direction_t ic_direction = front_rear_side(r->i_cm.map[ic]);
-                if (ic_connected[ic])
+                if (ic_connected[ic]) {
                     continue;
-
+                }
                 for (oc = 0; oc < n_oc; oc++) {
                     pa_channel_position_t b = r->o_cm.map[oc];
                     pa_channel_direction_t oc_direction = front_rear_side(r->o_cm.map[oc]);
-                    if (on_left(a) && on_left(b))
+                    if (on_left(a) && on_left(b)) {
                         m->map_table_f[oc][ic] = directionDownMixMatrix[ic_direction][oc_direction];
-
-                    else if (on_right(a) && on_right(b))
+                    } else if (on_right(a) && on_right(b)) {
                         m->map_table_f[oc][ic] = directionDownMixMatrix[ic_direction][oc_direction];
-
-                    else if (on_center(a) && on_center(b)) {
+                    } else if (on_center(a) && on_center(b)) {
                         m->map_table_f[oc][ic] = directionDownMixMatrix[ic_direction][oc_direction];
                         ic_unconnected_center_mixed_in = true;
-
-                    /* force lfe downmix */
-                    } else if (on_lfe(a))
+                    } else if (on_lfe(a)) {
+                        /* force lfe downmix */
                         m->map_table_f[oc][ic] = .375f / (float) ic_unconnected_lfe;
+                    }
                 }
             }
-
             if (ic_unconnected_center > 0 && !ic_unconnected_center_mixed_in) {
                 unsigned ncenter[PA_CHANNELS_MAX];
                 bool found_frs[PA_CHANNELS_MAX];
@@ -1366,18 +1363,16 @@ static void setup_remap(const pa_resampler *r, pa_remap_t *m, bool *lfe_remixed)
 
     for (oc = 0; oc < n_oc; oc++) {
         float sum = 0.0f;
-        for (ic = 0; ic < n_ic; ic++)
+        for (ic = 0; ic < n_ic; ic++) {
             sum += m->map_table_f[oc][ic];
-
-        if (sum > max_sum) max_sum = sum;
+        }
+        if (sum > max_sum) { max_sum = sum; }
     }
-
     for (oc = 0; oc < n_oc; oc++) {
         for (ic = 0; ic < n_ic; ic++) {
             m->map_table_f[oc][ic] /= max_sum;
         }
     }
-
     /* make an 16:16 int version of the matrix */
     for (oc = 0; oc < n_oc; oc++)
         for (ic = 0; ic < n_ic; ic++)
