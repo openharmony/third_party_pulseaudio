@@ -469,9 +469,8 @@ int32_t ReadCommand(pa_tagstruct *t, uint32_t *u)
     if (t->rindex + 5 > t->length) {  // TAG + COMMAND = 5 BYTES
         return -1;
     }
-    if (memcpy_s(u, PA_CMD_SIZE, t->data + t->rindex + 1, PA_CMD_SIZE)) { // TAG 1 COMMAND 4
-        return -1;
-    }
+    memcpy(u, t->data + t->rindex + 1, PA_CMD_SIZE); // TAG 1 COMMAND 4
+    
     *u = ntohl(*u);
     return 0;
 }
