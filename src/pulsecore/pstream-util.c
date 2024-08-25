@@ -30,6 +30,10 @@
 
 #include "pstream-util.h"
 
+#include "log/audio_log.h"
+
+#define PA_SNPRINTF_COMMAND_STR_LENGTH 256
+
 static void pa_pstream_send_tagstruct_with_ancil_data(pa_pstream *p, pa_tagstruct *t, pa_cmsg_ancil_data *ancil_data) {
     size_t length;
     const uint8_t *data;
@@ -37,6 +41,14 @@ static void pa_pstream_send_tagstruct_with_ancil_data(pa_pstream *p, pa_tagstruc
 
     pa_assert(p);
     pa_assert(t);
+
+    uint32_t command;
+    if (ReadCommand(t, &command) == 0) {
+        char t[PA_SNPRINTF_COMMAND_STR_LENGTH] = {0};
+        pa_snprintf(t, sizeof(t), "PA_SEND_CMD[%u]", p, command);
+        CallStart(t);
+        CallEnd();
+    }
 
     pa_assert_se(data = pa_tagstruct_data(t, &length));
     pa_assert_se(packet = pa_packet_new_data(data, length));
