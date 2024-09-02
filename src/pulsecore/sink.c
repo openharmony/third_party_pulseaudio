@@ -50,6 +50,8 @@
 
 #include "sink.h"
 
+#include "log/audio_log.h"
+
 #define MAX_MIX_CHANNELS 32
 #define MIX_BUFFER_LENGTH (pa_page_size())
 #define ABSOLUTE_MIN_LATENCY (500)
@@ -1606,6 +1608,10 @@ pa_usec_t pa_sink_get_latency(pa_sink *s) {
     if (!(s->flags & PA_SINK_LATENCY))
         return 0;
 
+    if (s->asyncmsgq == NULL) {
+        AUDIO_ERR_LOG("pa_asyncmsgq is NULL");
+        return 0;
+    }
     pa_assert_se(pa_asyncmsgq_send(s->asyncmsgq, PA_MSGOBJECT(s), PA_SINK_MESSAGE_GET_LATENCY, &usec, 0, NULL) == 0);
 
     /* the return value is unsigned, so check that the offset can be added to usec without
