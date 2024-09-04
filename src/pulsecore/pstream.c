@@ -42,6 +42,7 @@
 #include <pulsecore/macro.h>
 
 #include "pstream.h"
+#include "log/audio_log.h"
 
 /* We piggyback information if audio data blocks are stored in SHM on the seek mode */
 #define PA_FLAG_SHMDATA     0x80000000LU
