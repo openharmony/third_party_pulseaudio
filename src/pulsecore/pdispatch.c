@@ -335,7 +335,7 @@ int pa_pdispatch_run(pa_pdispatch *pd, pa_packet *packet, pa_cmsg_ancil_data *an
 }
 #endif
     char oht[256] = {0};  // PA CMD 256bytes max
-    pa_snprintf(oht, sizeof(oht), "PA_RECV_CMD[%u] <%s>", command, p);
+    pa_snprintf(oht, sizeof(oht), "PA_RECV_CMD[%u]", command);
     CallStart(oht);
 
     pd->ancil_data = ancil_data;
