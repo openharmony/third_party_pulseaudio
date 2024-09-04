@@ -42,6 +42,7 @@
 #define MAX_TAG_SIZE (64*1024)
 #define MAX_APPENDED_SIZE 128
 #define GROW_TAG_SIZE 100
+#define PA_CMD_SIZE 4
 
 struct pa_tagstruct {
     uint8_t *data;
@@ -461,6 +462,17 @@ const uint8_t* pa_tagstruct_data(pa_tagstruct*t, size_t *l) {
 
     *l = t->length;
     return t->data;
+}
+
+int32_t ReadCommand(pa_tagstruct *t, uint32_t *u)
+{
+    if (t->rindex + 5 > t->length) {  // TAG + COMMAND = 5 BYTES
+        return -1;
+    }
+    memcpy(u, t->data + t->rindex + 1, PA_CMD_SIZE); // TAG 1 COMMAND 4
+    
+    *u = ntohl(*u);
+    return 0;
 }
 
 int pa_tagstruct_get_boolean(pa_tagstruct*t, bool *b) {

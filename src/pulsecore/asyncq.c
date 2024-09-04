@@ -74,6 +74,11 @@ static unsigned reduce(pa_asyncq *l, unsigned value) {
     return value & (unsigned) (l->size - 1);
 }
 
+unsigned PaAsyncqGetNumToRead(pa_asyncq *l)
+{
+    return l->write_idx - l->read_idx;
+}
+
 pa_asyncq *pa_asyncq_new(unsigned size) {
     pa_asyncq *l;
 

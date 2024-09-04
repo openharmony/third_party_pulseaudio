@@ -40,6 +40,7 @@
 
 typedef struct pa_asyncq pa_asyncq;
 
+unsigned PaAsyncqGetNumToRead(pa_asyncq *l);
 pa_asyncq* pa_asyncq_new(unsigned size);
 void pa_asyncq_free(pa_asyncq* q, pa_free_cb_t free_cb);
 
