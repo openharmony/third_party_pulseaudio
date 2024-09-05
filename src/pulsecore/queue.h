@@ -37,5 +37,6 @@ void pa_queue_push(pa_queue *q, void *p);
 void* pa_queue_pop(pa_queue *q);
 
 int pa_queue_isempty(pa_queue *q);
+unsigned PaQueueGetLen(pa_queue *q);
 
 #endif

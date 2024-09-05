@@ -120,3 +120,9 @@ int pa_queue_isempty(pa_queue *q) {
 
     return q->length == 0;
 }
+
+unsigned PaQueueGetLen(pa_queue *q)
+{
+    pa_assert(q);
+    return q->length;
+}

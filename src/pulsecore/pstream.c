@@ -42,6 +42,7 @@
 #include <pulsecore/macro.h>
 
 #include "pstream.h"
+#include "log/audio_log.h"
 
 /* We piggyback information if audio data blocks are stored in SHM on the seek mode */
 #define PA_FLAG_SHMDATA     0x80000000LU
@@ -471,6 +472,9 @@ void pa_pstream_send_packet(pa_pstream*p, pa_packet *packet, pa_cmsg_ancil_data 
 #endif
 
     pa_queue_push(p->send_queue, i);
+    if (PaQueueGetLen(p->send_queue) >= 10) {  // 10 maybe have msg backlog
+        AUDIO_WARNING_LOG("[MSG backlog]: PaQueueLen = %{public}u", PaQueueGetLen(p->send_queue));
+    }
 
     p->mainloop->defer_enable(p->defer_event, 1);
 }
