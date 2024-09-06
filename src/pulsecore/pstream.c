@@ -472,8 +472,8 @@ void pa_pstream_send_packet(pa_pstream*p, pa_packet *packet, pa_cmsg_ancil_data 
 #endif
 
     pa_queue_push(p->send_queue, i);
-    if (PaQueueGetLen(p->send_queue) >= 3) {  // 3 maybe have msg backlog
-        AUDIO_WARNING_LOG("[MSG backlog]: @<%{public}p> PaQueueLen = %{public}u", p, PaQueueGetLen(p->send_queue));
+    if (PaQueueGetLen(p->send_queue) >= 10) {  // 10 maybe have msg backlog
+        AUDIO_WARNING_LOG("[MSG backlog]: PaQueueLen = %{public}u", PaQueueGetLen(p->send_queue));
     }
 
     p->mainloop->defer_enable(p->defer_event, 1);
