@@ -46,7 +46,6 @@
 
 #define MEMBLOCKQ_MAXLENGTH (32*1024*1024)
 #define CONVERT_BUFFER_LENGTH (pa_page_size())
-#define RESAMPLER_CACHE_SIZE_RATIO 20
 
 PA_DEFINE_PUBLIC_CLASS(pa_sink_input, pa_msgobject);
 
@@ -680,8 +679,7 @@ int pa_sink_input_new(
     pa_xfree(pt);
 
     if (resampler) {
-        pa_resampler_prepare(
-            resampler, i->thread_info.history_memblockq, resampler->o_fz * RESAMPLER_CACHE_SIZE_RATIO);
+        PaResamplerPrebuf(resampler, i->core->mempool);
     }
 
     /* Don't forget to call pa_sink_input_put! */
@@ -1745,8 +1743,7 @@ void pa_sink_input_cork(pa_sink_input *i, bool b) {
     if (b && i->thread_info.resampler) {
         pa_resampler_reset(i->thread_info.resampler);
         if (i->thread_info.resampler) {
-            pa_resampler_prepare(i->thread_info.resampler,
-                i->thread_info.history_memblockq, i->thread_info.resampler->o_fz * RESAMPLER_CACHE_SIZE_RATIO);
+            PaResamplerPrebuf(i->thread_info.resampler, i->core->mempool);
         }
     }
 }
@@ -2622,8 +2619,7 @@ int pa_sink_input_update_resampler(pa_sink_input *i, bool flush_history) {
             return -PA_ERR_NOTSUPPORTED;
         }
         if (new_resampler) {
-            pa_resampler_prepare(
-                new_resampler, i->thread_info.history_memblockq, new_resampler->o_fz * RESAMPLER_CACHE_SIZE_RATIO);
+            PaResamplerPrebuf(new_resampler, i->core->mempool);
         }
     } else
         new_resampler = NULL;
