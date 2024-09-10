@@ -1725,26 +1725,3 @@ size_t PaResamplerPrebuf(pa_resampler *r, pa_mempool *mempool)
 
     return 0;
 }
-
-size_t PaResamplerPrebuf(pa_resampler *r, pa_mempool *mempool)
-{
-    pa_assert(r);
-
-    if (!mempool) {
-        return 0;
-    }
-
-    pa_memchunk chunkIn, chunkOut;
-    chunkIn.length = r->o_fz * RESAMPLER_CACHE_SIZE_RATIO;
-    chunkIn.memblock = pa_memblock_new(mempool, chunkIn.length);
-    chunkIn.index = 0;
-
-    pa_silence_memchunk(&chunkIn, &r->i_ss);
-    pa_resampler_run(r, &chunkIn, &chunkOut);
-    if (chunkOut.length != 0) {
-        pa_memblock_unref(chunkOut.memblock);
-    }
-    pa_memblock_unref(chunkIn.memblock);
-
-    return 0;
-}
