@@ -203,4 +203,6 @@ int pa_resampler_soxr_init(pa_resampler *r);
 /* Resampler-specific quirks */
 bool pa_speex_is_fixed_point(void);
 
+size_t PaResamplerPrebuf(pa_resampler *r, pa_mempool *mempool);
+
 #endif
