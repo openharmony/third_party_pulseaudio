@@ -75,7 +75,7 @@ static size_t calculate_resampler_history_bytes(pa_sink_input *i, size_t in_rewi
 
     /* Calculate the matching period */
     matching_period = r->i_ss.rate / pa_resampler_get_gcd(r);
-    pa_log_debug("Integral period length is %zu input frames", matching_period);
+    pa_log_debug("Integral period length is %lu input frames", matching_period);
 
     /* If the delay is larger than the length of the history queue, we can only
      * replay as much as we have. */
@@ -2211,7 +2211,7 @@ int pa_sink_input_finish_move(pa_sink_input *i, pa_sink *dest, bool save) {
 
     pa_sink_input_update_resampler(i, false);
 
-    // restore_render_memblockq(i); // restore is needless for moving between sinks
+    // restore_render_memblockq(i) restore is needless for moving between sinks
 
     pa_sink_update_status(dest);
 
