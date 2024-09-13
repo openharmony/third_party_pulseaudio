@@ -123,10 +123,6 @@ config("export_pulsecore_include") {
 }
 
 ohos_shared_library("pulsecore") {
-  sanitize = {
-    integer_overflow = true
-  }
-
   deps = [
     ":pulsecore_sources",
     "../../src:pulsecommon",
