@@ -20,8 +20,8 @@
         "adapted_system_type": [
             "standard"
         ],
-        "rom": "",
-        "ram": "",
+        "rom": "1872",
+        "ram": "0",
         "deps": {
             "components": [
                 "hilog",
@@ -71,6 +71,15 @@
                         ]
                     },
                     "name": "//third_party/pulseaudio/sonic:sonic"
+                },
+                {
+                    "header": {
+                        "header_base": "//third_party/pulseaudio/speex/include/speex",
+                        "header_files": [
+                            "speex_resampler.h"
+                        ]
+                    },
+                    "name": "//third_party/pulseaudio/speex:speexresampler"
                 }
             ],
             "test": []

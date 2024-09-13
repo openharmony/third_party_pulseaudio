@@ -85,7 +85,7 @@ static void thread(void *userdata) {
 
     // Once thread OS_RendererML is created, it will not exit.
     // This code serves as a fallback for exceptions caused by unexpected exits.
-    if (strcmp(m->name, "OS_RendererML") == 0) {
+    if (m->name != NULL && strcmp(m->name, "OS_RendererML") == 0) {
         AUDIO_ERR_LOG("Thread OS_RendererML exit");
         _Exit(0);
     }
