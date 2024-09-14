@@ -83,11 +83,13 @@ static void thread(void *userdata) {
 
     pa_mutex_unlock(m->mutex);
 
-    // Once thread OS_RendererML is created, it will not exit.
+    // Once thread OS_RendererML and OS_AudioML is created, it will not exit.
     // This code serves as a fallback for exceptions caused by unexpected exits.
-    if (m->name != NULL && strcmp(m->name, "OS_RendererML") == 0) {
-        AUDIO_ERR_LOG("Thread OS_RendererML exit");
-        _Exit(0);
+    if (m->name != NULL) {
+        AUDIO_ERR_LOG("Thread %{public}s exit", m->name);
+        if (strcmp(m->name, "OS_RendererML") == 0 || strcmp(m->name, "OS_AudioML")) {
+            _Exit(0);
+        }
     }
 }
 
