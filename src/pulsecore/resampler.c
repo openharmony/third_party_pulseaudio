@@ -31,8 +31,6 @@
 #include <pulsecore/strbuf.h>
 #include <pulsecore/core-util.h>
 
-#include "log/audio_log.h"
-
 #include "resampler.h"
 #include "downmix.h"
 
@@ -438,13 +436,13 @@ pa_resampler* pa_resampler_new(
     }
     r->w_fz = pa_sample_size_of_format(r->work_format) * r->work_channels;
 
-    AUDIO_DEBUG_LOG("Resampler:");
-    AUDIO_DEBUG_LOG("  rate %{public}d -> %{public}d (method %{public}s)",
+    pa_log_debug("Resampler:");
+    pa_log_debug("  rate %d -> %d (method %s)",
         a->rate, b->rate, pa_resample_method_to_string(r->method));
-    AUDIO_DEBUG_LOG("  format %{public}s -> %{public}s (intermediate %{public}s)",
+    pa_log_debug("  format %s -> %s (intermediate %s)",
         pa_sample_format_to_string(a->format), pa_sample_format_to_string(b->format),
         pa_sample_format_to_string(r->work_format));
-    AUDIO_DEBUG_LOG("  channels %{public}d -> %{public}d (resampling %{public}d)",
+    pa_log_debug("  channels %d -> %d (resampling %d)",
         a->channels, b->channels, r->work_channels);
 
     /* set up the remap structure */

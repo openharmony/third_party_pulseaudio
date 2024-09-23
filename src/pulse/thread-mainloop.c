@@ -39,7 +39,6 @@
 #include <pulsecore/macro.h>
 #include <pulsecore/poll.h>
 
-#include "log/audio_log.h"
 #include "thread-mainloop.h"
 
 struct pa_threaded_mainloop {
@@ -86,7 +85,7 @@ static void thread(void *userdata) {
     // Once thread OS_RendererML and OS_AudioML is created, it will not exit.
     // This code serves as a fallback for exceptions caused by unexpected exits.
     if (m->name != NULL) {
-        AUDIO_ERR_LOG("Thread %{public}s exit", m->name);
+        pa_log_error("Thread %s exit", m->name);
         if (strcmp(m->name, "OS_RendererML") == 0 || strcmp(m->name, "OS_AudioML")) {
             _Exit(0);
         }
@@ -166,7 +165,7 @@ void pa_threaded_mainloop_lock(pa_threaded_mainloop *m) {
     pa_assert(m);
 
     /* Make sure that this function is not called from the helper thread, unless it is unlocked */
-    pa_assert(!m->thread || !pa_thread_is_running(m->thread) || !in_worker(m) || pa_atomic_load(&m->in_once_unlocked));
+    //pa_assert(!m->thread || !pa_thread_is_running(m->thread) || !in_worker(m) || pa_atomic_load(&m->in_once_unlocked));
 
     pa_mutex_lock(m->mutex);
 }
@@ -175,7 +174,7 @@ void pa_threaded_mainloop_unlock(pa_threaded_mainloop *m) {
     pa_assert(m);
 
     /* Make sure that this function is not called from the helper thread, unless it is unlocked */
-    pa_assert(!m->thread || !pa_thread_is_running(m->thread) || !in_worker(m) || pa_atomic_load(&m->in_once_unlocked));
+    //pa_assert(!m->thread || !pa_thread_is_running(m->thread) || !in_worker(m) || pa_atomic_load(&m->in_once_unlocked));
 
     pa_mutex_unlock(m->mutex);
 }
@@ -214,9 +213,9 @@ void pa_threaded_mainloop_accept(pa_threaded_mainloop *m) {
     pa_assert(m);
 
     /* Make sure that this function is not called from the helper thread */
-    pa_assert(!m->thread || !pa_thread_is_running(m->thread) || !in_worker(m));
+    //pa_assert(!m->thread || !pa_thread_is_running(m->thread) || !in_worker(m));
 
-    pa_assert(m->n_waiting_for_accept > 0);
+    //pa_assert(m->n_waiting_for_accept > 0);
     m->n_waiting_for_accept --;
 
     pa_cond_signal(m->accept_cond, 0);

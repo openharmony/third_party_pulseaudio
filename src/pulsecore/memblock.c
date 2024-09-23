@@ -48,8 +48,6 @@
 #include <pulsecore/llist.h>
 #include <pulsecore/core-util.h>
 
-#include "log/audio_log.h"
-
 #include "memblock.h"
 
 /* We can allocate 64*1024*1024 bytes at maximum. That's 64MB. Please
@@ -271,7 +269,7 @@ static struct mempool_slot* mempool_allocate_slot(pa_mempool *p) {
 
         if (!slot) {
             if (pa_log_ratelimit(PA_LOG_DEBUG))
-                AUDIO_DEBUG_LOG("Pool full");
+                pa_log_debug("Pool full");
             pa_atomic_inc(&p->stat.n_pool_full);
             return NULL;
         }
@@ -366,7 +364,7 @@ pa_memblock *pa_memblock_new_pool(pa_mempool *p, size_t length) {
         pa_atomic_ptr_store(&b->data, mempool_slot_data(slot));
 
     } else {
-        AUDIO_DEBUG_LOG("Memory block too large for pool: %{public}lu > %{public}lu",
+        pa_log_debug("Memory block too large for pool: %lu > %lu",
             (unsigned long) length, (unsigned long) p->block_size);
         pa_atomic_inc(&p->stat.n_too_large_for_pool);
         return NULL;
@@ -790,7 +788,7 @@ static void memblock_replace_import(pa_memblock *b) {
  * TODO-1: Transform the global core mempool to a per-client one
  * TODO-2: Remove global mempools support */
 pa_mempool *pa_mempool_new(pa_mem_type_t type, size_t size, bool per_client) {
-    AUDIO_DEBUG_LOG("pa_mempool_new:type %{public}d, size %{public}zu, per_client %{public}d,", type, size, per_client);
+    pa_log_debug("pa_mempool_new:type %d, size %zu, per_client %d,", type, size, per_client);
     pa_mempool *p;
     char t1[PA_BYTES_SNPRINT_MAX], t2[PA_BYTES_SNPRINT_MAX];
     const size_t page_size = pa_page_size();
@@ -816,8 +814,8 @@ pa_mempool *pa_mempool_new(pa_mem_type_t type, size_t size, bool per_client) {
         return NULL;
     }
 
-    AUDIO_DEBUG_LOG("Using %{public}s memory pool with %{public}u slots of size %{public}s each, total size is"
-                 "%{public}s, maximum usable slot size is %{public}lu",
+    pa_log_debug("Using %s memory pool with %u slots of size %s each, total size is"
+                 "%s, maximum usable slot size is %lu",
                  pa_mem_type_to_string(type),
                  p->n_blocks,
                  pa_bytes_snprint(t1, sizeof(t1), (unsigned) p->block_size),
@@ -882,7 +880,7 @@ static void mempool_free(pa_mempool *p) {
             }
 
             if (!k)
-                AUDIO_ERR_LOG("REF: Leaked memory block %{public}p", b);
+                pa_log_error("REF: Leaked memory block %p", b);
 
             while ((k = pa_flist_pop(list)))
                 while (pa_flist_push(p->free_slots, k) < 0)
@@ -893,7 +891,7 @@ static void mempool_free(pa_mempool *p) {
 
 #endif
 
-        AUDIO_ERR_LOG("Memory pool destroyed but not all memory blocks freed! %{public}u remain.",
+        pa_log_error("Memory pool destroyed but not all memory blocks freed! %u remain.",
             pa_atomic_load(&p->stat.n_allocated));
 
 /*         PA_DEBUG_TRAP; */
@@ -1214,8 +1212,8 @@ pa_memblock* pa_memimport_get(pa_memimport *i, pa_mem_type_t type, uint32_t bloc
 
     if (!(seg = pa_hashmap_get(i->segments, PA_UINT32_TO_PTR(shm_id)))) {
         if (type == PA_MEM_TYPE_SHARED_MEMFD) {
-            AUDIO_ERR_LOG("Bailing out! No cached memimport segment for memfd ID %{public}u", shm_id);
-            AUDIO_ERR_LOG("Did the other PA endpoint forget registering its memfd pool?");
+            pa_log_error("Bailing out! No cached memimport segment for memfd ID %u", shm_id);
+            pa_log_error("Did the other PA endpoint forget registering its memfd pool?");
             goto finish;
         }
 
@@ -1225,7 +1223,7 @@ pa_memblock* pa_memimport_get(pa_memimport *i, pa_mem_type_t type, uint32_t bloc
     }
 
     if (writable && !seg->writable) {
-        AUDIO_ERR_LOG("Cannot import cached segment in write mode - previously mapped as read-only");
+        pa_log_error("Cannot import cached segment in write mode - previously mapped as read-only");
         goto finish;
     }
 

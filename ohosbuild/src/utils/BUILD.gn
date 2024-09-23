@@ -42,6 +42,7 @@ ohos_executable("pactl") {
     "../../src:pulsecommon",
     "../../src/pulse:pulse",
   ]
+  external_deps = [ "hilog:libhilog" ]
   subsystem_name = "thirdparty"
   part_name = "pulseaudio"
 }
@@ -57,7 +58,7 @@ ohos_executable("pacmd") {
     "../../src:pulsecommon",
     "../../src/pulse:pulse",
   ]
-
+  external_deps = [ "hilog:libhilog" ]
   subsystem_name = "thirdparty"
   part_name = "pulseaudio"
 }

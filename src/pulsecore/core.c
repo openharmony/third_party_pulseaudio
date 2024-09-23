@@ -45,8 +45,6 @@
 #include <pulsecore/macro.h>
 #include <pulsecore/strbuf.h>
 
-#include "log/audio_log.h"
-
 #include "core.h"
 
 PA_DEFINE_PUBLIC_CLASS(pa_core, pa_msgobject);
@@ -108,7 +106,7 @@ static int core_message_handler(const char *object_path, const char *message, co
 }
 
 pa_core* pa_core_new(pa_mainloop_api *m, bool shared, bool enable_memfd, size_t shm_size) {
-    AUDIO_INFO_LOG("start pa_core_new, shared: %{public}d, enable_memfd: %{public}d", shared, enable_memfd);
+    pa_log_info("start pa_core_new, shared: %d, enable_memfd: %d", shared, enable_memfd);
     pa_core* c;
     pa_mempool *pool;
     pa_mem_type_t type;
@@ -119,7 +117,7 @@ pa_core* pa_core_new(pa_mainloop_api *m, bool shared, bool enable_memfd, size_t 
     if (shared) {
         type = (enable_memfd) ? PA_MEM_TYPE_SHARED_MEMFD : PA_MEM_TYPE_SHARED_POSIX;
         if (!(pool = pa_mempool_new(type, shm_size, false))) {
-            AUDIO_WARNING_LOG("Failed to allocate %{public}s memory pool. Falling back to a normal memory pool.",
+            pa_log_warn("Failed to allocate %s memory pool. Falling back to a normal memory pool.",
                         pa_mem_type_to_string(type));
             shared = false;
         }
@@ -127,7 +125,7 @@ pa_core* pa_core_new(pa_mainloop_api *m, bool shared, bool enable_memfd, size_t 
 
     if (!shared) {
         if (!(pool = pa_mempool_new(PA_MEM_TYPE_PRIVATE, shm_size, false))) {
-            AUDIO_ERR_LOG("pa_mempool_new() failed.");
+            pa_log_error("pa_mempool_new() failed.");
             return NULL;
         }
     }
@@ -290,7 +288,7 @@ void pa_core_set_configured_default_sink(pa_core *core, const char *sink) {
 
     pa_xfree(core->configured_default_sink);
     core->configured_default_sink = pa_xstrdup(sink);
-    AUDIO_INFO_LOG("configured_default_sink: %{public}s -> %{public}s",
+    pa_log_info("configured_default_sink: %s -> %s",
                 old_sink ? old_sink : "(unset)", sink ? sink : "(unset)");
     pa_subscription_post(core, PA_SUBSCRIPTION_EVENT_SERVER | PA_SUBSCRIPTION_EVENT_CHANGE, PA_INVALID_INDEX);
 
@@ -312,7 +310,7 @@ void pa_core_set_configured_default_source(pa_core *core, const char *source) {
 
     pa_xfree(core->configured_default_source);
     core->configured_default_source = pa_xstrdup(source);
-    AUDIO_INFO_LOG("configured_default_source: %{public}s -> %{public}s",
+    pa_log_info("configured_default_source: %s -> %s",
                 old_source ? old_source : "(unset)", source ? source : "(unset)");
     pa_subscription_post(core, PA_SUBSCRIPTION_EVENT_SERVER | PA_SUBSCRIPTION_EVENT_CHANGE, PA_INVALID_INDEX);
 
@@ -387,7 +385,7 @@ void pa_core_update_default_sink(pa_core *core) {
         return;
 
     core->default_sink = best;
-    AUDIO_INFO_LOG("default_sink: %{public}s -> %{public}s",
+    pa_log_info("default_sink: %s -> %s",
                 old_default_sink ? old_default_sink->name : "(unset)", best ? best->name : "(unset)");
 
     /* If the default sink changed, it may be that the default source has to be
@@ -478,7 +476,7 @@ void pa_core_update_default_source(pa_core *core) {
         return;
 
     core->default_source = best;
-    AUDIO_INFO_LOG("default_source: %{public}s -> %{public}s",
+    pa_log_info("default_source: %s -> %s",
                 old_default_source ? old_default_source->name : "(unset)", best ? best->name : "(unset)");
     pa_subscription_post(core, PA_SUBSCRIPTION_EVENT_SERVER | PA_SUBSCRIPTION_EVENT_CHANGE, PA_INVALID_INDEX);
     pa_hook_fire(&core->hooks[PA_CORE_HOOK_DEFAULT_SOURCE_CHANGED], core->default_source);
@@ -494,7 +492,7 @@ void pa_core_set_exit_idle_time(pa_core *core, int time) {
     if (time == core->exit_idle_time)
         return;
 
-    AUDIO_INFO_LOG("exit_idle_time: %{public}i -> %{public}i", core->exit_idle_time, time);
+    pa_log_info("exit_idle_time: %i -> %i", core->exit_idle_time, time);
     core->exit_idle_time = time;
 }
 
@@ -502,7 +500,7 @@ static void exit_callback(pa_mainloop_api *m, pa_time_event *e, const struct tim
     pa_core *c = userdata;
     pa_assert(c->exit_event == e);
 
-    AUDIO_INFO_LOG("We are idle, quitting...");
+    pa_log_info("We are idle, quitting...");
     pa_core_exit(c, true, 0);
 }
 
@@ -535,7 +533,7 @@ void pa_core_maybe_vacuum(pa_core *c) {
     pa_assert(c);
 
     if (pa_idxset_isempty(c->sink_inputs) && pa_idxset_isempty(c->source_outputs)) {
-        AUDIO_DEBUG_LOG("Hmm, no streams around, trying to vacuum.");
+        pa_log_debug("Hmm, no streams around, trying to vacuum.");
     } else {
         pa_sink *si;
         pa_source *so;
@@ -551,7 +549,7 @@ void pa_core_maybe_vacuum(pa_core *c) {
             if (so->state != PA_SOURCE_SUSPENDED)
                 return;
 
-        AUDIO_INFO_LOG("All sinks and sources are suspended, vacuuming memory");
+        pa_log_info("All sinks and sources are suspended, vacuuming memory");
     }
 
     pa_mempool_vacuum(c->mempool);

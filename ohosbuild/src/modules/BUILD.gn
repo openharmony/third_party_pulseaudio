@@ -63,7 +63,7 @@ ohos_shared_library("module-native-protocol-fd") {
     ":common_deps",
     "../../src/pulsecore:protocol-native",
   ]
-
+  external_deps = [ "hilog:libhilog" ]
   subsystem_name = "thirdparty"
   part_name = "pulseaudio"
 }
@@ -84,7 +84,7 @@ ohos_shared_library("module-native-protocol-tcp") {
     ":common_deps",
     "../../src/pulsecore:protocol-native",
   ]
-
+  external_deps = [ "hilog:libhilog" ]
   subsystem_name = "thirdparty"
   part_name = "pulseaudio"
 }
@@ -105,7 +105,7 @@ ohos_shared_library("module-native-protocol-unix") {
     ":common_deps",
     "../../src/pulsecore:protocol-native",
   ]
-
+  external_deps = [ "hilog:libhilog" ]
   subsystem_name = "thirdparty"
   part_name = "pulseaudio"
 }
@@ -126,7 +126,7 @@ ohos_shared_library("module-cli-protocol-unix") {
     ":common_deps",
     "../../src/pulsecore:protocol-cli",
   ]
-
+  external_deps = [ "hilog:libhilog" ]
   subsystem_name = "thirdparty"
   part_name = "pulseaudio"
 }
@@ -142,7 +142,7 @@ ohos_shared_library("module-suspend-on-idle") {
 
   configs = [ ":common_config" ]
   deps = [ ":common_deps" ]
-
+  external_deps = [ "hilog:libhilog" ]
   subsystem_name = "thirdparty"
   part_name = "pulseaudio"
 }

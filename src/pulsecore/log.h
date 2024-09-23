@@ -20,12 +20,14 @@
   You should have received a copy of the GNU Lesser General Public License
   along with PulseAudio; if not, see <http://www.gnu.org/licenses/>.
 ***/
-
+#ifndef LOG_H
+#define LOG_H
 #include <stdarg.h>
 #include <stdlib.h>
 
 #include <pulsecore/macro.h>
 #include <pulse/gccmacro.h>
+#include "log/audio_log.h"
 
 /* A simple logging subsystem */
 
@@ -111,6 +113,8 @@ void pa_log_levelv(
         const char *format,
         va_list ap);
 
+void PrintCallStackInfo();
+
 pa_log_target *pa_log_target_new(pa_log_target_type_t type, const char *file);
 
 void pa_log_target_free(pa_log_target *t);
@@ -152,4 +156,5 @@ LOG_FUNC(error, PA_LOG_ERROR)
 
 bool pa_log_ratelimit(pa_log_level_t level);
 
+#endif
 #endif
