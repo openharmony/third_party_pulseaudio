@@ -109,7 +109,7 @@ ohos_shared_library("pulse-simple") {
   sources = [ "../../../src/pulse/simple.c" ]
 
   configs = [ ":pulse_config" ]
-
+  external_deps = [ "hilog:libhilog" ]
   deps = [
     "../../src:pulsecommon",
     "../../src/pulse:pulse",

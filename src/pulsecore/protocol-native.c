@@ -63,8 +63,6 @@
 #include <pulsecore/thread-mq.h>
 #include <pulsecore/mem.h>
 
-#include "log/audio_log.h"
-
 #include "protocol-native.h"
 
 /* #define PROTOCOL_NATIVE_DEBUG */
@@ -298,7 +296,7 @@ static void fix_record_buffer_attr_pre(record_stream *s) {
          * guarantee it. */
 
         if (fragsize_usec != s->configured_source_latency)
-            AUDIO_DEBUG_LOG("Could not configure a sufficiently low latency. Early requests might not be satisfied.");
+            pa_log_debug("Could not configure a sufficiently low latency. Early requests might not be satisfied.");
 
     } else if (s->adjust_latency) {
 
@@ -448,7 +446,7 @@ static record_stream* record_stream_new(
 
     pa_idxset_put(c->record_streams, s, &s->index);
 
-    AUDIO_DEBUG_LOG("Final latency %{public}0.2f ms = %{public}0.2f ms + %{public}0.2f ms",
+    pa_log_debug("Final latency %0.2f ms = %0.2f ms + %0.2f ms",
                 ((double) pa_bytes_to_usec(s->buffer_attr.fragsize, &source_output->sample_spec) + (double) s->configured_source_latency) / PA_USEC_PER_MSEC,
                 (double) pa_bytes_to_usec(s->buffer_attr.fragsize, &source_output->sample_spec) / PA_USEC_PER_MSEC,
                 (double) s->configured_source_latency / PA_USEC_PER_MSEC);
@@ -630,7 +628,7 @@ static void fix_playback_buffer_attr(playback_stream *s) {
     pa_assert(s);
 
 #ifdef PROTOCOL_NATIVE_DEBUG
-    AUDIO_DEBUG_LOG("Client requested: maxlength=%li bytes tlength=%li bytes minreq=%li bytes prebuf=%li bytes",
+    pa_log_debug("Client requested: maxlength=%li bytes tlength=%li bytes minreq=%li bytes prebuf=%li bytes",
            (long) s->buffer_attr_req.maxlength,
            (long) s->buffer_attr_req.tlength,
            (long) s->buffer_attr_req.minreq,
@@ -680,7 +678,7 @@ static void fix_playback_buffer_attr(playback_stream *s) {
     orig_tlength_usec = tlength_usec = pa_bytes_to_usec(s->buffer_attr.tlength, &s->sink_input->sample_spec);
     orig_minreq_usec = minreq_usec = pa_bytes_to_usec(s->buffer_attr.minreq, &s->sink_input->sample_spec);
 
-    AUDIO_INFO_LOG("Requested tlength=%{public}0.2f ms, minreq=%{public}0.2f ms",
+    pa_log_info("Requested tlength=%0.2f ms, minreq=%0.2f ms",
                 (double) tlength_usec / PA_USEC_PER_MSEC,
                 (double) minreq_usec / PA_USEC_PER_MSEC);
 
@@ -694,7 +692,7 @@ static void fix_playback_buffer_attr(playback_stream *s) {
          * way it will have to query us at least that often. */
 
         sink_usec = minreq_usec;
-        AUDIO_DEBUG_LOG("Early requests mode enabled, configuring sink latency to minreq.");
+        pa_log_debug("Early requests mode enabled, configuring sink latency to minreq.");
 
     } else if (s->adjust_latency) {
 
@@ -720,7 +718,7 @@ static void fix_playback_buffer_attr(playback_stream *s) {
         else
             sink_usec = 0;
 
-        AUDIO_DEBUG_LOG("Adjust latency mode enabled, configuring sink latency to half of overall latency.");
+        pa_log_debug("Adjust latency mode enabled, configuring sink latency to half of overall latency.");
 
     } else {
 
@@ -733,7 +731,7 @@ static void fix_playback_buffer_attr(playback_stream *s) {
         else
             sink_usec = 0;
 
-        AUDIO_DEBUG_LOG("Traditional mode enabled, modifying sink usec only for compat with minreq.");
+        pa_log_debug("Traditional mode enabled, modifying sink usec only for compat with minreq.");
     }
 
     s->configured_sink_latency = pa_sink_input_set_requested_latency(s->sink_input, sink_usec);
@@ -745,7 +743,7 @@ static void fix_playback_buffer_attr(playback_stream *s) {
          * guarantee it. */
 
         if (minreq_usec != s->configured_sink_latency)
-            AUDIO_DEBUG_LOG("Could not configure a sufficiently low latency. Early requests might not be satisfied.");
+            pa_log_debug("Could not configure a sufficiently low latency. Early requests might not be satisfied.");
 
     } else if (s->adjust_latency) {
 
@@ -757,7 +755,7 @@ static void fix_playback_buffer_attr(playback_stream *s) {
             tlength_usec -= s->configured_sink_latency;
     }
 
-    AUDIO_DEBUG_LOG("Requested latency=%{public}0.2f ms, Received latency=%{public}0.2f ms",
+    pa_log_debug("Requested latency=%0.2f ms, Received latency=%0.2f ms",
                  (double) sink_usec / PA_USEC_PER_MSEC,
                  (double) s->configured_sink_latency / PA_USEC_PER_MSEC);
 
@@ -953,7 +951,7 @@ static playback_stream* playback_stream_new(
 
     pa_idxset_put(c->output_streams, s, &s->index);
 
-    AUDIO_DEBUG_LOG("Final latency %{public}0.2f ms = %{public}0.2f ms + 2*%{public}0.2f ms + %{public}0.2f ms",
+    pa_log_debug("Final latency %0.2f ms = %0.2f ms + 2*%0.2f ms + %0.2f ms",
                 ((double) pa_bytes_to_usec(s->buffer_attr.tlength, &sink_input->sample_spec) + (double) s->configured_sink_latency) / PA_USEC_PER_MSEC,
                 (double) pa_bytes_to_usec(s->buffer_attr.tlength-s->buffer_attr.minreq*2, &sink_input->sample_spec) / PA_USEC_PER_MSEC,
                 (double) pa_bytes_to_usec(s->buffer_attr.minreq, &sink_input->sample_spec) / PA_USEC_PER_MSEC,
@@ -1116,7 +1114,7 @@ static void handle_seek(playback_stream *s, int64_t indexw) {
             /* We just ended an underrun, let's ask the sink
              * for a complete rewind rewrite */
 
-            AUDIO_DEBUG_LOG("Requesting rewind due to end of underrun.");
+            pa_log_debug("Requesting rewind due to end of underrun.");
             pa_sink_input_request_rewind(s->sink_input,
                                          (size_t) (s->sink_input->thread_info.underrun_for == (uint64_t) -1 ? 0 :
                                                    s->sink_input->thread_info.underrun_for),
@@ -1132,7 +1130,7 @@ static void handle_seek(playback_stream *s, int64_t indexw) {
             /* OK, the sink already asked for this data, so
              * let's have it ask us again */
 
-            AUDIO_DEBUG_LOG("Requesting rewind due to rewrite.");
+            pa_log_debug("Requesting rewind due to rewrite.");
             pa_sink_input_request_rewind(s->sink_input, (size_t) (indexr - indexw), true, false, false);
         }
     }
@@ -1170,7 +1168,7 @@ static int sink_input_process_msg(pa_msgobject *o, int code, void *userdata, int
 
             if (chunk && pa_memblockq_push_align(s->memblockq, chunk) < 0) {
                 if (pa_log_ratelimit(PA_LOG_WARN))
-                    AUDIO_WARNING_LOG("Failed to push data into queue");
+                    pa_log_warn("Failed to push data into queue");
                 pa_asyncmsgq_post(pa_thread_mq_get()->outq, PA_MSGOBJECT(s), PLAYBACK_STREAM_MESSAGE_OVERFLOW, NULL, 0, NULL, NULL);
                 pa_memblockq_seek(s->memblockq, (int64_t) chunk->length, PA_SEEK_RELATIVE, true);
             }
@@ -1304,7 +1302,7 @@ static bool handle_input_underrun(playback_stream *s, bool force) {
         return false;
 
     if (!s->is_underrun)
-        AUDIO_DEBUG_LOG("%{public}s %{public}s of '%{public}s'", force ? "Actual" : "Implicit",
+        pa_log_debug("%s %s of '%s'", force ? "Actual" : "Implicit",
             s->drain_request ? "drain" : "underrun", pa_strnull(pa_proplist_gets(s->sink_input->proplist, PA_PROP_MEDIA_NAME)));
 
     send_drain = s->drain_request && (force || pa_sink_input_safe_to_remove(s->sink_input));
@@ -1312,7 +1310,7 @@ static bool handle_input_underrun(playback_stream *s, bool force) {
     if (send_drain) {
          s->drain_request = false;
          pa_asyncmsgq_post(pa_thread_mq_get()->outq, PA_MSGOBJECT(s), PLAYBACK_STREAM_MESSAGE_DRAIN_ACK, PA_UINT_TO_PTR(s->drain_tag), 0, NULL, NULL);
-         AUDIO_DEBUG_LOG("Drain acknowledged of '%{public}s'", pa_strnull(pa_proplist_gets(s->sink_input->proplist, PA_PROP_MEDIA_NAME)));
+         pa_log_debug("Drain acknowledged of '%s'", pa_strnull(pa_proplist_gets(s->sink_input->proplist, PA_PROP_MEDIA_NAME)));
     } else if (!s->is_underrun) {
          pa_asyncmsgq_post(pa_thread_mq_get()->outq, PA_MSGOBJECT(s), PLAYBACK_STREAM_MESSAGE_UNDERFLOW, NULL, pa_memblockq_get_read_index(s->memblockq), NULL, NULL);
     }
@@ -1339,7 +1337,7 @@ static bool handle_input_underrun_ohos(playback_stream *s, bool force) {
         return false;
 
     if (!s->is_underrun)
-        AUDIO_DEBUG_LOG("%{public}s %{public}s of '%{public}s'", force ? "Actual" : "Implicit",
+        pa_log_debug("%s %s of '%s'", force ? "Actual" : "Implicit",
             s->drain_request ? "drain" : "underrun",
             pa_strnull(pa_proplist_gets(s->sink_input->proplist, PA_PROP_MEDIA_NAME)));
 
@@ -1432,15 +1430,15 @@ static void sink_input_update_max_request_cb(pa_sink_input *i, size_t nbytes) {
     new_tlength = nbytes+2*pa_memblockq_get_minreq(s->memblockq);
 
     if (old_tlength < new_tlength) {
-        AUDIO_DEBUG_LOG("max_request changed, trying to update from %{public}zu to %{public}zu.", old_tlength,
+        pa_log_debug("max_request changed, trying to update from %zu to %zu.", old_tlength,
             new_tlength);
         pa_memblockq_set_tlength(s->memblockq, new_tlength);
         new_tlength = pa_memblockq_get_tlength(s->memblockq);
 
         if (new_tlength == old_tlength)
-            AUDIO_DEBUG_LOG("Failed to increase tlength");
+            pa_log_debug("Failed to increase tlength");
         else {
-            AUDIO_DEBUG_LOG("Notifying client about increased tlength");
+            pa_log_debug("Notifying client about increased tlength");
             pa_asyncmsgq_post(pa_thread_mq_get()->outq, PA_MSGOBJECT(s), PLAYBACK_STREAM_MESSAGE_UPDATE_TLENGTH, NULL, pa_memblockq_get_tlength(s->memblockq), NULL, NULL);
         }
     }
@@ -2321,7 +2319,7 @@ static void command_exit(pa_pdispatch *pd, uint32_t command, uint32_t tag, pa_ta
     ret = pa_core_exit(c->protocol->core, false, 0);
     CHECK_VALIDITY(c->pstream, ret >= 0, tag, PA_ERR_ACCESS);
 
-    AUDIO_DEBUG_LOG("Client %{public}s asks us to terminate.", pa_strnull(pa_proplist_gets(c->client->proplist,
+    pa_log_debug("Client %s asks us to terminate.", pa_strnull(pa_proplist_gets(c->client->proplist,
         PA_PROP_APPLICATION_PROCESS_BINARY)));
 
     pa_pstream_send_simple_ack(c->pstream, tag); /* nonsense */
@@ -2333,35 +2331,35 @@ static void setup_srbchannel(pa_native_connection *c, pa_mem_type_t shm_type) {
     pa_memchunk mc;
     pa_tagstruct *t;
     int fdlist[2];
-    AUDIO_INFO_LOG("start setup_srbchannel, shm_type: %{public}d", shm_type);
+    pa_log_info("start setup_srbchannel, shm_type: %d", shm_type);
 #ifndef HAVE_CREDS
-    AUDIO_DEBUG_LOG("Disabling srbchannel, reason: No fd passing support");
+    pa_log_debug("Disabling srbchannel, reason: No fd passing support");
     return;
 #endif
 
     if (!c->options->srbchannel) {
-        AUDIO_DEBUG_LOG("Disabling srbchannel, reason: Must be enabled by module parameter");
+        pa_log_debug("Disabling srbchannel, reason: Must be enabled by module parameter");
         return;
     }
 
     if (c->version < 30) {
-        AUDIO_DEBUG_LOG("Disabling srbchannel, reason: Protocol too old");
+        pa_log_debug("Disabling srbchannel, reason: Protocol too old");
         return;
     }
 
     if (!pa_pstream_get_shm(c->pstream)) {
-        AUDIO_DEBUG_LOG("Disabling srbchannel, reason: No SHM support");
+        pa_log_debug("Disabling srbchannel, reason: No SHM support");
         return;
     }
 
     if (c->rw_mempool) {
-        AUDIO_DEBUG_LOG("Ignoring srbchannel setup, reason: received COMMAND_AUTH "
+        pa_log_debug("Ignoring srbchannel setup, reason: received COMMAND_AUTH "
                      "more than once");
         return;
     }
 
     if (!(c->rw_mempool = pa_mempool_new(shm_type, c->protocol->core->shm_size, true))) {
-        AUDIO_DEBUG_LOG("Disabling srbchannel, reason: Failed to allocate shared "
+        pa_log_debug("Disabling srbchannel, reason: Failed to allocate shared "
                     "writable memory pool.");
         return;
     }
@@ -2369,7 +2367,7 @@ static void setup_srbchannel(pa_native_connection *c, pa_mem_type_t shm_type) {
     if (shm_type == PA_MEM_TYPE_SHARED_MEMFD) {
         const char *reason;
         if (pa_pstream_register_memfd_mempool(c->pstream, c->rw_mempool, &reason)) {
-            AUDIO_WARNING_LOG("Disabling srbchannel, reason: Failed to register memfd mempool: %{public}s", reason);
+            pa_log_warn("Disabling srbchannel, reason: Failed to register memfd mempool: %s", reason);
             goto fail;
         }
     }
@@ -2377,10 +2375,10 @@ static void setup_srbchannel(pa_native_connection *c, pa_mem_type_t shm_type) {
 
     srb = pa_srbchannel_new(c->protocol->core->mainloop, c->rw_mempool);
     if (!srb) {
-        AUDIO_DEBUG_LOG("Failed to create srbchannel");
+        pa_log_debug("Failed to create srbchannel");
         goto fail;
     }
-    AUDIO_DEBUG_LOG("Enabling srbchannel...");
+    pa_log_debug("Enabling srbchannel...");
     pa_srbchannel_export(srb, &srbt);
 
     /* Send enable command to client */
@@ -2415,13 +2413,13 @@ static void command_enable_srbchannel(pa_pdispatch *pd, uint32_t command, uint32
         return;
     }
 
-    AUDIO_DEBUG_LOG("Client enabled srbchannel.");
+    pa_log_debug("Client enabled srbchannel.");
     pa_pstream_set_srbchannel(c->pstream, c->srbpending);
     c->srbpending = NULL;
 }
 
 static void command_auth(pa_pdispatch *pd, uint32_t command, uint32_t tag, pa_tagstruct *t, void *userdata) {
-    AUDIO_INFO_LOG("start command_authd");
+    pa_log_info("start command_authd");
     pa_native_connection *c = PA_NATIVE_CONNECTION(userdata);
     const void*cookie;
     bool memfd_on_remote = false, do_memfd = false;
@@ -2461,7 +2459,7 @@ static void command_auth(pa_pdispatch *pd, uint32_t command, uint32_t tag, pa_ta
         c->version &= PA_PROTOCOL_VERSION_MASK;
     }
 
-    AUDIO_DEBUG_LOG("Protocol version: remote %u, local %u", c->version, PA_PROTOCOL_VERSION);
+    pa_log_debug("Protocol version: remote %u, local %u", c->version, PA_PROTOCOL_VERSION);
 
     pa_proplist_setf(c->client->proplist, "native-protocol.version", "%u", c->version);
 
@@ -2479,19 +2477,19 @@ static void command_auth(pa_pdispatch *pd, uint32_t command, uint32_t tag, pa_ta
                 gid_t gid;
 
                 if ((gid = pa_get_gid_of_group(c->options->auth_group)) == (gid_t) -1)
-                    AUDIO_WARNING_LOG("Failed to get GID of group '%{public}s'", c->options->auth_group);
+                    pa_log_warn("Failed to get GID of group '%s'", c->options->auth_group);
                 else if (gid == creds->gid)
                     success = true;
 
                 if (!success) {
                     if ((r = pa_uid_in_group(creds->uid, c->options->auth_group)) < 0)
-                        AUDIO_WARNING_LOG("Failed to check group membership.");
+                        pa_log_warn("Failed to check group membership.");
                     else if (r > 0)
                         success = true;
                 }
             }
 
-            AUDIO_DEBUG_LOG("Got credentials: uid=%{public}lu gid=%{public}lu success=%{public}i",
+            pa_log_debug("Got credentials: uid=%lu gid=%lu success=%i",
                         (unsigned long) creds->uid,
                         (unsigned long) creds->gid,
                         (int) success);
@@ -2514,7 +2512,7 @@ static void command_auth(pa_pdispatch *pd, uint32_t command, uint32_t tag, pa_ta
         }
 
         if (!success) {
-            AUDIO_WARNING_LOG("Denied access to client with invalid authentication data.");
+            pa_log_warn("Denied access to client with invalid authentication data.");
             pa_pstream_send_error(c->pstream, tag, PA_ERR_ACCESS);
             return;
         }
@@ -2531,7 +2529,7 @@ static void command_auth(pa_pdispatch *pd, uint32_t command, uint32_t tag, pa_ta
         pa_mempool_is_shared(c->protocol->core->mempool) &&
         c->is_local;
 
-    AUDIO_DEBUG_LOG("SHM possible: %{public}s", pa_yes_no(do_shm));
+    pa_log_debug("SHM possible: %s", pa_yes_no(do_shm));
 
     if (do_shm)
         if (c->version < 10 || (c->version >= 13 && !shm_on_remote))
@@ -2549,7 +2547,7 @@ static void command_auth(pa_pdispatch *pd, uint32_t command, uint32_t tag, pa_ta
     }
 #endif
 
-    AUDIO_DEBUG_LOG("Negotiated SHM: %{public}s", pa_yes_no(do_shm));
+    pa_log_debug("Negotiated SHM: %s", pa_yes_no(do_shm));
     pa_pstream_enable_shm(c->pstream, do_shm);
 
     /* Do not declare memfd support for 9.0 client libraries (protocol v31).
@@ -2569,8 +2567,8 @@ static void command_auth(pa_pdispatch *pd, uint32_t command, uint32_t tag, pa_ta
         } else
             shm_type = PA_MEM_TYPE_SHARED_POSIX;
 
-        AUDIO_INFO_LOG("Memfd possible: %s", pa_yes_no(pa_memfd_is_locally_supported()));
-        AUDIO_INFO_LOG("Negotiated SHM type: %s", pa_mem_type_to_string(shm_type));
+        pa_log_info("Memfd possible: %s", pa_yes_no(pa_memfd_is_locally_supported()));
+        pa_log_info("Negotiated SHM type: %s", pa_mem_type_to_string(shm_type));
     }
 
     reply = reply_new(tag);
@@ -3062,7 +3060,7 @@ static void sink_fill_tagstruct(pa_native_connection *c, pa_tagstruct *t, pa_sin
     if (c->version >= 15) {
         pa_tagstruct_put_volume(t, sink->base_volume);
         if (PA_UNLIKELY(sink->state == PA_SINK_INVALID_STATE))
-            AUDIO_ERR_LOG("Internal sink state is invalid.");
+            pa_log_error("Internal sink state is invalid.");
         pa_tagstruct_putu32(t, sink->state);
         pa_tagstruct_putu32(t, sink->n_volume_steps);
         pa_tagstruct_putu32(t, sink->card ? sink->card->index : PA_INVALID_INDEX);
@@ -3137,7 +3135,7 @@ static void source_fill_tagstruct(pa_native_connection *c, pa_tagstruct *t, pa_s
     if (c->version >= 15) {
         pa_tagstruct_put_volume(t, source->base_volume);
         if (PA_UNLIKELY(source->state == PA_SOURCE_INVALID_STATE))
-            AUDIO_ERR_LOG("Internal source state is invalid.");
+            pa_log_error("Internal source state is invalid.");
         pa_tagstruct_putu32(t, source->state);
         pa_tagstruct_putu32(t, source->n_volume_steps);
         pa_tagstruct_putu32(t, source->card ? source->card->index : PA_INVALID_INDEX);
@@ -3699,18 +3697,18 @@ static void command_set_volume(
     if (sink) {
         CHECK_VALIDITY(c->pstream, volume.channels == 1 || pa_cvolume_compatible(&volume, &sink->sample_spec), tag, PA_ERR_INVALID);
 
-        AUDIO_DEBUG_LOG("Client %{public}s changes volume of sink %{public}s.", client_name, sink->name);
+        pa_log_debug("Client %s changes volume of sink %s.", client_name, sink->name);
         pa_sink_set_volume(sink, &volume, true, true);
     } else if (source) {
         CHECK_VALIDITY(c->pstream, volume.channels == 1 || pa_cvolume_compatible(&volume, &source->sample_spec), tag, PA_ERR_INVALID);
 
-        AUDIO_DEBUG_LOG("Client %{public}s changes volume of source %{public}s.", client_name, source->name);
+        pa_log_debug("Client %s changes volume of source %s.", client_name, source->name);
         pa_source_set_volume(source, &volume, true, true);
     } else if (si) {
         CHECK_VALIDITY(c->pstream, si->volume_writable, tag, PA_ERR_BADSTATE);
         CHECK_VALIDITY(c->pstream, volume.channels == 1 || pa_cvolume_compatible(&volume, &si->sample_spec), tag, PA_ERR_INVALID);
 
-        AUDIO_DEBUG_LOG("Client %{public}s changes volume of sink input %{public}s.",
+        pa_log_debug("Client %s changes volume of sink input %s.",
                      client_name,
                      pa_strnull(pa_proplist_gets(si->proplist, PA_PROP_MEDIA_NAME)));
         pa_sink_input_set_volume(si, &volume, true, true);
@@ -3718,7 +3716,7 @@ static void command_set_volume(
         CHECK_VALIDITY(c->pstream, so->volume_writable, tag, PA_ERR_BADSTATE);
         CHECK_VALIDITY(c->pstream, volume.channels == 1 || pa_cvolume_compatible(&volume, &so->sample_spec), tag, PA_ERR_INVALID);
 
-        AUDIO_DEBUG_LOG("Client %{public}s changes volume of source output %{public}s.",
+        pa_log_debug("Client %s changes volume of source output %s.",
                      client_name,
                      pa_strnull(pa_proplist_gets(so->proplist, PA_PROP_MEDIA_NAME)));
         pa_source_output_set_volume(so, &volume, true, true);
@@ -3794,18 +3792,18 @@ static void command_set_mute(
     client_name = pa_strnull(pa_proplist_gets(c->client->proplist, PA_PROP_APPLICATION_PROCESS_BINARY));
 
     if (sink) {
-        AUDIO_DEBUG_LOG("Client %{public}s changes mute of sink %{public}s.", client_name, sink->name);
+        pa_log_debug("Client %s changes mute of sink %s.", client_name, sink->name);
         pa_sink_set_mute(sink, mute, true);
     } else if (source) {
-        AUDIO_DEBUG_LOG("Client %{public}s changes mute of source %{public}s.", client_name, source->name);
+        pa_log_debug("Client %s changes mute of source %s.", client_name, source->name);
         pa_source_set_mute(source, mute, true);
     } else if (si) {
-        AUDIO_DEBUG_LOG("Client %{public}s changes mute of sink input %{public}s.",
+        pa_log_debug("Client %s changes mute of sink input %s.",
                      client_name,
                      pa_strnull(pa_proplist_gets(si->proplist, PA_PROP_MEDIA_NAME)));
         pa_sink_input_set_mute(si, mute, true);
     } else if (so) {
-        AUDIO_DEBUG_LOG("Client %{public}s changes mute of source output %{public}s.",
+        pa_log_debug("Client %s changes mute of source output %s.",
                      client_name,
                      pa_strnull(pa_proplist_gets(so->proplist, PA_PROP_MEDIA_NAME)));
         pa_source_output_set_mute(so, mute, true);
@@ -4497,7 +4495,7 @@ static void command_suspend(pa_pdispatch *pd, uint32_t command, uint32_t tag, pa
 
         if (idx == PA_INVALID_INDEX && name && !*name) {
 
-            AUDIO_DEBUG_LOG("%{public}s all sinks", b ? "Suspending" : "Resuming");
+            pa_log_debug("%s all sinks", b ? "Suspending" : "Resuming");
 
             if (pa_sink_suspend_all(c->protocol->core, b, PA_SUSPEND_USER) < 0) {
                 pa_pstream_send_error(c->pstream, tag, PA_ERR_INVALID);
@@ -4513,7 +4511,7 @@ static void command_suspend(pa_pdispatch *pd, uint32_t command, uint32_t tag, pa
 
             CHECK_VALIDITY(c->pstream, sink, tag, PA_ERR_NOENTITY);
 
-            AUDIO_DEBUG_LOG("%{public}s of sink %{public}s requested by client %" PRIu32 ".",
+            pa_log_debug("%s of sink %s requested by client %" PRIu32 ".",
                          b ? "Suspending" : "Resuming", sink->name, c->client->index);
 
             if (pa_sink_suspend(sink, b, PA_SUSPEND_USER) < 0) {
@@ -4527,7 +4525,7 @@ static void command_suspend(pa_pdispatch *pd, uint32_t command, uint32_t tag, pa
 
         if (idx == PA_INVALID_INDEX && name && !*name) {
 
-            AUDIO_DEBUG_LOG("%{public}s all sources", b ? "Suspending" : "Resuming");
+            pa_log_debug("%s all sources", b ? "Suspending" : "Resuming");
 
             if (pa_source_suspend_all(c->protocol->core, b, PA_SUSPEND_USER) < 0) {
                 pa_pstream_send_error(c->pstream, tag, PA_ERR_INVALID);
@@ -4544,7 +4542,7 @@ static void command_suspend(pa_pdispatch *pd, uint32_t command, uint32_t tag, pa
 
             CHECK_VALIDITY(c->pstream, source, tag, PA_ERR_NOENTITY);
 
-            AUDIO_DEBUG_LOG("%{public}s of source %{public}s requested by client %" PRIu32 ".",
+            pa_log_debug("%s of source %s requested by client %" PRIu32 ".",
                          b ? "Suspending" : "Resuming", source->name, c->client->index);
 
             if (pa_source_suspend(source, b, PA_SUSPEND_USER) < 0) {
@@ -4678,7 +4676,7 @@ static void command_set_card_profile(pa_pdispatch *pd, uint32_t command, uint32_
 
     CHECK_VALIDITY(c->pstream, profile, tag, PA_ERR_NOENTITY);
 
-    AUDIO_INFO_LOG("Application \"%{public}s\" requests card profile change. card = %{public}s, profile = %{public}s",
+    pa_log_info("Application \"%s\" requests card profile change. card = %s, profile = %s",
                 pa_strnull(pa_proplist_gets(c->client->proplist, PA_PROP_APPLICATION_NAME)),
                 card->name,
                 profile->name);
@@ -4923,7 +4921,7 @@ static void pstream_memblock_callback(pa_pstream *p, uint32_t channel, int64_t o
     pa_native_connection_assert_ref(c);
 
     if (!(stream = OUTPUT_STREAM(pa_idxset_get_by_index(c->output_streams, channel)))) {
-        AUDIO_DEBUG_LOG("Client sent block for invalid stream.");
+        pa_log_debug("Client sent block for invalid stream.");
         /* Ignoring */
         return;
     }
@@ -4937,8 +4935,8 @@ static void pstream_memblock_callback(pa_pstream *p, uint32_t channel, int64_t o
 
         size_t frame_size = pa_frame_size(&ps->sink_input->sample_spec);
         if (chunk->index % frame_size != 0 || chunk->length % frame_size != 0) {
-            AUDIO_WARNING_LOG("Client sent non-aligned memblock: index %{public}d, length %{public}d, frame size:"
-                "%{public}d", (int) chunk->index, (int) chunk->length, (int) frame_size);
+            pa_log_warn("Client sent non-aligned memblock: index %d, length %d, frame size:"
+                "%d", (int) chunk->index, (int) chunk->length, (int) frame_size);
             return;
         }
 
@@ -5002,7 +5000,7 @@ static void pstream_die_callback(pa_pstream *p, void *userdata) {
     pa_native_connection_assert_ref(c);
 
     native_connection_unlink(c);
-    AUDIO_INFO_LOG("Connection died.");
+    pa_log_info("Connection died.");
 }
 
 static void pstream_drain_callback(pa_pstream *p, void *userdata) {
@@ -5038,7 +5036,7 @@ static void client_kill_cb(pa_client *c) {
     pa_assert(c);
 
     native_connection_unlink(PA_NATIVE_CONNECTION(c->userdata));
-    AUDIO_INFO_LOG("Connection killed.");
+    pa_log_info("Connection killed.");
 }
 
 static void client_send_event_cb(pa_client *client, const char*event, pa_proplist *pl) {
@@ -5071,7 +5069,7 @@ static void auth_timeout(pa_mainloop_api*m, pa_time_event *e, const struct timev
 
     if (!c->authorized) {
         native_connection_unlink(c);
-        AUDIO_INFO_LOG("Connection terminated due to authentication timeout.");
+        pa_log_info("Connection terminated due to authentication timeout.");
     }
 }
 
@@ -5086,7 +5084,7 @@ void pa_native_protocol_connect(pa_native_protocol *p, pa_iochannel *io, pa_nati
     pa_assert(o);
 
     if (pa_idxset_size(p->connections)+1 > MAX_CONNECTIONS) {
-        AUDIO_WARNING_LOG("Warning! Too many connections (%{public}u), dropping incoming connection.", MAX_CONNECTIONS);
+        pa_log_warn("Warning! Too many connections (%u), dropping incoming connection.", MAX_CONNECTIONS);
         pa_iochannel_free(io);
         return;
     }
@@ -5112,7 +5110,7 @@ void pa_native_protocol_connect(pa_native_protocol *p, pa_iochannel *io, pa_nati
     c->srbpending = NULL;
 
     if (o->auth_anonymous) {
-        AUDIO_INFO_LOG("Client authenticated anonymously.");
+        pa_log_info("Client authenticated anonymously.");
         c->authorized = true;
     }
 
@@ -5120,7 +5118,7 @@ void pa_native_protocol_connect(pa_native_protocol *p, pa_iochannel *io, pa_nati
         o->auth_ip_acl &&
         pa_ip_acl_check(o->auth_ip_acl, pa_iochannel_get_recv_fd(io)) > 0) {
 
-        AUDIO_INFO_LOG("Client authenticated by IP ACL.");
+        pa_log_info("Client authenticated by IP ACL.");
         c->authorized = true;
     }
 
@@ -5344,18 +5342,18 @@ int pa_native_options_parse(pa_native_options *o, pa_core *c, pa_modargs *ma) {
 
     o->srbchannel = true;
     if (pa_modargs_get_value_boolean(ma, "srbchannel", &o->srbchannel) < 0) {
-        AUDIO_ERR_LOG("srbchannel= expects a boolean argument.");
+        pa_log_error("srbchannel= expects a boolean argument.");
         return -1;
     }
 
     if (pa_modargs_get_value_boolean(ma, "auth-anonymous", &o->auth_anonymous) < 0) {
-        AUDIO_ERR_LOG("auth-anonymous= expects a boolean argument.");
+        pa_log_error("auth-anonymous= expects a boolean argument.");
         return -1;
     }
 
     enabled = true;
     if (pa_modargs_get_value_boolean(ma, "auth-group-enable", &enabled) < 0) {
-        AUDIO_ERR_LOG("auth-group-enable= expects a boolean argument.");
+        pa_log_error("auth-group-enable= expects a boolean argument.");
         return -1;
     }
 
@@ -5364,14 +5362,14 @@ int pa_native_options_parse(pa_native_options *o, pa_core *c, pa_modargs *ma) {
 
 #ifndef HAVE_CREDS
     if (o->auth_group)
-        AUDIO_ERR_LOG("Authentication group configured, but not available on local system. Ignoring.");
+        pa_log_error("Authentication group configured, but not available on local system. Ignoring.");
 #endif
 
     if ((acl = pa_modargs_get_value(ma, "auth-ip-acl", NULL))) {
         pa_ip_acl *ipa;
 
         if (!(ipa = pa_ip_acl_new(acl))) {
-            AUDIO_ERR_LOG("Failed to parse IP ACL '%s'", acl);
+            pa_log_error("Failed to parse IP ACL '%s'", acl);
             return -1;
         }
 
@@ -5383,7 +5381,7 @@ int pa_native_options_parse(pa_native_options *o, pa_core *c, pa_modargs *ma) {
 
     enabled = true;
     if (pa_modargs_get_value_boolean(ma, "auth-cookie-enabled", &enabled) < 0) {
-        AUDIO_ERR_LOG("auth-cookie-enabled= expects a boolean argument.");
+        pa_log_error("auth-cookie-enabled= expects a boolean argument.");
         return -1;
     }
 

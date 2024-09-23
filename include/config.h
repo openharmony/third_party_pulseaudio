@@ -211,8 +211,6 @@
 
 #define HAVE_SYSCONF 1
 
-#define HAVE_SYSLOG_H 1
-
 #define HAVE_SYS_EVENTFD_H 1
 
 #define HAVE_SYS_IOCTL_H 1

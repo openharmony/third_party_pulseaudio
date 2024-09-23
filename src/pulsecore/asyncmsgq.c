@@ -34,7 +34,6 @@
 #include <pulsecore/flist.h>
 
 #include "asyncmsgq.h"
-#include "log/audio_log.h"
 #define PA_SNPRINTF_STR_LENGTH 256
 
 PA_STATIC_FLIST_DECLARE(asyncmsgq, 0, pa_xfree);

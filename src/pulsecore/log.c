@@ -405,6 +405,23 @@ void pa_log_levelv_meta(
 
     pa_vsnprintf(text, sizeof(text), format, ap);
 
+    const char *filename = strrchr(file, '/');
+    if (filename) {
+        filename++;
+    } else {
+        filename = file;
+    }
+
+    if (level == PA_LOG_ERROR) {
+        AUDIO_ERR_LOG("%{public}s:%{public}u (%{public}s) %{public}s", filename, line, func, text);
+    } else if (level == PA_LOG_WARN) {
+        AUDIO_WARNING_LOG("%{public}s:%{public}u (%{public}s) %{public}s", filename, line, func, text);
+    } else if (level == PA_LOG_NOTICE || level == PA_LOG_INFO) {
+        AUDIO_INFO_LOG("%{public}s:%{public}u (%{public}s) %{public}s", filename, line, func, text);
+    } else if (level == PA_LOG_DEBUG) {
+        AUDIO_DEBUG_LOG("%{public}s:%{public}u (%{public}s) %{public}s", filename, line, func, text);
+    }
+
     if ((_flags & PA_LOG_PRINT_META) && file && line > 0 && func)
         pa_snprintf(location, sizeof(location), "[%s][%s:%i %s()] ",
                     pa_strnull(pa_thread_get_name(pa_thread_self())), file, line, func);
@@ -571,6 +588,30 @@ void pa_log_levelv_meta(
 
     pa_xfree(bt);
     errno = saved_errno;
+}
+
+void PrintCallStackInfo()
+{
+    const int32_t maxDepth = 20;
+    void *stacks[maxDepth];
+ 
+    int stackNum = backtrace(stacks, maxDepth);
+    AUDIO_ERR_LOG("backtrace() returned %{public}d addresses\n", stackNum);
+ 
+    char **symbols = backtrace_symbols(stacks, stackNum);
+    if (symbols == NULL) {
+        AUDIO_ERR_LOG("backtrace_symbols faile.");
+        for (int i = 0; i < stackNum; i++) {
+            AUDIO_ERR_LOG("  [%{public}02d] addr: %{public}p\n", i, stacks[i]);
+        }
+        return;
+    }
+
+    for (int i = 0; i < stackNum; i++) {
+        AUDIO_ERR_LOG("  [%{public}02d] %{public}s\n", i, symbols[i]);
+    }
+ 
+    free(symbols);
 }
 
 void pa_log_level_meta(
