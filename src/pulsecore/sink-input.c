@@ -678,8 +678,8 @@ int pa_sink_input_new(
                 pt);
     pa_xfree(pt);
 
-    if (resampler) {
-        PaResamplerPrebuf(resampler, i->core->mempool);
+    if (i->thread_info.resampler) {
+        PaResamplerPrebuf(i->thread_info.resampler, i->core->mempool);
     }
 
     /* Don't forget to call pa_sink_input_put! */
@@ -2618,9 +2618,6 @@ int pa_sink_input_update_resampler(pa_sink_input *i, bool flush_history) {
             pa_log_warn("Unsupported resampling operation.");
             return -PA_ERR_NOTSUPPORTED;
         }
-        if (new_resampler) {
-            PaResamplerPrebuf(new_resampler, i->core->mempool);
-        }
     } else
         new_resampler = NULL;
 
@@ -2634,6 +2631,9 @@ int pa_sink_input_update_resampler(pa_sink_input *i, bool flush_history) {
         pa_resampler_free(i->thread_info.resampler);
 
     i->thread_info.resampler = new_resampler;
+    if (i->thread_info.resampler) {
+        PaResamplerPrebuf(i->thread_info.resampler, i->core->mempool);
+    }
 
     pa_memblockq_free(i->thread_info.render_memblockq);
 
