@@ -40,8 +40,6 @@
 
 #include "pdispatch.h"
 
-#include "log/audio_log.h"
-
 #define DEBUG_OPCODES
 
 #ifdef DEBUG_OPCODES

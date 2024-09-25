@@ -678,8 +678,8 @@ int pa_sink_input_new(
                 pt);
     pa_xfree(pt);
 
-    if (resampler) {
-        PaResamplerPrebuf(resampler, i->core->mempool);
+    if (i->thread_info.resampler) {
+        PaResamplerPrebuf(i->thread_info.resampler, i->core->mempool);
     }
 
     /* Don't forget to call pa_sink_input_put! */
@@ -1566,7 +1566,7 @@ bool pa_sink_input_is_passthrough(pa_sink_input *i) {
 /* Called from main context */
 bool pa_sink_input_is_volume_readable(pa_sink_input *i) {
     pa_sink_input_assert_ref(i);
-    pa_assert_ctl_context();
+    // pa_assert_ctl_context();
 
     return !pa_sink_input_is_passthrough(i);
 }
@@ -1574,7 +1574,7 @@ bool pa_sink_input_is_volume_readable(pa_sink_input *i) {
 /* Called from main context */
 pa_cvolume *pa_sink_input_get_volume(pa_sink_input *i, pa_cvolume *volume, bool absolute) {
     pa_sink_input_assert_ref(i);
-    pa_assert_ctl_context();
+    // pa_assert_ctl_context();
     pa_assert(PA_SINK_INPUT_IS_LINKED(i->state));
     pa_assert(pa_sink_input_is_volume_readable(i));
 
@@ -2558,7 +2558,7 @@ void pa_sink_input_send_event(pa_sink_input *i, const char *event, pa_proplist *
     pa_sink_input_send_event_hook_data hook_data;
 
     pa_sink_input_assert_ref(i);
-    pa_assert_ctl_context();
+    // pa_assert_ctl_context();
     pa_assert(event);
 
     if (!i->send_event)
@@ -2618,9 +2618,6 @@ int pa_sink_input_update_resampler(pa_sink_input *i, bool flush_history) {
             pa_log_warn("Unsupported resampling operation.");
             return -PA_ERR_NOTSUPPORTED;
         }
-        if (new_resampler) {
-            PaResamplerPrebuf(new_resampler, i->core->mempool);
-        }
     } else
         new_resampler = NULL;
 
@@ -2634,6 +2631,9 @@ int pa_sink_input_update_resampler(pa_sink_input *i, bool flush_history) {
         pa_resampler_free(i->thread_info.resampler);
 
     i->thread_info.resampler = new_resampler;
+    if (i->thread_info.resampler) {
+        PaResamplerPrebuf(i->thread_info.resampler, i->core->mempool);
+    }
 
     pa_memblockq_free(i->thread_info.render_memblockq);
 

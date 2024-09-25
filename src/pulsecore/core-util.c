@@ -132,7 +132,6 @@
 #include <pulsecore/strlist.h>
 #include <pulsecore/pipe.h>
 #include <pulsecore/once.h>
-#include "log/audio_log.h"
 
 #include "core-util.h"
 
@@ -576,7 +575,7 @@ int pa_close(int fd) {
         if ((r = close(fd)) < 0) {
             if (errno == EINTR)
                 continue;
-            AUDIO_ERR_LOG("Close fd failed, err code: %{public}d", r);
+            pa_log_error("Close fd failed, err code: %d", r);
         }
         return r;
     }
