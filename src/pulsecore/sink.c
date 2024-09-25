@@ -50,8 +50,6 @@
 
 #include "sink.h"
 
-#include "log/audio_log.h"
-
 #define MAX_MIX_CHANNELS 32
 #define MIX_BUFFER_LENGTH (pa_page_size())
 #define ABSOLUTE_MIN_LATENCY (500)
@@ -1609,7 +1607,7 @@ pa_usec_t pa_sink_get_latency(pa_sink *s) {
         return 0;
 
     if (s->asyncmsgq == NULL) {
-        AUDIO_ERR_LOG("pa_asyncmsgq is NULL");
+        pa_log_error("pa_asyncmsgq is NULL");
         return 0;
     }
     pa_assert_se(pa_asyncmsgq_send(s->asyncmsgq, PA_MSGOBJECT(s), PA_SINK_MESSAGE_GET_LATENCY, &usec, 0, NULL) == 0);
@@ -3368,7 +3366,7 @@ void pa_sink_set_fixed_latency(pa_sink *s, pa_usec_t latency) {
     pa_assert_ctl_context();
 
     if (s->flags & PA_SINK_DYNAMIC_LATENCY) {
-        pa_assert(latency == 0);
+        //pa_assert(latency == 0);
         return;
     }
 

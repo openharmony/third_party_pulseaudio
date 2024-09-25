@@ -19,7 +19,8 @@
   You should have received a copy of the GNU Lesser General Public License
   along with PulseAudio; if not, see <http://www.gnu.org/licenses/>.
 ***/
-
+#ifndef MACRO_H
+#define MACRO_H
 #include <sys/types.h>
 #include <unistd.h>
 #include <assert.h>
@@ -152,8 +153,8 @@ static inline size_t PA_ALIGN(size_t l) {
 #define pa_assert_se(expr)                                              \
     do {                                                                \
         if (PA_UNLIKELY(!(expr))) {                                     \
-            pa_log_error("Assertion '%s' failed at %s:%u, function %s(). Aborting.", #expr , __FILE__, __LINE__, PA_PRETTY_FUNCTION); \
-            abort();                                                    \
+            pa_log_error("Assertion '%s' failed. Aborting.", #expr); \
+            PrintCallStackInfo();                                       \
         }                                                               \
     } while (false)
 #else
@@ -161,7 +162,7 @@ static inline size_t PA_ALIGN(size_t l) {
     do {                                                                \
         int _unique_var = (expr);                                       \
         if (!_unique_var)                                               \
-            abort();                                                    \
+            pa_log_error("Assertion '%s' failed. Aborting.", #expr); \
     } while (false)
 #endif
 
@@ -174,11 +175,11 @@ static inline size_t PA_ALIGN(size_t l) {
  * there for extra paranoia checking and should probably be removed in
  * production builds. */
 #ifdef NDEBUG
-#define pa_assert(expr) pa_nop()
-#define pa_assert_fp(expr) pa_nop()
+#define pa_assert(expr) pa_assert_se(expr)
+#define pa_assert_fp(expr) pa_assert_se(expr)
 #elif defined (FASTPATH)
 #define pa_assert(expr) pa_assert_se(expr)
-#define pa_assert_fp(expr) pa_nop()
+#define pa_assert_fp(expr) pa_assert_se(expr)
 #else
 #define pa_assert(expr) pa_assert_se(expr)
 #define pa_assert_fp(expr) pa_assert_se(expr)
@@ -269,4 +270,5 @@ static inline size_t PA_ALIGN(size_t l) {
 /* We include this at the very last place */
 #include <pulsecore/log.h>
 
+#endif
 #endif

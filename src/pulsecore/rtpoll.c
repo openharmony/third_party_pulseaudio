@@ -40,8 +40,6 @@
 #include <pulsecore/ratelimit.h>
 #include <pulse/rtclock.h>
 
-#include "log/audio_log.h"
-
 #include "rtpoll.h"
 #include "time.h"
 
@@ -241,7 +239,7 @@ int pa_rtpoll_run(pa_rtpoll *p) {
         if ((k = i->work_cb(i)) != 0) {
             if (k < 0) {
                 r = k;
-                AUDIO_ERR_LOG("Error %{public}d in i->work_cb, goto finish", r);
+                pa_log_error("Error %d in i->work_cb, goto finish", r);
             }
 #ifdef DEBUG_TIMING
             pa_log("rtpoll finish");
@@ -276,7 +274,7 @@ int pa_rtpoll_run(pa_rtpoll *p) {
             }
 
             if (k < 0) {
-                AUDIO_ERR_LOG("Error %{public}d in i->before_cb, goto finish", r);
+                pa_log_error("Error %d in i->before_cb, goto finish", r);
                 r = k;
             }
 #ifdef DEBUG_TIMING
@@ -344,7 +342,7 @@ int pa_rtpoll_run(pa_rtpoll *p) {
         if (errno == EAGAIN || errno == EINTR) {
             r = 0;
         } else {
-            AUDIO_ERR_LOG("Error %{public}d in ppoll, errno: %{public}s", r, pa_cstrerror(errno));
+            pa_log_error("Error %d in ppoll, errno: %s", r, pa_cstrerror(errno));
             pa_log_error("poll(): %s", pa_cstrerror(errno));
         }
 
@@ -577,7 +575,7 @@ static int asyncmsgq_read_work(pa_rtpoll_item *i) {
         clock_t end = clock();
         double deltatime = (double)(end - start) / CLOCKS_PER_SEC;
         if (deltatime > 1.0) {
-            AUDIO_ERR_LOG("code %{public}d time out %{public}f s", code, deltatime);
+            pa_log_error("code %d time out %f s", code, deltatime);
         }
         pa_asyncmsgq_done(i->work_userdata, ret);
         return 1;

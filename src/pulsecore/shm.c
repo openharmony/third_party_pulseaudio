@@ -58,8 +58,6 @@
 #include <pulsecore/atomic.h>
 #include <pulsecore/mem.h>
 
-#include "log/audio_log.h"
-
 #include "shm.h"
 
 #if defined(__linux__) && !defined(MADV_REMOVE)
@@ -128,7 +126,7 @@ static int privatemem_create(pa_shm *m, size_t size) {
 
 #ifdef MAP_ANONYMOUS
     if ((m->ptr = mmap(NULL, m->size, PROT_READ|PROT_WRITE, MAP_ANONYMOUS|MAP_PRIVATE, -1, (off_t) 0)) == MAP_FAILED) {
-        AUDIO_ERR_LOG("mmap() failed: %{public}s", pa_cstrerror(errno));
+        pa_log_error("mmap() failed: %s", pa_cstrerror(errno));
         return -1;
     }
 #elif defined(HAVE_POSIX_MEMALIGN)
@@ -136,7 +134,7 @@ static int privatemem_create(pa_shm *m, size_t size) {
         int r;
 
         if ((r = posix_memalign(&m->ptr, pa_page_size(), size)) < 0) {
-            AUDIO_ERR_LOG("posix_memalign() failed: %{public}s", pa_cstrerror(r));
+            pa_log_error("posix_memalign() failed: %s", pa_cstrerror(r));
             return r;
         }
     }
@@ -178,7 +176,7 @@ static int sharedmem_create(pa_shm *m, pa_mem_type_t type, size_t size, mode_t m
     }
 
     if (fd < 0) {
-        AUDIO_ERR_LOG("%{public}s open() failed: %{public}s", pa_mem_type_to_string(type), pa_cstrerror(errno));
+        pa_log_error("%s open() failed: %s", pa_mem_type_to_string(type), pa_cstrerror(errno));
         goto fail;
     }
 
@@ -187,7 +185,7 @@ static int sharedmem_create(pa_shm *m, pa_mem_type_t type, size_t size, mode_t m
     m->do_unlink = do_unlink;
 
     if (ftruncate(fd, (off_t) m->size) < 0) {
-        AUDIO_ERR_LOG("ftruncate() failed: %{public}s", pa_cstrerror(errno));
+        pa_log_error("ftruncate() failed: %s", pa_cstrerror(errno));
         goto fail;
     }
 
@@ -196,7 +194,7 @@ static int sharedmem_create(pa_shm *m, pa_mem_type_t type, size_t size, mode_t m
 #endif
 
     if ((m->ptr = mmap(NULL, PA_PAGE_ALIGN(m->size), PROT_READ|PROT_WRITE, MAP_SHARED|MAP_NORESERVE, fd, (off_t) 0)) == MAP_FAILED) {
-        AUDIO_ERR_LOG("mmap() failed: %{public}s", pa_cstrerror(errno));
+        pa_log_error("mmap() failed: %s", pa_cstrerror(errno));
         goto fail;
     }
 
@@ -257,7 +255,7 @@ static void privatemem_free(pa_shm *m) {
 
 #ifdef MAP_ANONYMOUS
     if (munmap(m->ptr, m->size) < 0)
-        AUDIO_ERR_LOG("munmap() failed: %{public}s", pa_cstrerror(errno));
+        pa_log_error("munmap() failed: %s", pa_cstrerror(errno));
 #elif defined(HAVE_POSIX_MEMALIGN)
     free(m->ptr);
 #else
@@ -279,11 +277,11 @@ void pa_shm_free(pa_shm *m) {
         goto finish;
     }
 
-    AUDIO_INFO_LOG("mem type: %{public}d", m->type);
+    pa_log_info("mem type: %d", m->type);
 
 #if defined(HAVE_SHM_OPEN) || defined(HAVE_MEMFD)
     if (munmap(m->ptr, PA_PAGE_ALIGN(m->size)) < 0)
-        AUDIO_ERR_LOG("munmap() failed: %{public}s", pa_cstrerror(errno));
+        pa_log_error("munmap() failed: %s", pa_cstrerror(errno));
 
 #ifdef HAVE_SHM_OPEN
     if (m->type == PA_MEM_TYPE_SHARED_POSIX && m->do_unlink) {
@@ -291,7 +289,7 @@ void pa_shm_free(pa_shm *m) {
 
         segment_name(fn, sizeof(fn), m->id);
         if (shm_unlink(fn) < 0)
-            AUDIO_ERR_LOG(" shm_unlink(%{public}s) failed: %{public}s", fn, pa_cstrerror(errno));
+            pa_log_error(" shm_unlink(%s) failed: %s", fn, pa_cstrerror(errno));
     }
 #endif
 #ifdef HAVE_MEMFD
@@ -301,7 +299,7 @@ void pa_shm_free(pa_shm *m) {
 
 #else
     /* We shouldn't be here without shm or memfd support */
-    AUDIO_ERR_LOG("remove pa_assert_not_reached call");
+    pa_log_error("remove pa_assert_not_reached call");
 #endif
 
 finish:
@@ -371,7 +369,7 @@ static int shm_attach(pa_shm *m, pa_mem_type_t type, unsigned id, int memfd_fd, 
         segment_name(fn, sizeof(fn), id);
         if ((fd = shm_open(fn, writable ? O_RDWR : O_RDONLY, 0)) < 0) {
             if ((errno != EACCES && errno != ENOENT) || !for_cleanup)
-                AUDIO_ERR_LOG("shm_open() failed: %{public}s", pa_cstrerror(errno));
+                pa_log_error("shm_open() failed: %s", pa_cstrerror(errno));
             goto fail;
         }
         break;
@@ -387,20 +385,20 @@ static int shm_attach(pa_shm *m, pa_mem_type_t type, unsigned id, int memfd_fd, 
     }
 
     if (fstat(fd, &st) < 0) {
-        AUDIO_ERR_LOG("fstat() failed: %{public}s", pa_cstrerror(errno));
+        pa_log_error("fstat() failed: %s", pa_cstrerror(errno));
         goto fail;
     }
 
     if (st.st_size <= 0 ||
         st.st_size > (off_t) MAX_SHM_SIZE + (off_t) shm_marker_size(type) ||
         PA_ALIGN((size_t) st.st_size) != (size_t) st.st_size) {
-        AUDIO_ERR_LOG("Invalid shared memory segment size");
+        pa_log_error("Invalid shared memory segment size");
         goto fail;
     }
 
     prot = writable ? PROT_READ | PROT_WRITE : PROT_READ;
     if ((m->ptr = mmap(NULL, PA_PAGE_ALIGN(st.st_size), prot, MAP_SHARED, fd, (off_t) 0)) == MAP_FAILED) {
-        AUDIO_ERR_LOG("mmap() failed: %{public}s", pa_cstrerror(errno));
+        pa_log_error("mmap() failed: %s", pa_cstrerror(errno));
         goto fail;
     }
 
@@ -412,7 +410,7 @@ static int shm_attach(pa_shm *m, pa_mem_type_t type, unsigned id, int memfd_fd, 
     if (type != PA_MEM_TYPE_SHARED_MEMFD)
         pa_assert_se(pa_close(fd) == 0);
 
-    AUDIO_INFO_LOG("shm_attach set mem type %{public}d", type);
+    pa_log_info("shm_attach set mem type %d", type);
     m->type = type;
     m->id = id;
     m->size = (size_t) st.st_size;
@@ -437,14 +435,14 @@ int pa_shm_attach(pa_shm *m, pa_mem_type_t type, unsigned id, int memfd_fd, bool
 }
 
 int pa_shm_cleanup(void) {
-    AUDIO_INFO_LOG("start pa_shm_cleanup");
+    pa_log_info("start pa_shm_cleanup");
 #ifdef HAVE_SHM_OPEN
 #ifdef SHM_PATH
     DIR *d;
     struct dirent *de;
 
     if (!(d = opendir(SHM_PATH))) {
-        AUDIO_WARNING_LOG("Failed to read "SHM_PATH": %s", pa_cstrerror(errno));
+        pa_log_warn("Failed to read "SHM_PATH": %s", pa_cstrerror(errno));
         return -1;
     }
 
@@ -496,7 +494,7 @@ int pa_shm_cleanup(void) {
         segment_name(fn, sizeof(fn), id);
 
         if (shm_unlink(fn) < 0 && errno != EACCES && errno != ENOENT)
-            AUDIO_WARNING_LOG("Failed to remove SHM segment %{public}s: %{public}s", fn, pa_cstrerror(errno));
+            pa_log_warn("Failed to remove SHM segment %s: %s", fn, pa_cstrerror(errno));
     }
 
     closedir(d);

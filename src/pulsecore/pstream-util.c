@@ -30,8 +30,6 @@
 
 #include "pstream-util.h"
 
-#include "log/audio_log.h"
-
 #define PA_SNPRINTF_COMMAND_STR_LENGTH 256
 
 static void pa_pstream_send_tagstruct_with_ancil_data(pa_pstream *p, pa_tagstruct *t, pa_cmsg_ancil_data *ancil_data) {

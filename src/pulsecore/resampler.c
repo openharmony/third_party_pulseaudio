@@ -31,8 +31,6 @@
 #include <pulsecore/strbuf.h>
 #include <pulsecore/core-util.h>
 
-#include "log/audio_log.h"
-
 #include "resampler.h"
 #include "downmix.h"
 
@@ -438,13 +436,13 @@ pa_resampler* pa_resampler_new(
     }
     r->w_fz = pa_sample_size_of_format(r->work_format) * r->work_channels;
 
-    AUDIO_DEBUG_LOG("Resampler:");
-    AUDIO_DEBUG_LOG("  rate %{public}d -> %{public}d (method %{public}s)",
+    pa_log_debug("Resampler:");
+    pa_log_debug("  rate %d -> %d (method %s)",
         a->rate, b->rate, pa_resample_method_to_string(r->method));
-    AUDIO_DEBUG_LOG("  format %{public}s -> %{public}s (intermediate %{public}s)",
+    pa_log_debug("  format %s -> %s (intermediate %s)",
         pa_sample_format_to_string(a->format), pa_sample_format_to_string(b->format),
         pa_sample_format_to_string(r->work_format));
-    AUDIO_DEBUG_LOG("  channels %{public}d -> %{public}d (resampling %{public}d)",
+    pa_log_debug("  channels %d -> %d (resampling %d)",
         a->channels, b->channels, r->work_channels);
 
     /* set up the remap structure */
@@ -1712,13 +1710,13 @@ size_t PaResamplerPrebuf(pa_resampler *r, pa_mempool *mempool)
     }
 
     pa_memchunk chunkIn, chunkOut;
-    chunkIn.length = r->o_fz * RESAMPLER_CACHE_SIZE_RATIO;
+    chunkIn.length = r->o_fz * RESAMPLER_CACHE_SIZE_RATIO * r->i_fz;
     chunkIn.memblock = pa_memblock_new(mempool, chunkIn.length);
     chunkIn.index = 0;
 
     pa_silence_memchunk(&chunkIn, &r->i_ss);
     pa_resampler_run(r, &chunkIn, &chunkOut);
-    if (chunkOut.length != 0) {
+    if (chunkOut.memblock) {
         pa_memblock_unref(chunkOut.memblock);
     }
     pa_memblock_unref(chunkIn.memblock);

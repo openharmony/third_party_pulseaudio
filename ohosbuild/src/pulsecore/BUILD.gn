@@ -177,7 +177,7 @@ ohos_shared_library("cli") {
     "../../src:pulsecommon",
     "../../src/pulsecore:pulsecore",
   ]
-
+  external_deps = [ "hilog:libhilog" ]
   subsystem_name = "thirdparty"
   part_name = "pulseaudio"
 }
@@ -192,7 +192,7 @@ ohos_shared_library("protocol-cli") {
     "../../src/pulsecore:cli",
     "../../src/pulsecore:pulsecore",
   ]
-
+  external_deps = [ "hilog:libhilog" ]
   subsystem_name = "thirdparty"
   part_name = "pulseaudio"
 }

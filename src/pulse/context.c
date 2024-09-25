@@ -67,8 +67,6 @@
 #include <pulsecore/macro.h>
 #include <pulsecore/proplist-util.h>
 
-#include "log/audio_log.h"
-
 #include "internal.h"
 #include "context.h"
 
@@ -579,8 +577,8 @@ static void setup_complete_callback(pa_pdispatch *pd, uint32_t command, uint32_t
                     c->shm_type = PA_MEM_TYPE_SHARED_POSIX;
             }
 
-            AUDIO_DEBUG_LOG("Memfd possible: %{public}s", pa_yes_no(c->memfd_on_local));
-            AUDIO_DEBUG_LOG("Negotiated SHM type: %{public}s", pa_mem_type_to_string(c->shm_type));
+            pa_log_debug("Memfd possible: %s", pa_yes_no(c->memfd_on_local));
+            pa_log_debug("Negotiated SHM type: %s", pa_mem_type_to_string(c->shm_type));
 
             reply = pa_tagstruct_command(c, PA_COMMAND_SET_CLIENT_NAME, &tag);
 
@@ -710,7 +708,7 @@ static int context_autospawn(pa_context *c) {
 #else
     if (sa.sa_handler == SIG_IGN) {
 #endif
-        AUDIO_ERR_LOG("Process disabled waitpid(), cannot autospawn.");
+        pa_log_error("Process disabled waitpid(), cannot autospawn.");
         pa_context_fail(c, PA_ERR_CONNECTIONREFUSED);
         goto fail;
     }
@@ -785,7 +783,7 @@ static int context_autospawn(pa_context *c) {
          * startup worked, even if we cannot know */
 
     } else if (!WIFEXITED(status) || WEXITSTATUS(status) != 0) {
-        AUDIO_ERR_LOG("Connection refused for status");
+        pa_log_error("Connection refused for status");
         pa_context_fail(c, PA_ERR_CONNECTIONREFUSED);
         goto fail;
     }
@@ -890,7 +888,7 @@ static int try_next_connection(pa_context *c) {
                 }
             } else
 #endif
-                AUDIO_ERR_LOG("Connection refused for try connect");
+                pa_log_error("Connection refused for try connect");
                 pa_context_fail(c, PA_ERR_CONNECTIONREFUSED);
 
             goto finish;
@@ -939,7 +937,7 @@ static void on_connection(pa_socket_client *client, pa_iochannel*io, void *userd
             goto finish;
         }
 
-        AUDIO_ERR_LOG("Connection refused for io");
+        pa_log_error("Connection refused for io");
         pa_context_fail(c, PA_ERR_CONNECTIONREFUSED);
         goto finish;
     }
