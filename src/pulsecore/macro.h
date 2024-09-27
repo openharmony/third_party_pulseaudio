@@ -154,7 +154,6 @@ static inline size_t PA_ALIGN(size_t l) {
     do {                                                                \
         if (PA_UNLIKELY(!(expr))) {                                     \
             pa_log_error("Assertion '%s' failed. Aborting.", #expr); \
-            PrintCallStackInfo();                                       \
         }                                                               \
     } while (false)
 #else
