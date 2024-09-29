@@ -386,7 +386,7 @@ void pa_log_levelv_meta(
 
     /* We don't use dynamic memory allocation here to minimize the hit
      * in RT threads */
-    char text[16*1024], location[128], timestamp[32];
+    char text[256], location[128], timestamp[32];
 
     pa_assert(level < PA_LOG_LEVEL_MAX);
     pa_assert(format);
