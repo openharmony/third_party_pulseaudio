@@ -1620,6 +1620,18 @@ void pa_resampler_run(pa_resampler *r, const pa_memchunk *in, pa_memchunk *out) 
     pa_assert(in->memblock);
     pa_assert(in->length % r->i_fz == 0);
 
+    /* If first frame and resampler doesn't init, push one frame to init.
+     * Otherwise, resamplers demand 2 or 3 times to output*/
+    if (!r->resample_buf.memblock && (r->i_ss.rate != r->o_ss.rate)) {
+        pa_memchunk dumpBuf;
+        buf = &dumpBuf
+        pa_memblock dumpBlock = pa_memblock_new(r->mempool, in->length);
+        buf->memblock = dumpBlock;
+        buf->length = in->length;
+        resample(r, buf);
+        pa_memblock_release(dumpBlock);
+    }
+
     buf = (pa_memchunk*) in;
     r->in_frames += buf->length / r->i_fz;
     buf = convert_to_work_format(r, buf);
@@ -1642,6 +1654,9 @@ void pa_resampler_run(pa_resampler *r, const pa_memchunk *in, pa_memchunk *out) 
         *out = *buf;
         r->out_frames += buf->length / r->o_fz;
 
+        if (out->length < 100) { //100 is to small for output. Need logs
+            pa_log_warn("output length %zu is too small, please check.", out->length);
+        }
         if (buf == in)
             pa_memblock_ref(buf->memblock);
         else
@@ -1697,29 +1712,6 @@ static int copy_init(pa_resampler *r) {
     pa_assert(r);
 
     pa_assert(r->o_ss.rate == r->i_ss.rate);
-
-    return 0;
-}
-
-size_t PaResamplerPrebuf(pa_resampler *r, pa_mempool *mempool)
-{
-    pa_assert(r);
-
-    if (!mempool) {
-        return 0;
-    }
-
-    pa_memchunk chunkIn, chunkOut;
-    chunkIn.length = r->o_fz * RESAMPLER_CACHE_SIZE_RATIO * r->i_fz;
-    chunkIn.memblock = pa_memblock_new(mempool, chunkIn.length);
-    chunkIn.index = 0;
-
-    pa_silence_memchunk(&chunkIn, &r->i_ss);
-    pa_resampler_run(r, &chunkIn, &chunkOut);
-    if (chunkOut.memblock) {
-        pa_memblock_unref(chunkOut.memblock);
-    }
-    pa_memblock_unref(chunkIn.memblock);
 
     return 0;
 }

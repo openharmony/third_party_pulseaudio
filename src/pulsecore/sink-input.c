@@ -678,10 +678,6 @@ int pa_sink_input_new(
                 pt);
     pa_xfree(pt);
 
-    if (i->thread_info.resampler) {
-        PaResamplerPrebuf(i->thread_info.resampler, i->core->mempool);
-    }
-
     /* Don't forget to call pa_sink_input_put! */
 
     *_i = i;
@@ -1742,9 +1738,6 @@ void pa_sink_input_cork(pa_sink_input *i, bool b) {
 
     if (b && i->thread_info.resampler) {
         pa_resampler_reset(i->thread_info.resampler);
-        if (i->thread_info.resampler) {
-            PaResamplerPrebuf(i->thread_info.resampler, i->core->mempool);
-        }
     }
 }
 
@@ -2631,9 +2624,6 @@ int pa_sink_input_update_resampler(pa_sink_input *i, bool flush_history) {
         pa_resampler_free(i->thread_info.resampler);
 
     i->thread_info.resampler = new_resampler;
-    if (i->thread_info.resampler) {
-        PaResamplerPrebuf(i->thread_info.resampler, i->core->mempool);
-    }
 
     pa_memblockq_free(i->thread_info.render_memblockq);
 
