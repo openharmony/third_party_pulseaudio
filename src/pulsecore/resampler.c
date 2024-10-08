@@ -1622,10 +1622,10 @@ void pa_resampler_run(pa_resampler *r, const pa_memchunk *in, pa_memchunk *out) 
 
     /* If first frame and resampler doesn't init, push one frame to init.
      * Otherwise, resamplers demand 2 or 3 times to output*/
-    if (!r->resample_buf.memblock && (r->i_ss.rate != r->o_ss.rate)) {
+    if ((r->in_frames == 0) && (r->i_ss.rate != r->o_ss.rate)) {
         pa_memchunk dumpBuf;
-        buf = &dumpBuf
-        pa_memblock dumpBlock = pa_memblock_new(r->mempool, in->length);
+        buf = &dumpBuf;
+        pa_memblock *dumpBlock = pa_memblock_new(r->mempool, in->length);
         buf->memblock = dumpBlock;
         buf->length = in->length;
         resample(r, buf);
