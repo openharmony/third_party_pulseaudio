@@ -94,6 +94,13 @@ ohos_shared_library("pulse") {
   external_deps = [ "hilog:libhilog" ]
 
   defines = []
+
+  if (build_variant == "user") {
+    defines += [ "AUDIO_BUILD_VARIANT_USER" ]
+  } else if (build_variant == "root") {
+    defines += [ "AUDIO_BUILD_VARIANT_ROOT" ]
+  }
+
   if (defined(global_parts_info) &&
       defined(global_parts_info.hiviewdfx_hitrace)) {
     defines += [ "FEATURE_HITRACE_METER" ]
