@@ -576,7 +576,7 @@ int pa_close(int fd) {
         if ((r = close(fd)) < 0) {
             if (errno == EINTR)
                 continue;
-            AUDIO_ERR_LOG("Close fd failed, err code: %{public}d", r);
+            AUDIO_ERR_LOG("Close fd failed, err code: %{public}d", errno);
         }
         return r;
     }
@@ -2716,10 +2716,10 @@ void pa_close_pipe(int fds[2]) {
     pa_assert(fds);
 
     if (fds[0] >= 0)
-        pa_assert_se(pa_close(fds[0]) == 0);
+        pa_close(fds[0]);
 
     if (fds[1] >= 0)
-        pa_assert_se(pa_close(fds[1]) == 0);
+        pa_close(fds[1]);
 
     fds[0] = fds[1] = -1;
 }
