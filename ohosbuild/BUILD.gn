@@ -31,7 +31,6 @@ group("pulseaudio_packages") {
   ]
   if (build_variant == "root") {
     deps += [
-      "src/utils:pacat",
       "src/utils:pacmd",
       "src/utils:pactl",
     ]

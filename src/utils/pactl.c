@@ -32,7 +32,9 @@
 #include <locale.h>
 #include <ctype.h>
 
+#ifdef SNDFILE_ENABLE
 #include <sndfile.h>
+#endif
 
 #include <pulse/pulseaudio.h>
 #include <pulse/ext-device-restore.h>
@@ -43,7 +45,10 @@
 #include <pulsecore/macro.h>
 #include <pulsecore/core-util.h>
 #include <pulsecore/log.h>
+
+#ifdef SNDFILE_ENABLE
 #include <pulsecore/sndfile-util.h>
+#endif
 
 static pa_context *context = NULL;
 static pa_mainloop_api *mainloop_api = NULL;
@@ -91,11 +96,13 @@ static enum mute_flags {
 
 static pa_proplist *proplist = NULL;
 
+#ifdef SNDFILE_ENABLE
 static SNDFILE *sndfile = NULL;
 static pa_stream *sample_stream = NULL;
 static pa_sample_spec sample_spec;
 static pa_channel_map channel_map;
 static size_t sample_length = 0;
+#endif
 
 /* This variable tracks the number of ongoing asynchronous operations. When a
  * new operation begins, this is incremented simply with actions++, and when
@@ -2090,6 +2097,7 @@ error:
     goto done;
 }
 
+#ifdef SNDFILE_ENABLE
 static void stream_state_callback(pa_stream *s, void *userdata) {
     pa_assert(s);
 
@@ -2135,6 +2143,7 @@ static void stream_write_callback(pa_stream *s, size_t length, void *userdata) {
         pa_stream_finish_upload(sample_stream);
     }
 }
+#endif
 
 static const char *subscription_event_type_to_string(pa_subscription_event_type_t t) {
 
@@ -2239,7 +2248,7 @@ static void context_state_callback(pa_context *c, void *userdata) {
                 case REMOVE_SAMPLE:
                     o = pa_context_remove_sample(c, sample_name, simple_callback, NULL);
                     break;
-
+#ifdef SNDFILE_ENABLE
                 case UPLOAD_SAMPLE:
                     sample_stream = pa_stream_new(c, sample_name, &sample_spec, NULL);
                     pa_assert(sample_stream);
@@ -2249,7 +2258,7 @@ static void context_state_callback(pa_context *c, void *userdata) {
                     pa_stream_connect_upload(sample_stream, sample_length);
                     actions++;
                     break;
-
+#endif
                 case EXIT:
                     o = pa_context_exit_daemon(c, simple_callback, NULL);
                     break;
@@ -2781,6 +2790,7 @@ int main(int argc, char *argv[]) {
             }
 
         } else if (pa_streq(argv[optind], "upload-sample")) {
+#ifdef SNDFILE_ENABLE
             struct SF_INFO sfi;
             action = UPLOAD_SAMPLE;
 
@@ -2816,7 +2826,7 @@ int main(int argc, char *argv[]) {
 
             pa_assert(pa_channel_map_compatible(&channel_map, &sample_spec));
             sample_length = (size_t) sfi.frames*pa_frame_size(&sample_spec);
-
+#endif
         } else if (pa_streq(argv[optind], "play-sample")) {
             action = PLAY_SAMPLE;
             if (argc != optind+2 && argc != optind+3) {
@@ -3250,9 +3260,10 @@ int main(int argc, char *argv[]) {
     }
 
 quit:
+#ifdef SNDFILE_ENABLE
     if (sample_stream)
         pa_stream_unref(sample_stream);
-
+#endif
     if (context)
         pa_context_unref(context);
 
@@ -3274,10 +3285,10 @@ quit:
     pa_xfree(object_path);
     pa_xfree(message);
     pa_xfree(message_args);
-
+#ifdef SNDFILE_ENABLE
     if (sndfile)
         sf_close(sndfile);
-
+#endif
     if (proplist)
         pa_proplist_free(proplist);
 

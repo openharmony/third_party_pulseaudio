@@ -97,7 +97,6 @@ ohos_source_set("pulsecommon_sources") {
     "../../src/pulsecore/sample-util.c",
     "../../src/pulsecore/semaphore-posix.c",
     "../../src/pulsecore/shm.c",
-    "../../src/pulsecore/sndfile-util.c",
     "../../src/pulsecore/socket-client.c",
     "../../src/pulsecore/socket-util.c",
     "../../src/pulsecore/srbchannel.c",
@@ -115,7 +114,6 @@ ohos_source_set("pulsecommon_sources") {
   external_deps = [
     "hilog:libhilog",
     "init:libbegetutil",
-    "libsnd:sndfile",
   ]
 
   defines = []
@@ -130,12 +128,12 @@ ohos_source_set("pulsecommon_sources") {
 }
 
 ohos_shared_library("pulsecommon") {
+  branch_protector_ret = "pac_ret"
   deps = [ ":pulsecommon_sources" ]
 
   external_deps = [
     "hilog:libhilog",
     "init:libbegetutil",
-    "libsnd:sndfile",
   ]
 
   subsystem_name = "thirdparty"

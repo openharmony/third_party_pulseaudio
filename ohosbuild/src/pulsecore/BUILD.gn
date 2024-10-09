@@ -22,6 +22,7 @@ config("pulsecore_config") {
     "../../../src",
     "../../include",
     "../../src",
+    "../../../speex/include",
   ]
 
   cflags = [
@@ -72,6 +73,7 @@ ohos_source_set("pulsecore_sources") {
     "../../../src/pulsecore/resampler.c",
     "../../../src/pulsecore/resampler/ffmpeg.c",
     "../../../src/pulsecore/resampler/peaks.c",
+    "../../../src/pulsecore/resampler/speex.c",
     "../../../src/pulsecore/resampler/trivial.c",
     "../../../src/pulsecore/rtpoll.c",
     "../../../src/pulsecore/sconv-s16be.c",
@@ -81,8 +83,6 @@ ohos_source_set("pulsecore_sources") {
     "../../../src/pulsecore/sink-input.c",
     "../../../src/pulsecore/sink.c",
     "../../../src/pulsecore/sioman.c",
-    "../../../src/pulsecore/sound-file-stream.c",
-    "../../../src/pulsecore/sound-file.c",
     "../../../src/pulsecore/source-output.c",
     "../../../src/pulsecore/source.c",
     "../../../src/pulsecore/start-child.c",
@@ -97,10 +97,7 @@ ohos_source_set("pulsecore_sources") {
 
   configs = [ ":pulsecore_config" ]
 
-  external_deps = [
-    "hilog:libhilog",
-    "libsnd:sndfile",
-  ]
+  external_deps = [ "hilog:libhilog" ]
 
   defines = []
   if (defined(global_parts_info) &&
@@ -123,21 +120,15 @@ config("export_pulsecore_include") {
 }
 
 ohos_shared_library("pulsecore") {
-  sanitize = {
-    integer_overflow = true
-  }
-
   deps = [
     ":pulsecore_sources",
+    "../../../speex:speexresampler",
     "../../src:pulsecommon",
   ]
 
   public_configs = [ ":export_pulsecore_include" ]
 
-  external_deps = [
-    "hilog:libhilog",
-    "libsnd:sndfile",
-  ]
+  external_deps = [ "hilog:libhilog" ]
 
   defines = []
   if (defined(global_parts_info) &&

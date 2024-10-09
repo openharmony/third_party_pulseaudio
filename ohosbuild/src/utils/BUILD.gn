@@ -33,21 +33,6 @@ config("pulseutils_config") {
   ]
 }
 
-ohos_executable("pacat") {
-  sources = [ "../../../src/utils/pacat.c" ]
-
-  configs = [ ":pulseutils_config" ]
-
-  deps = [
-    "../../src:pulsecommon",
-    "../../src/pulse:pulse",
-  ]
-  external_deps = [ "libsnd:sndfile" ]
-
-  subsystem_name = "thirdparty"
-  part_name = "pulseaudio"
-}
-
 ohos_executable("pactl") {
   sources = [ "../../../src/utils/pactl.c" ]
 
@@ -57,7 +42,6 @@ ohos_executable("pactl") {
     "../../src:pulsecommon",
     "../../src/pulse:pulse",
   ]
-  external_deps = [ "libsnd:sndfile" ]
   subsystem_name = "thirdparty"
   part_name = "pulseaudio"
 }
