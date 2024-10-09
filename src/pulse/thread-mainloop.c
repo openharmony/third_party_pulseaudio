@@ -86,9 +86,12 @@ static void thread(void *userdata) {
     // This code serves as a fallback for exceptions caused by unexpected exits.
     if (m->name != NULL) {
         pa_log_error("Thread %s exit", m->name);
-        if (strcmp(m->name, "OS_RendererML") == 0 || strcmp(m->name, "OS_AudioML")) {
+#ifdef AUDIO_BUILD_VARIANT_USER
+        // Handle unexpected thread termination: kill the process to ensure continued service in user ver.
+        if (strcmp(m->name, "OS_RendererML") == 0 || strcmp(m->name, "OS_AudioML") == 0) {
             _Exit(0);
         }
+#endif
     }
 }
 
