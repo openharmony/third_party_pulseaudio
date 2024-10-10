@@ -1284,12 +1284,14 @@ static int pa_cli_command_play_file(pa_core *c, pa_tokenizer *t, pa_strbuf *buf,
         pa_strbuf_puts(buf, "No sink by that name.\n");
         return -1;
     }
-
+#ifdef SNDFILE_ENABLE
     if (pa_play_file(sink, fname, NULL) < 0) {
         pa_strbuf_puts(buf, "Failed to play sound file.\n");
         return -1;
     }
-
+#else
+    return -1;
+#endif
     return 0;
 }
 
