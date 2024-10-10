@@ -2211,7 +2211,7 @@ int pa_sink_input_finish_move(pa_sink_input *i, pa_sink *dest, bool save) {
 
     pa_sink_input_update_resampler(i, false);
 
-    // restore_render_memblockq(i); // restore is needless for moving between sinks
+    // restore_render_memblockq(i) restore is needless for moving between sinks
 
     pa_sink_update_status(dest);
 

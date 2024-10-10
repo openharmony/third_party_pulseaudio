@@ -45,7 +45,7 @@ static void pa_pstream_send_tagstruct_with_ancil_data(pa_pstream *p, pa_tagstruc
     uint32_t command;
     if (ReadCommand(t, &command) == 0) {
         char t[PA_SNPRINTF_COMMAND_STR_LENGTH] = {0};
-        pa_snprintf(t, sizeof(t), "PA_SEND_CMD[%u]", command);
+        pa_snprintf(t, sizeof(t), "PA_SEND_CMD[%u]", p, command);
         CallStart(t);
         CallEnd();
     }

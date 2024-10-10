@@ -43,6 +43,7 @@
 #include "log/audio_log.h"
 
 #include "rtpoll.h"
+#include "time.h"
 
 /* #define DEBUG_TIMING */
 
@@ -571,7 +572,13 @@ static int asyncmsgq_read_work(pa_rtpoll_item *i) {
             return 1;
         }
 
+        clock_t start = clock();
         ret = pa_asyncmsgq_dispatch(object, code, data, offset, &chunk);
+        clock_t end = clock();
+        double deltatime = (double)(end - start) / CLOCKS_PER_SEC;
+        if (deltatime > 1.0) {
+            AUDIO_ERR_LOG("code %{public}d time out %{public}f s", code, deltatime);
+        }
         pa_asyncmsgq_done(i->work_userdata, ret);
         return 1;
     }
