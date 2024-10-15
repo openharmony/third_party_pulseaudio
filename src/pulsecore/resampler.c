@@ -1625,11 +1625,18 @@ void pa_resampler_run(pa_resampler *r, const pa_memchunk *in, pa_memchunk *out) 
     if ((r->in_frames == 0) && (r->i_ss.rate != r->o_ss.rate)) {
         pa_memchunk dumpBuf;
         buf = &dumpBuf;
-        pa_memblock *dumpBlock = pa_memblock_new(r->mempool, in->length);
-        buf->memblock = dumpBlock;
-        buf->length = in->length;
+        size_t tempLength = r->i_fz * RESAMPLER_CACHE_SIZE_RATIO * r->o_fz;
+        buf->length = tempLength;
+        buf->memblock = pa_memblock_new(r->mempool, tempLength);
+        buf->index = 0;
+        
+        // silence memblock
+        void *data = pa_memblock_acquire(buf->memblock);
+        memset(data, 0, buf->length);
+        pa_memblock_release(buf->memblock);
+
         resample(r, buf);
-        pa_memblock_release(dumpBlock);
+        pa_memblock_release(buf->memblock);
     }
 
     buf = (pa_memchunk*) in;
