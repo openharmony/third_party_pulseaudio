@@ -1661,9 +1661,6 @@ void pa_resampler_run(pa_resampler *r, const pa_memchunk *in, pa_memchunk *out) 
         *out = *buf;
         r->out_frames += buf->length / r->o_fz;
 
-        if (out->length < 100) { //100 is to small for output. Need logs
-            pa_log_warn("output length %zu is too small, please check.", out->length);
-        }
         if (buf == in)
             pa_memblock_ref(buf->memblock);
         else
