@@ -25,6 +25,8 @@
 #include <errno.h>
 
 #include <pulse/xmalloc.h>
+#include <pulse/rtclock.h>
+#include <pulse/timeval.h>
 
 #include <pulsecore/macro.h>
 #include <pulsecore/log.h>
@@ -151,6 +153,7 @@ int pa_asyncmsgq_send(pa_asyncmsgq *a, pa_msgobject *object, int code, const voi
     struct asyncmsgq_item i;
     pa_assert(PA_REFCNT_VALUE(a) > 0);
 
+    pa_usec_t startTime = pa_rtclock_now();
     char t[PA_SNPRINTF_STR_LENGTH] = {0};
     pa_snprintf(t, sizeof(t), "pa_asyncmsgq_send[%d] %u", code, PaAsyncqGetNumToRead(a->asyncq));
     CallStart(t);
@@ -179,6 +182,11 @@ int pa_asyncmsgq_send(pa_asyncmsgq *a, pa_msgobject *object, int code, const voi
     if (pa_flist_push(PA_STATIC_FLIST_GET(semaphores), i.semaphore) < 0)
         pa_semaphore_free(i.semaphore);
     CallEnd();
+    pa_usec_t executionTime = pa_rtclock_now() - startTime;
+    if (executionTime > OH_DAEMON_TIMEOUT_THRESHOLD_ON_US) { // too long block of daemon thread, dangerous
+        AUDIO_WARNING_LOG("Execution time of this msg is too long: qLen[%{public}u], MSG[%{public}d] (%{public}ldms)",
+            PaAsyncqGetNumToRead(a->asyncq), code, executionTime / PA_USEC_PER_MSEC);
+    }
     return i.ret;
 }
 
