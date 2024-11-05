@@ -555,7 +555,11 @@ size_t pa_resampler_request(pa_resampler *r, size_t out_length) {
      * behavior of the used resamplers and will calculate the
      * minimum number of input frames that are needed to produce
      * the given number of output frames. */
-    in_length = (out_length - 1) * r->i_ss.rate / r->o_ss.rate + 1;
+     if (r->o_ss.rate % 50 != 0 || r->i_ss.rate % 50 != 0) {  // 1s/20ms(oh frmLen) = 50
+        in_length = (out_length - 1) * r->i_ss.rate / r->o_ss.rate + 1;
+     } else {
+        in_length = out_length * r->i_ss.rate / r->o_ss.rate;
+     }
 
     /* Convert to input length */
     return in_length * r->i_fz;
