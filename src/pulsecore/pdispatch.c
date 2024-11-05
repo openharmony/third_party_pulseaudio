@@ -355,7 +355,7 @@ int pa_pdispatch_run(pa_pdispatch *pd, pa_packet *packet, pa_cmsg_ancil_data *an
         (*cb)(pd, command, tag, ts, userdata);
         pa_usec_t executionTime = pa_rtclock_now() - startTime;
         if (executionTime > OH_DAEMON_TIMEOUT_THRESHOLD_ON_US) {  // too long block of daemon thread, dangerous
-            AUDIO_WARNING_LOG("Execution time of this command is too long: CMD[%{public}s] (%{public}llums)",
+            AUDIO_WARNING_LOG("Execution time of this command is too long: CMD[%{public}s] (%{public}" PRIu64 "ms)",
                 p, executionTime / PA_USEC_PER_MSEC);
         }
     } else {
