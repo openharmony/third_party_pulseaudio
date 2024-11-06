@@ -78,6 +78,8 @@ static void speex_free(void *ptr) {free(ptr);}
 #include "os_support.h"
 #endif /* OUTSIDE_SPEEX */
 
+#include "log/audio_log.h"
+
 #include <math.h>
 #include <limits.h>
 
@@ -896,6 +898,12 @@ static int speex_resampler_process_native(SpeexResamplerState *st, spx_uint32_t 
    st->last_sample[channel_index] -= *in_len;
 
    ilen = *in_len;
+
+   // add protection to prevent crash caused by mem overflow
+   // ilen is unsigned, first check prevent very huge value e.g. 0xffff
+   if (ilen > N - 1 + ilen || N - 1 + ilen > st->nb_channels * st->mem_alloc_size) {
+      return RESAMPLER_ERR_BAD_STATE;
+   }
 
    for(j=0;j<N-1;++j)
      mem[j] = mem[j+ilen];
