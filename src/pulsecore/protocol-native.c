@@ -602,6 +602,7 @@ static int playback_stream_process_msg(pa_msgobject *o, int code, void*userdata,
                 pa_tagstruct_put_usec(t, s->configured_sink_latency);
                 pa_pstream_send_tagstruct(s->connection->pstream, t);
             }
+            [[fallthrough]];
 
         case PLAYBACK_STREAM_MESSAGE_UNDERFLOW_OHOS: {
             pa_tagstruct *t;
