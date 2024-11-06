@@ -78,8 +78,6 @@ static void speex_free(void *ptr) {free(ptr);}
 #include "os_support.h"
 #endif /* OUTSIDE_SPEEX */
 
-#include "log/audio_log.h"
-
 #include <math.h>
 #include <limits.h>
 
