@@ -77,6 +77,7 @@
 #define DEFAULT_TLENGTH_MSEC 2000 /* 2s */
 #define DEFAULT_PROCESS_MSEC 20   /* 20ms */
 #define DEFAULT_FRAGSIZE_MSEC DEFAULT_TLENGTH_MSEC
+#define PA_SNPRINTF_STR_LENGTH 256
 
 static bool sink_input_process_underrun_cb(pa_sink_input *i);
 static bool sink_input_process_underrun_ohos_cb(pa_sink_input *i);
@@ -1375,6 +1376,11 @@ static int sink_input_pop_cb(pa_sink_input *i, size_t nbytes, pa_memchunk *chunk
     if (!handle_input_underrun(s, false))
         s->is_underrun = false;
 
+    char t[PA_SNPRINTF_STR_LENGTH] = {0};
+    pa_snprintf(t, sizeof(t), "memblockq->size after push = [%zu]", pa_memblock_get_length(s->memblockq));
+    CallStart(t);
+    CallEnd();
+
     /* This call will not fail with prebuf=0, hence we check for
        underrun explicitly in handle_input_underrun */
     if (pa_memblockq_peek(s->memblockq, chunk) < 0)
@@ -1386,6 +1392,9 @@ static int sink_input_pop_cb(pa_sink_input *i, size_t nbytes, pa_memchunk *chunk
         pa_asyncmsgq_post(pa_thread_mq_get()->outq, PA_MSGOBJECT(s), PLAYBACK_STREAM_MESSAGE_STARTED, NULL, 0, NULL, NULL);
 
     pa_memblockq_drop(s->memblockq, chunk->length);
+    pa_snprintf(t, sizeof(t), "memblockq size after pop = [%zu]", pa_memblockq_get_length(s->memblockq));
+    CallStart(t);
+    CallEnd();
     playback_stream_request_bytes(s);
 
     return 0;
