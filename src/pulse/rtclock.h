@@ -28,6 +28,8 @@
 
 PA_C_DECL_BEGIN
 
+#define OH_DAEMON_TIMEOUT_THRESHOLD_ON_US 20000
+
 /** Return the current monotonic system time in usec, if such a clock
  * is available.  If it is not available this will return the
  * wallclock time instead.  \since 0.9.16 */
