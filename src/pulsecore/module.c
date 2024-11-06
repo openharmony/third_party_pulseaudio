@@ -40,6 +40,8 @@
 
 #include "module.h"
 
+#include "log/audio_log.h"
+
 #define PA_SYMBOL_INIT "pa__init"
 #define PA_SYMBOL_DONE "pa__done"
 #define PA_SYMBOL_LOAD_ONCE "pa__load_once"
@@ -126,6 +128,7 @@ int pa_module_load(pa_module** module, pa_core *c, const char *name, const char 
 
     if (c->disallow_module_loading) {
         errcode = -PA_ERR_ACCESS;
+        AUDIO_ERR_LOG("disallow_module_loading");
         goto fail;
     }
 
@@ -144,7 +147,7 @@ int pa_module_load(pa_module** module, pa_core *c, const char *name, const char 
          * module with normal loaders, libltdl falls back to the "preload"
          * loader, which never finds anything, and therefore says "file not
          * found". */
-        pa_log("Failed to open module \"%s\".", name);
+        AUDIO_ERR_LOG("Failed to open module \"%{public}s\".", name);
         errcode = -PA_ERR_IO;
         goto fail;
     }
@@ -153,13 +156,13 @@ int pa_module_load(pa_module** module, pa_core *c, const char *name, const char 
         const char *version = get_version();
 
         if (!pa_safe_streq(version, PACKAGE_VERSION)) {
-            pa_log("Module \"%s\" version (%s) doesn't match the expected version (%s).",
-                   name, pa_strnull(version), PACKAGE_VERSION);
+            AUDIO_ERR_LOG("Module \"%{public}s\" version (%{public}s) doesn't match the expected version (%{public}s).",
+                name, pa_strnull(version), PACKAGE_VERSION);
             errcode = -PA_ERR_IO;
             goto fail;
         }
     } else {
-        pa_log("Symbol \"%s\" not found in module \"%s\".", PA_SYMBOL_GET_VERSION, name);
+        AUDIO_ERR_LOG("Symbol \"%{public}s\" not found in module \"%{public}s\".", PA_SYMBOL_GET_VERSION, name);
         errcode = -PA_ERR_IO;
         goto fail;
     }
@@ -175,7 +178,7 @@ int pa_module_load(pa_module** module, pa_core *c, const char *name, const char 
 
             PA_IDXSET_FOREACH(i, c->modules, idx) {
                 if (pa_streq(name, i->name)) {
-                    pa_log("Module \"%s\" should be loaded once at most. Refusing to load.", name);
+                    AUDIO_ERR_LOG("Module \"%{public}s\" should be loaded once at most. Refusing to load.", name);
                     errcode = -PA_ERR_EXIST;
                     goto fail;
                 }
@@ -191,7 +194,7 @@ int pa_module_load(pa_module** module, pa_core *c, const char *name, const char 
     }
 
     if (!(m->init = (int (*)(pa_module*_m)) pa_load_sym(m->dl, name, PA_SYMBOL_INIT))) {
-        pa_log("Failed to load module \"%s\": symbol \""PA_SYMBOL_INIT"\" not found.", name);
+        AUDIO_ERR_LOG("Failed to load module \"%{public}s\": symbol \""PA_SYMBOL_INIT"\" not found.", name);
         errcode = -PA_ERR_IO;
         goto fail;
     }
@@ -208,9 +211,11 @@ int pa_module_load(pa_module** module, pa_core *c, const char *name, const char 
     if ((rval = m->init(m)) < 0) {
         if (rval == -PA_MODULE_ERR_SKIP) {
             errcode = -PA_ERR_NOENTITY;
+            AUDIO_ERR_LOG("invliad rval");
             goto fail;
         }
-        pa_log_error("Failed to load module \"%s\" (argument: \"%s\"): initialization failed.", name, argument ? argument : "");
+        AUDIO_ERR_LOG("Failed to load module \"%{public}s\" (argument: \"%{public}s\"): initialization failed.",
+            name, argument ? argument : "");
         errcode = -PA_ERR_IO;
         goto fail;
     }
