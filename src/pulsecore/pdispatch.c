@@ -352,6 +352,7 @@ int pa_pdispatch_run(pa_pdispatch *pd, pa_packet *packet, pa_cmsg_ancil_data *an
 
     } else if (pd->callback_table && (command < pd->n_commands) && pd->callback_table[command]) {
         const pa_pdispatch_cb_t *cb = pd->callback_table+command;
+        
         pa_usec_t startTime = pa_rtclock_now();
         (*cb)(pd, command, tag, ts, userdata);
         pa_usec_t executionTime = pa_rtclock_now() - startTime;
