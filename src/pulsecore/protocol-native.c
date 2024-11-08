@@ -1377,7 +1377,7 @@ static int sink_input_pop_cb(pa_sink_input *i, size_t nbytes, pa_memchunk *chunk
         s->is_underrun = false;
 
     char t[PA_SNPRINTF_STR_LENGTH] = {0};
-    pa_snprintf(t, sizeof(t), "memblockq->size after push = [%zu]", pa_memblock_get_length(s->memblockq));
+    pa_snprintf(t, sizeof(t), "memblockq size after push = [%zu]", pa_memblock_get_length(s->memblockq));
     CallStart(t);
     CallEnd();
 
