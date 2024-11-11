@@ -63,6 +63,8 @@
 #include <pulsecore/thread-mq.h>
 #include <pulsecore/mem.h>
 
+#include "log/audio_log.h"
+
 #include "protocol-native.h"
 
 /* #define PROTOCOL_NATIVE_DEBUG */
@@ -78,6 +80,8 @@
 #define DEFAULT_PROCESS_MSEC 20   /* 20ms */
 #define DEFAULT_FRAGSIZE_MSEC DEFAULT_TLENGTH_MSEC
 #define PA_SNPRINTF_STR_LENGTH 256
+
+const uint64_t BUF_LENGTH_IN_MSEC = 20;
 
 static bool sink_input_process_underrun_cb(pa_sink_input *i);
 static bool sink_input_process_underrun_ohos_cb(pa_sink_input *i);
@@ -1363,6 +1367,10 @@ static bool sink_input_process_underrun_ohos_cb(pa_sink_input *i) {
 /* Called from thread context */
 static int sink_input_pop_cb(pa_sink_input *i, size_t nbytes, pa_memchunk *chunk) {
     playback_stream *s;
+    int64_t read_index;
+    int64_t write_index;
+    size_t frame_size;
+    float frame_num;
 
     pa_sink_input_assert_ref(i);
     s = PLAYBACK_STREAM(i->userdata);
@@ -1376,8 +1384,18 @@ static int sink_input_pop_cb(pa_sink_input *i, size_t nbytes, pa_memchunk *chunk
     if (!handle_input_underrun(s, false))
         s->is_underrun = false;
 
+    pa_sample_spec sampleSpec = i->thread_info.sample_spec;
+    frame_size = pa_usec_to_bytes(BUF_LENGTH_IN_MSEC * PA_USEC_PER_MSEC, &sampleSpec);
+    frame_num = pa_memblockq_get_length(s->memblockq) / frame_size;
+    write_index = pa_memblockq_get_write_index(s->memblockq);
+    read_index  = pa_memblockq_get_read_index(s->memblockq);
+    if (write_index - read_index < frame_size && write_index > 0) {
+        AUDIO_WARNING_LOG("=====The memblockq has less than one frame!=====");
+    }
+
     char t[PA_SNPRINTF_STR_LENGTH] = {0};
-    pa_snprintf(t, sizeof(t), "memblockq size after push = [%zu]", pa_memblockq_get_length(s->memblockq));
+    pa_snprintf(t, sizeof(t), "memblockq size after push[%zu] = [%0.2f] * [%zu]",
+        pa_memblockq_get_length(s->memblockq), frame_num, frame_size);
     CallStart(t);
     CallEnd();
 
@@ -1392,7 +1410,8 @@ static int sink_input_pop_cb(pa_sink_input *i, size_t nbytes, pa_memchunk *chunk
         pa_asyncmsgq_post(pa_thread_mq_get()->outq, PA_MSGOBJECT(s), PLAYBACK_STREAM_MESSAGE_STARTED, NULL, 0, NULL, NULL);
 
     pa_memblockq_drop(s->memblockq, chunk->length);
-    pa_snprintf(t, sizeof(t), "memblockq size after pop = [%zu]", pa_memblockq_get_length(s->memblockq));
+    pa_snprintf(t, sizeof(t), "memblockq size after pop[%zu] = [%0.2f] * [%zu]",
+        pa_memblockq_get_length(s->memblockq), frame_num, frame_size);
     CallStart(t);
     CallEnd();
     playback_stream_request_bytes(s);
