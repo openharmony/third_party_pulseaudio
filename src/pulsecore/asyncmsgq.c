@@ -56,6 +56,7 @@ struct pa_asyncmsgq {
     PA_REFCNT_DECLARE;
     pa_asyncq *asyncq;
     pa_mutex *mutex; /* only for the writer side */
+    uint32_t mark;
 
     struct asyncmsgq_item *current;
 };
@@ -63,6 +64,7 @@ struct pa_asyncmsgq {
 pa_asyncmsgq *pa_asyncmsgq_new(unsigned size) {
     pa_asyncq *asyncq;
     pa_asyncmsgq *a;
+    static uint32_t asyncmsgqNum = 0;
 
     asyncq = pa_asyncq_new(size);
     if (!asyncq)
@@ -74,6 +76,8 @@ pa_asyncmsgq *pa_asyncmsgq_new(unsigned size) {
     a->asyncq = asyncq;
     pa_assert_se(a->mutex = pa_mutex_new(false, true));
     a->current = NULL;
+    asyncmsgqNum += 1;
+    a->mark = asyncmsgqNum; 
 
     return a;
 }
@@ -123,7 +127,8 @@ void pa_asyncmsgq_post(pa_asyncmsgq *a, pa_msgobject *object, int code, const vo
     pa_assert(PA_REFCNT_VALUE(a) > 0);
 
     char t[PA_SNPRINTF_STR_LENGTH] = {0};
-    pa_snprintf(t, sizeof(t), "pa_asyncmsgq_post[%d] %u", code, PaAsyncqGetNumToRead(a->asyncq));
+    pa_snprintf(t, sizeof(t), "pa_asyncmsgq_post[%d] <msgqNo.%u> msg_wait_for_read:%u", code, a->mark,
+        PaAsyncqGetNumToRead(a->asyncq));
     CallStart(t);
 
     if (!(i = pa_flist_pop(PA_STATIC_FLIST_GET(asyncmsgq))))
@@ -155,7 +160,8 @@ int pa_asyncmsgq_send(pa_asyncmsgq *a, pa_msgobject *object, int code, const voi
 
     pa_usec_t startTime = pa_rtclock_now();
     char t[PA_SNPRINTF_STR_LENGTH] = {0};
-    pa_snprintf(t, sizeof(t), "pa_asyncmsgq_send[%d] %u", code, PaAsyncqGetNumToRead(a->asyncq));
+    pa_snprintf(t, sizeof(t), "pa_asyncmsgq_send[%d] <msgqNo.%u> msg_wait_for_read:%u", code, a->mark,
+        PaAsyncqGetNumToRead(a->asyncq));
     CallStart(t);
     i.code = code;
     i.object = object;
@@ -184,7 +190,8 @@ int pa_asyncmsgq_send(pa_asyncmsgq *a, pa_msgobject *object, int code, const voi
     CallEnd();
     pa_usec_t executionTime = pa_rtclock_now() - startTime;
     if (executionTime > OH_DAEMON_TIMEOUT_THRESHOLD_ON_US) { // too long block of daemon thread, dangerous
-        AUDIO_WARNING_LOG("Execution time of this msg is too long: qLen[%{public}u], MSG[%{public}d] (%{public}" PRIu64 "ms)",
+        AUDIO_WARNING_LOG("Execution time of this msg is too long: qLen[%{public}u], MSG[%{public}d] " \
+            "(%{public}" PRIu64 "ms)",
             PaAsyncqGetNumToRead(a->asyncq), code, executionTime / PA_USEC_PER_MSEC);
     }
     return i.ret;
@@ -202,7 +209,8 @@ int pa_asyncmsgq_get(pa_asyncmsgq *a, pa_msgobject **object, int *code, void **u
 /*     pa_log("success"); */
 
     char t[PA_SNPRINTF_STR_LENGTH] = {0};
-    pa_snprintf(t, sizeof(t), "pa_asyncmsgq_get[%d] %u", a->current->code, PaAsyncqGetNumToRead(a->asyncq));
+    pa_snprintf(t, sizeof(t), "pa_asyncmsgq_get[%d] <msgqNo.%u> msg_wait_for_read:%u", a->current->code, a->mark,
+        PaAsyncqGetNumToRead(a->asyncq));
     CallStart(t);
     if (code)
         *code = a->current->code;
