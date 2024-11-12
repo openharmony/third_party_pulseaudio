@@ -63,6 +63,8 @@
 #include <pulsecore/thread-mq.h>
 #include <pulsecore/mem.h>
 
+#include "log/audio_log.h"
+
 #include "protocol-native.h"
 
 /* #define PROTOCOL_NATIVE_DEBUG */
@@ -77,6 +79,9 @@
 #define DEFAULT_TLENGTH_MSEC 2000 /* 2s */
 #define DEFAULT_PROCESS_MSEC 20   /* 20ms */
 #define DEFAULT_FRAGSIZE_MSEC DEFAULT_TLENGTH_MSEC
+#define PA_SNPRINTF_STR_LENGTH 256
+
+const uint64_t BUF_LENGTH_IN_MSEC = 20;
 
 static bool sink_input_process_underrun_cb(pa_sink_input *i);
 static bool sink_input_process_underrun_ohos_cb(pa_sink_input *i);
@@ -602,6 +607,8 @@ static int playback_stream_process_msg(pa_msgobject *o, int code, void*userdata,
                 pa_pstream_send_tagstruct(s->connection->pstream, t);
             }
 
+            break;
+        
         case PLAYBACK_STREAM_MESSAGE_UNDERFLOW_OHOS: {
             pa_tagstruct *t;
 
@@ -614,6 +621,7 @@ static int playback_stream_process_msg(pa_msgobject *o, int code, void*userdata,
             break;
         }
 
+        default:
             break;
     }
 
@@ -1362,6 +1370,8 @@ static bool sink_input_process_underrun_ohos_cb(pa_sink_input *i) {
 /* Called from thread context */
 static int sink_input_pop_cb(pa_sink_input *i, size_t nbytes, pa_memchunk *chunk) {
     playback_stream *s;
+    size_t frameSize;
+    float frameNum;
 
     pa_sink_input_assert_ref(i);
     s = PLAYBACK_STREAM(i->userdata);
@@ -1375,6 +1385,16 @@ static int sink_input_pop_cb(pa_sink_input *i, size_t nbytes, pa_memchunk *chunk
     if (!handle_input_underrun(s, false))
         s->is_underrun = false;
 
+    pa_sample_spec sampleSpec = i->thread_info.sample_spec;
+    frameSize = pa_usec_to_bytes(BUF_LENGTH_IN_MSEC * PA_USEC_PER_MSEC, &sampleSpec);
+    frameNum = (float)pa_memblockq_get_length(s->memblockq) / (float)frameSize;
+
+    char t[PA_SNPRINTF_STR_LENGTH] = {0};
+    pa_snprintf(t, sizeof(t), "memblockq size after push[%zu] = [%0.2f] * [%zu]",
+        pa_memblockq_get_length(s->memblockq), frameNum, frameSize);
+    CallStart(t);
+    CallEnd();
+
     /* This call will not fail with prebuf=0, hence we check for
        underrun explicitly in handle_input_underrun */
     if (pa_memblockq_peek(s->memblockq, chunk) < 0)
@@ -1386,6 +1406,12 @@ static int sink_input_pop_cb(pa_sink_input *i, size_t nbytes, pa_memchunk *chunk
         pa_asyncmsgq_post(pa_thread_mq_get()->outq, PA_MSGOBJECT(s), PLAYBACK_STREAM_MESSAGE_STARTED, NULL, 0, NULL, NULL);
 
     pa_memblockq_drop(s->memblockq, chunk->length);
+
+    frameNum = (float)pa_memblockq_get_length(s->memblockq) / (float)frameSize;
+    pa_snprintf(t, sizeof(t), "memblockq size after pop[%zu] = [%0.2f] * [%zu]",
+        pa_memblockq_get_length(s->memblockq), frameNum, frameSize);
+    CallStart(t);
+    CallEnd();
     playback_stream_request_bytes(s);
 
     return 0;

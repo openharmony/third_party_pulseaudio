@@ -590,30 +590,6 @@ void pa_log_levelv_meta(
     errno = saved_errno;
 }
 
-void PrintCallStackInfo()
-{
-    const int32_t maxDepth = 20;
-    void *stacks[maxDepth];
- 
-    int stackNum = backtrace(stacks, maxDepth);
-    AUDIO_ERR_LOG("backtrace() returned %{public}d addresses\n", stackNum);
- 
-    char **symbols = backtrace_symbols(stacks, stackNum);
-    if (symbols == NULL) {
-        AUDIO_ERR_LOG("backtrace_symbols faile.");
-        for (int i = 0; i < stackNum; i++) {
-            AUDIO_ERR_LOG("  [%{public}02d] addr: %{public}p\n", i, stacks[i]);
-        }
-        return;
-    }
-
-    for (int i = 0; i < stackNum; i++) {
-        AUDIO_ERR_LOG("  [%{public}02d] %{public}s\n", i, symbols[i]);
-    }
- 
-    free(symbols);
-}
-
 void pa_log_level_meta(
         pa_log_level_t level,
         const char*file,
