@@ -64,7 +64,7 @@ struct pa_asyncmsgq {
 pa_asyncmsgq *pa_asyncmsgq_new(unsigned size) {
     pa_asyncq *asyncq;
     pa_asyncmsgq *a;
-    static uint32_t asyncmsgq_num = 0;
+    static uint32_t asyncmsgqNum = 0;
 
     asyncq = pa_asyncq_new(size);
     if (!asyncq)
@@ -76,8 +76,8 @@ pa_asyncmsgq *pa_asyncmsgq_new(unsigned size) {
     a->asyncq = asyncq;
     pa_assert_se(a->mutex = pa_mutex_new(false, true));
     a->current = NULL;
-    asyncmsgq_num += 1;
-    a->mark = asyncmsgq_num; 
+    asyncmsgqNum += 1;
+    a->mark = asyncmsgqNum; 
 
     return a;
 }

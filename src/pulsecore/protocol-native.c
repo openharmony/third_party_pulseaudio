@@ -620,6 +620,9 @@ static int playback_stream_process_msg(pa_msgobject *o, int code, void*userdata,
             pa_pstream_send_tagstruct(s->connection->pstream, t);
             break;
         }
+
+        default:
+            break;
     }
 
     return 0;
@@ -1367,10 +1370,8 @@ static bool sink_input_process_underrun_ohos_cb(pa_sink_input *i) {
 /* Called from thread context */
 static int sink_input_pop_cb(pa_sink_input *i, size_t nbytes, pa_memchunk *chunk) {
     playback_stream *s;
-    int64_t read_index;
-    int64_t write_index;
-    size_t frame_size;
-    float frame_num;
+    size_t frameSize;
+    float frameNum;
 
     pa_sink_input_assert_ref(i);
     s = PLAYBACK_STREAM(i->userdata);
@@ -1385,17 +1386,12 @@ static int sink_input_pop_cb(pa_sink_input *i, size_t nbytes, pa_memchunk *chunk
         s->is_underrun = false;
 
     pa_sample_spec sampleSpec = i->thread_info.sample_spec;
-    frame_size = pa_usec_to_bytes(BUF_LENGTH_IN_MSEC * PA_USEC_PER_MSEC, &sampleSpec);
-    frame_num = pa_memblockq_get_length(s->memblockq) / frame_size;
-    write_index = pa_memblockq_get_write_index(s->memblockq);
-    read_index  = pa_memblockq_get_read_index(s->memblockq);
-    if (write_index - read_index < frame_size && write_index > 0) {
-        AUDIO_WARNING_LOG("=====The memblockq has less than one frame!=====");
-    }
+    frameSize = pa_usec_to_bytes(BUF_LENGTH_IN_MSEC * PA_USEC_PER_MSEC, &sampleSpec);
+    frameNum = (float)pa_memblockq_get_length(s->memblockq) / (float)frameSize;
 
     char t[PA_SNPRINTF_STR_LENGTH] = {0};
     pa_snprintf(t, sizeof(t), "memblockq size after push[%zu] = [%0.2f] * [%zu]",
-        pa_memblockq_get_length(s->memblockq), frame_num, frame_size);
+        pa_memblockq_get_length(s->memblockq), frameNum, frameSize);
     CallStart(t);
     CallEnd();
 
@@ -1410,8 +1406,10 @@ static int sink_input_pop_cb(pa_sink_input *i, size_t nbytes, pa_memchunk *chunk
         pa_asyncmsgq_post(pa_thread_mq_get()->outq, PA_MSGOBJECT(s), PLAYBACK_STREAM_MESSAGE_STARTED, NULL, 0, NULL, NULL);
 
     pa_memblockq_drop(s->memblockq, chunk->length);
+
+    frameNum = (float)pa_memblockq_get_length(s->memblockq) / (float)frameSize;
     pa_snprintf(t, sizeof(t), "memblockq size after pop[%zu] = [%0.2f] * [%zu]",
-        pa_memblockq_get_length(s->memblockq), frame_num, frame_size);
+        pa_memblockq_get_length(s->memblockq), frameNum, frameSize);
     CallStart(t);
     CallEnd();
     playback_stream_request_bytes(s);
