@@ -133,6 +133,10 @@ static void save_time_callback(pa_mainloop_api*a, pa_time_event* e, const struct
 }
 
 static void trigger_save(struct userdata *u, pa_device_type_t type, uint32_t sink_idx) {
+    if (u == NULL)
+    {
+        return;
+    }
     pa_native_connection *c;
     uint32_t idx;
 
