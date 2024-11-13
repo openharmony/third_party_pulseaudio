@@ -260,6 +260,10 @@ void kiss_fftr2(kiss_fftr_cfg st,const kiss_fft_scalar *timedata,kiss_fft_scalar
 
 void kiss_fftri2(kiss_fftr_cfg st,const kiss_fft_scalar *freqdata,kiss_fft_scalar *timedata)
 {
+    if (st == NULL || st->substate == NULL || st->substate->inverse == NULL)
+    {
+        return;
+    }
    /* input buffer timedata is stored row-wise */
    int k, ncfft;
 

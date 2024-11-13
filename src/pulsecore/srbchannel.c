@@ -43,6 +43,10 @@ struct pa_ringbuffer {
 static void *pa_ringbuffer_peek(pa_ringbuffer *r, int *count) {
     int c = pa_atomic_load(r->count);
 
+    if (r->readindex < 0) {
+        return r->memory;
+    }
+
     if (r->readindex + c > r->capacity)
         *count = r->capacity - r->readindex;
     else

@@ -387,6 +387,10 @@ static int esd_proto_stream_play(connection *c, esd_proto_t request, const void 
     pa_memchunk silence;
 
     connection_assert_ref(c);
+    if (c->options == NULL || c-options->default_sink == NULL)
+    {
+        return -1;
+    }
     pa_assert(data);
     pa_assert(length == (sizeof(int32_t)*2+ESD_NAME_MAX));
 

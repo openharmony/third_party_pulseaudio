@@ -396,6 +396,10 @@ pa_rtpoll_item* pa_rtp_context_get_rtpoll_item(pa_rtp_context *c, pa_rtpoll *rtp
     item = pa_rtpoll_item_new(rtpoll, PA_RTPOLL_LATE, 1);
 
     p = pa_rtpoll_item_get_pollfd(item, NULL);
+    if (p == NULL)
+    {
+        return item;
+    }
     p->fd = c->fd;
     p->events = POLLIN;
     p->revents = 0;
