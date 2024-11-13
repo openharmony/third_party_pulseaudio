@@ -1561,6 +1561,10 @@ int __open_2(const char *filename, int flags) {
 static int mixer_ioctl(fd_info *i, unsigned long request, void*argp, int *_errno) {
     int ret = -1;
 
+    if (argp == NULL) {
+        return ret;
+    }
+
     switch (request) {
         case SOUND_MIXER_READ_DEVMASK :
             debug(DEBUG_LEVEL_NORMAL, __FILE__": SOUND_MIXER_READ_DEVMASK\n");

@@ -190,7 +190,10 @@ static pa_usec_t sink_get_latency(struct userdata *u, pa_sample_spec *ss) {
 
     pa_assert(u);
     pa_assert(ss);
-
+    if (u->memchunk.memblock == NULL)
+    {
+        return r;
+    }
     if (u->fd >= 0) {
         r = pa_bytes_to_usec(get_playback_buffered_bytes(u), ss);
         if (u->memchunk.memblock)

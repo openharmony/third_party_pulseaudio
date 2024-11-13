@@ -44,6 +44,10 @@
 #ifdef FIXED_POINT
 static int maximize_range(spx_word16_t *in, spx_word16_t *out, spx_word16_t bound, int len)
 {
+   if (in == NULL || out == NULL)
+   {
+      return;
+   }
    int i, shift;
    spx_word16_t max_val = 0;
    for (i=0;i<len;i++)
@@ -68,6 +72,10 @@ static int maximize_range(spx_word16_t *in, spx_word16_t *out, spx_word16_t boun
 
 static void renorm_range(spx_word16_t *in, spx_word16_t *out, int shift, int len)
 {
+   if (in == NULL || out == NULL)
+   {
+      return;
+   }
    int i;
    for (i=0;i<len;i++)
    {

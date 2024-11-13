@@ -300,6 +300,10 @@ static int64_t calc_diff(struct userdata *u, struct snapshot *snapshot) {
     int64_t diff_time, buffer_latency;
     pa_usec_t plen, rlen, source_delay, sink_delay, recv_counter, send_counter;
 
+    if (u->sink_input == NULL || u->source_output == NULL) {
+        return -1;
+    }
+
     /* get latency difference between playback and record */
     plen = pa_bytes_to_usec(snapshot->plen, &u->sink_input->sample_spec);
     rlen = pa_bytes_to_usec(snapshot->rlen, &u->source_output->sample_spec);
@@ -1591,6 +1595,10 @@ static int canceller_process_msg_cb(pa_msgobject *o, int code, void *userdata, i
         return 0;
 
     u = msg->userdata;
+
+    if (u == NULL || u->source == NULL || u->source_output == NULL) {
+        return 0;
+    }
 
     switch (code) {
         case ECHO_CANCELLER_MESSAGE_SET_VOLUME: {

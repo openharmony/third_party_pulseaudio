@@ -24,6 +24,10 @@ void lr4_set(struct lr4 *lr4, enum biquad_type type, float freq)
 
 void lr4_process_float32(struct lr4 *lr4, int samples, int channels, float *src, float *dest)
 {
+	if (lr4 == NULL || src == NULL || dest == NULL) {
+		return;
+	}
+
 	float lx1 = lr4->x1;
 	float lx2 = lr4->x2;
 	float ly1 = lr4->y1;

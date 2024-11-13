@@ -316,7 +316,10 @@ static void handle_get_active_profile(DBusConnection *conn, DBusMessage *msg, vo
     pa_assert(conn);
     pa_assert(msg);
     pa_assert(c);
-
+    if (c->active_profile == NULL)
+    {
+        return;
+    }
     active_profile = pa_dbusiface_card_profile_get_path(pa_hashmap_get(c->profiles, c->active_profile->name));
     pa_dbus_send_basic_variant_reply(conn, msg, DBUS_TYPE_OBJECT_PATH, &active_profile);
 }
