@@ -172,6 +172,10 @@ struct JitterBuffer_ {
  */
 static spx_int16_t compute_opt_delay(JitterBuffer *jitter)
 {
+   if (jitter == NULL)
+   {
+      return 0;
+   }
    int i;
    spx_int16_t opt=0;
    spx_int32_t best_cost=0x7fffffff;
