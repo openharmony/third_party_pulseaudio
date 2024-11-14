@@ -31,7 +31,6 @@
 #include <stddef.h>
 #include <ltdl.h>
 #include <limits.h>
-#include <unistd.h>
 #include <locale.h>
 #include <sys/types.h>
 #include <sys/stat.h>

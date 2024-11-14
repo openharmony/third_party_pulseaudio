@@ -24,7 +24,6 @@
 
 #include <string.h>
 #include <stdio.h>
-#include <string.h>
 
 #include <pulse/def.h>
 #include <pulse/timeval.h>

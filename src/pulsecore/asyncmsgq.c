@@ -28,7 +28,6 @@
 #include <pulse/rtclock.h>
 #include <pulse/timeval.h>
 
-#include <pulsecore/macro.h>
 #include <pulsecore/log.h>
 #include <pulsecore/semaphore.h>
 #include <pulsecore/macro.h>
