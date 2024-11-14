@@ -997,9 +997,6 @@ static const char* load_profile(struct userdata *u, size_t channel, char *name) 
     pa_datum key, value;
     const size_t profile_size = CHANNEL_PROFILE_SIZE(u) * sizeof(float);
     key.data = name;
-    if (key.data == NULL) {
-        return NULL;
-    }
     key.size = strlen(key.data);
     if (pa_database_get(u->database, &key, &value) != NULL) {
         if (value.size == profile_size) {

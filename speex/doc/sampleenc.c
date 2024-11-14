@@ -26,9 +26,6 @@ int main(int argc, char **argv)
 
    inFile = argv[1];
    fin = fopen(inFile, "r");
-   if (fin == NULL) {
-      return -1;
-   }
 
    /*Initialization of the structure that holds the bits*/
    speex_bits_init(&bits);
