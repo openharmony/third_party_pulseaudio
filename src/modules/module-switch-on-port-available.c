@@ -58,7 +58,6 @@ static void card_info_new(struct userdata *u, pa_card *card) {
 }
 
 static void card_info_free(struct card_info *info) {
-
     pa_hashmap_remove(info->userdata->card_infos, info->card);
     pa_xfree(info);
 }
@@ -71,7 +70,7 @@ static bool profile_good_for_output(pa_card_profile *profile, pa_device_port *po
     pa_assert(profile);
 
     card = profile->card;
-    
+
     if (pa_safe_streq(card->active_profile->name, "off"))
         return true;
 
