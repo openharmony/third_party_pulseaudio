@@ -1392,6 +1392,10 @@ int pa_source_output_start_move(pa_source_output *o) {
         return r;
 
     pa_log_debug("Starting to move source output %u from '%s'", (unsigned) o->index, o->source->name);
+    if (o->source) {
+        AUDIO_INFO_LOG("[StartMove]: SourceOutput[%{public}u] --xxxx--> source[%{public}u, %{public}s]",
+            o->index, o->source->index, o->source->name);
+    }
 
     origin = o->source;
 
@@ -1612,6 +1616,11 @@ int pa_source_output_finish_move(pa_source_output *o, pa_source *dest, bool save
         o->moving(o, dest);
 
     o->source = dest;
+    if (dest) {
+        AUDIO_INFO_LOG("[FinishMove]: SourceOutput[%{public}u] ----------> source[%{public}u, %{public}s]",
+            o->index, dest->index, dest->name);
+    }
+
     /* save == true, means user is calling the move_to() and want to
        save the preferred_source */
     if (save) {
@@ -1666,6 +1675,7 @@ void pa_source_output_fail_move(pa_source_output *o) {
             return;
     }
 
+    AUDIO_WARNING_LOG("[FailMove]: SourceOutput[%{public}u] moving FAILED.", o->index);
     if (o->moving)
         o->moving(o, NULL);
 

@@ -457,6 +457,9 @@ static record_stream* record_stream_new(
                 (double) s->configured_source_latency / PA_USEC_PER_MSEC);
 
     pa_source_output_put(s->source_output);
+    AUDIO_INFO_LOG("[NEW]: SourceOutput[%{public}u] -----> source[%{public}u, %{public}s].",
+        s->source_output->index, s->source_output->source->index, s->source_output->source->name);
+
     return s;
 }
 
@@ -966,6 +969,8 @@ static playback_stream* playback_stream_new(
                 (double) s->configured_sink_latency / PA_USEC_PER_MSEC);
 
     pa_sink_input_put(s->sink_input);
+    AUDIO_INFO_LOG("[NEW]: SinkInput[%{public}u] -----> sink[%{public}u, %{public}s].",
+        s->sink_input->index, s->sink_input->sink->index, s->sink_input->sink->name);
 
 out:
     if (formats)
