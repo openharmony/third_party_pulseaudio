@@ -103,10 +103,6 @@
 static void remap_mono_to_stereo_s16ne_mmx(pa_remap_t *m, int16_t *dst, const int16_t *src, unsigned n) {
     pa_reg_x86 temp, temp2;
 
-    if (dst == NULL || src == NULL) {
-        return;
-    }
-
     __asm__ __volatile__ (
         MONO_TO_STEREO(wd,4,15) /* do words to doubles */
         : "+r" (dst), "+r" (src), "=&r" (temp), "=&r" (temp2)
@@ -119,10 +115,6 @@ static void remap_mono_to_stereo_s16ne_mmx(pa_remap_t *m, int16_t *dst, const in
 static void remap_mono_to_stereo_any32ne_mmx(pa_remap_t *m, float *dst, const float *src, unsigned n) {
     pa_reg_x86 temp, temp2;
 
-    if (dst == NULL || src == NULL) {
-        return;
-    }
-    
     __asm__ __volatile__ (
         MONO_TO_STEREO(dq,3,7) /* do doubles to quads */
         : "+r" (dst), "+r" (src), "=&r" (temp), "=&r" (temp2)

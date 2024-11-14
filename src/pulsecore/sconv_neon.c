@@ -28,9 +28,6 @@
 #include <arm_neon.h>
 
 static void pa_sconv_s16le_from_f32ne_neon(unsigned n, const float *src, int16_t *dst) {
-    if (dst == NULL || src == NULL) {
-        return;
-    }
     unsigned i = n & 3;
 
     __asm__ __volatile__ (
@@ -60,9 +57,6 @@ static void pa_sconv_s16le_from_f32ne_neon(unsigned n, const float *src, int16_t
 }
 
 static void pa_sconv_s16le_to_f32ne_neon(unsigned n, const int16_t *src, float *dst) {
-    if (dst == NULL || src == NULL) {
-        return;
-    }
     unsigned i = n & 3;
     const float invscale = 1.0f / (1 << 15);
 
