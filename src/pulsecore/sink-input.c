@@ -1882,6 +1882,10 @@ int pa_sink_input_start_move(pa_sink_input *i) {
         return r;
 
     pa_log_debug("Starting to move sink input %u from '%s'", (unsigned) i->index, i->sink->name);
+    if (i->sink) {
+        AUDIO_INFO_LOG("[StartMove]: SinkInput[%{public}u] --xxxx--> sink[%{public}u, %{public}s]",
+            i->index, i->sink->index, i->sink->name);
+    }
 
     /* Kill directly connected outputs */
     while ((o = pa_idxset_first(i->direct_outputs, NULL))) {
@@ -2190,6 +2194,11 @@ int pa_sink_input_finish_move(pa_sink_input *i, pa_sink *dest, bool save) {
         i->moving(i, dest);
 
     i->sink = dest;
+    if (dest) {
+        AUDIO_INFO_LOG("[FinishMove]: SinkInput[%{public}u] ----------> sink[%{public}u, %{public}s]",
+            i->index, dest->index, dest->name);
+    }
+
     /* save == true, means user is calling the move_to() and want to
        save the preferred_sink */
     if (save) {
@@ -2252,6 +2261,7 @@ void pa_sink_input_fail_move(pa_sink_input *i) {
             return;
     }
 
+    AUDIO_WARNING_LOG("[FailMove]: SinkInput[%{public}u] moving FAILED.", i->index);
     if (i->moving)
         i->moving(i, NULL);
 
