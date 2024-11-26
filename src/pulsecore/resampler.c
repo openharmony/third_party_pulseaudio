@@ -1641,6 +1641,7 @@ void pa_resampler_run(pa_resampler *r, const pa_memchunk *in, pa_memchunk *out) 
 
         resample(r, buf);
         pa_memblock_release(buf->memblock);
+        pa_memblock_unref(buf->memblock);
     }
 
     buf = (pa_memchunk*) in;
