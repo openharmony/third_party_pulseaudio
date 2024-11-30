@@ -1637,7 +1637,6 @@ void pa_resampler_run(pa_resampler *r, const pa_memchunk *in, pa_memchunk *out) 
         // silence memblock
         void *data = pa_memblock_acquire(buf->memblock);
         memset(data, 0, buf->length);
-        pa_memblock_release(buf->memblock);
 
         resample(r, buf);
         pa_memblock_release(buf->memblock);
