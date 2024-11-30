@@ -2761,7 +2761,8 @@ int pa_sink_process_msg(pa_msgobject *o, int code, void *userdata, int64_t offse
 
                 /* Save some current values for restore_render_memblockq() */
                 i->thread_info.origin_sink_latency = pa_sink_get_latency_within_thread(s, false);
-                i->thread_info.move_start_time = pa_rtclock_now();
+                // may cause pop during switch between OFFLOAD and PRIMARY
+                // - i->thread_info.move_start_time = pa_rtclock_now();
                 i->thread_info.resampler_delay_frames = 0;
                 if (i->thread_info.resampler)
                     /* Round down */
