@@ -37,6 +37,7 @@
 
 /* Number of samples of extra space we allow the resamplers to return */
 #define EXTRA_FRAMES 128
+#define RESAMPLER_CACHE_SIZE_RATIO 20
 
 struct ffmpeg_data { /* data specific to ffmpeg */
     struct AVResampleContext *state;
