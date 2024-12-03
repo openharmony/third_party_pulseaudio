@@ -89,11 +89,11 @@ static void restart(struct device_info *d) {
     pa_core_rttime_restart(d->userdata->core, d->time_event, now + d->timeout);
 
     if (d->sink) {
-        AUDIO_INFO_LOG("Sink %{public}s becomes idle, timeout in %{public}" PRIu64 " seconds.",
+        AUDIO_DEBUG_LOG("Sink %{public}s becomes idle, timeout in %{public}" PRIu64 " seconds.",
             d->sink->name, d->timeout / PA_USEC_PER_SEC);
     }
     if (d->source) {
-        AUDIO_INFO_LOG("Source %{public}s becomes idle, timeout in %{public}" PRIu64 " seconds.",
+        AUDIO_DEBUG_LOG("Source %{public}s becomes idle, timeout in %{public}" PRIu64 " seconds.",
             d->source->name, d->timeout / PA_USEC_PER_SEC);
     }
 }
