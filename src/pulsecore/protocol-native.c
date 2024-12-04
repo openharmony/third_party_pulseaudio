@@ -624,6 +624,12 @@ static record_stream* record_stream_new(
                 (double) s->configured_source_latency / PA_USEC_PER_MSEC);
 
     pa_source_output_put(s->source_output);
+    if (s->source_output->source) {
+        AUDIO_INFO_LOG("[NEW]: SourceOutput[%{public}u] -----> source[%{public}u, %{public}s].",
+            s->source_output->index, s->source_output->source->index, s->source_output->source->name);
+    } else {
+        AUDIO_ERR_LOG("SourceOutput[%{public}u] -----> source is nullptr", s->source_output->index);
+    }
     return s;
 }
 
@@ -1133,6 +1139,13 @@ static playback_stream* playback_stream_new(
                 (double) s->configured_sink_latency / PA_USEC_PER_MSEC);
 
     pa_sink_input_put(s->sink_input);
+
+    if (s->sink_input->sink) {
+        AUDIO_INFO_LOG("[NEW]: SinkInput[%{public}u] -----> sink[%{public}u, %{public}s].",
+            s->sink_input->index, s->sink_input->sink->index, s->sink_input->sink->name);
+    } else {
+        AUDIO_ERR_LOG("SourceInput[%{public}u] -----> sink is nullptr", s->sink_input->index);
+    }
 
 out:
     if (formats)
