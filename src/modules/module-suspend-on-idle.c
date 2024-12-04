@@ -31,6 +31,7 @@
 #include <pulsecore/source-output.h>
 #include <pulsecore/modargs.h>
 #include <pulsecore/log.h>
+#include "log/audio_log.h"
 
 PA_MODULE_AUTHOR("Lennart Poettering");
 PA_MODULE_DESCRIPTION("When a sink/source is idle for too long, suspend it");
