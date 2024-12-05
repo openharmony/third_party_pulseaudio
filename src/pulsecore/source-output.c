@@ -38,7 +38,7 @@
 #include <pulsecore/log.h>
 #include <pulsecore/namereg.h>
 #include <pulsecore/core-util.h>
-
+#include "log/audio_log.h"
 #include "source-output.h"
 
 #define MEMBLOCKQ_MAXLENGTH (32*1024*1024)
@@ -1395,7 +1395,11 @@ int pa_source_output_start_move(pa_source_output *o) {
     pa_log_debug("Starting to move source output %u from '%s'", (unsigned) o->index, o->source->name);
 
     origin = o->source;
-
+    
+    if (o->source) {
+        AUDIO_INFO_LOG("[StartMove]: SourceOutput[%{public}u] --xxxx--> source[%{public}u, %{public}s]",
+            o->index, o->source->index, o->source->name);
+    }
     pa_idxset_remove_by_data(o->source->outputs, o, NULL);
 
     if (o->state == PA_SOURCE_OUTPUT_CORKED)
@@ -1613,6 +1617,10 @@ int pa_source_output_finish_move(pa_source_output *o, pa_source *dest, bool save
         o->moving(o, dest);
 
     o->source = dest;
+    if (dest) {
+        AUDIO_INFO_LOG("[FinishMove]: SourceOutput[%{public}u] ----------> source[%{public}u, %{public}s]",
+            o->index, dest->index, dest->name);
+    }
     /* save == true, means user is calling the move_to() and want to
        save the preferred_source */
     if (save) {
@@ -1666,7 +1674,8 @@ void pa_source_output_fail_move(pa_source_output *o) {
         if (pa_source_output_finish_move(o, o->core->default_source, false) >= 0)
             return;
     }
-
+    
+    AUDIO_WARNING_LOG("[FailMove]: SourceOutput[%{public}u] moving FAILED.", o->index);
     if (o->moving)
         o->moving(o, NULL);
 

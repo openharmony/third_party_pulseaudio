@@ -31,6 +31,7 @@
 #include <pulsecore/source-output.h>
 #include <pulsecore/modargs.h>
 #include <pulsecore/log.h>
+#include "log/audio_log.h"
 
 PA_MODULE_AUTHOR("Lennart Poettering");
 PA_MODULE_DESCRIPTION("When a sink/source is idle for too long, suspend it");
@@ -66,13 +67,13 @@ static void timeout_cb(pa_mainloop_api*a, pa_time_event* e, const struct timeval
     d->userdata->core->mainloop->time_restart(d->time_event, NULL);
 
     if (d->sink && pa_sink_check_suspend(d->sink, NULL, NULL) <= 0 && !(d->sink->suspend_cause & PA_SUSPEND_IDLE)) {
-        pa_log_info("Sink %s idle for too long, suspending ...", d->sink->name);
+        AUDIO_INFO_LOG("Sink %{public}s idle for too long, suspending ...", d->sink->name);
         pa_sink_suspend(d->sink, true, PA_SUSPEND_IDLE);
         pa_core_maybe_vacuum(d->userdata->core);
     }
 
     if (d->source && pa_source_check_suspend(d->source, NULL) <= 0 && !(d->source->suspend_cause & PA_SUSPEND_IDLE)) {
-        pa_log_info("Source %s idle for too long, suspending ...", d->source->name);
+        AUDIO_INFO_LOG("Source %{public}s idle for too long, suspending ...", d->source->name);
         pa_source_suspend(d->source, true, PA_SUSPEND_IDLE);
         pa_core_maybe_vacuum(d->userdata->core);
     }
@@ -87,10 +88,14 @@ static void restart(struct device_info *d) {
     d->last_use = now = pa_rtclock_now();
     pa_core_rttime_restart(d->userdata->core, d->time_event, now + d->timeout);
 
-    if (d->sink)
-        pa_log_debug("Sink %s becomes idle, timeout in %" PRIu64 " seconds.", d->sink->name, d->timeout / PA_USEC_PER_SEC);
-    if (d->source)
-        pa_log_debug("Source %s becomes idle, timeout in %" PRIu64 " seconds.", d->source->name, d->timeout / PA_USEC_PER_SEC);
+    if (d->sink) {
+        AUDIO_DEBUG_LOG("Sink %{public}s becomes idle, timeout in %{public}" PRIu64 " seconds.",
+            d->sink->name, d->timeout / PA_USEC_PER_SEC);
+    }
+    if (d->source) {
+        AUDIO_DEBUG_LOG("Source %{public}s becomes idle, timeout in %{public}" PRIu64 " seconds.",
+            d->source->name, d->timeout / PA_USEC_PER_SEC);
+    }
 }
 
 static void resume(struct device_info *d) {
