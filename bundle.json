@@ -2,7 +2,7 @@
     "name": "@ohos/pulseaudio",
     "description": "Pulseaudio is a Sound server system, which is used by multimedia audio subsystem as audio server. It provides playback, record and audio management functionalities.",
     "version": "3.1",
-    "license": "LGPL V2.1/BSD-Style/Sun License",
+    "license": "LGPL-2.1",
     "publishAs": "code-segment",
     "segment": {
         "destPath": "third_party/pulseaudio"
@@ -20,8 +20,8 @@
         "adapted_system_type": [
             "standard"
         ],
-        "rom": "",
-        "ram": "",
+        "rom": "0",
+        "ram": "0",
         "deps": {
             "components": [
                 "hilog",
