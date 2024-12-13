@@ -1,7 +1,7 @@
 [
     {
         "Name"                  : "pulseaudio",
-        "License"               : "LGPL V2.1/BSD-Style/Sun License",
+        "License"               : "LGPL-2.1",
         "License File"          : "LICENSE",
         "Version Number"        : "16.1",
         "Upstream URL"          : "https://gitlab.freedesktop.org/pulseaudio/pulseaudio/-/tree/v16.1",
