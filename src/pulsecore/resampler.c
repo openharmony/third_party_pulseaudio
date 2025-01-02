@@ -33,6 +33,7 @@
 
 #include "resampler.h"
 #include "downmix.h"
+#include "resampleLoader.h"
 
 /* Number of samples of extra space we allow the resamplers to return */
 #define EXTRA_FRAMES 128
@@ -43,6 +44,7 @@ struct ffmpeg_data { /* data specific to ffmpeg */
 };
 
 static int copy_init(pa_resampler *r);
+static int (*ProResamlerInit) (pa_resampler *r) = NULL;
 
 static void setup_remap(const pa_resampler *r, pa_remap_t *m, bool *lfe_remixed);
 static void free_remap(pa_remap_t *m);
@@ -145,8 +147,10 @@ static void calculate_gcd(pa_resampler *r) {
 static pa_resample_method_t choose_auto_resampler(pa_resample_flags_t flags,
     const uint32_t rate_a, const uint32_t rate_b) {
     pa_resample_method_t method;
-
-    if (pa_resample_method_supported(PA_RESAMPLER_SPEEX_FLOAT_BASE + 1) && (rate_a != rate_b)) {
+    if (pa_resample_method_supported(PA_PRORESAMPLER_BASE + 1) && (rate_a != rate_b) &&
+        LoadProResampler(&ProResamlerInit)) {
+            method = PA_PRORESAMPLER_BASE + 1;
+    } else if (pa_resample_method_supported(PA_RESAMPLER_SPEEX_FLOAT_BASE + 1) && (rate_a != rate_b)) {
         method = PA_RESAMPLER_SPEEX_FLOAT_BASE + 1;
     } else {
         method = PA_RESAMPLER_TRIVIAL;
@@ -436,14 +440,11 @@ pa_resampler* pa_resampler_new(
     }
     r->w_fz = pa_sample_size_of_format(r->work_format) * r->work_channels;
 
-    pa_log_debug("Resampler:");
-    pa_log_debug("  rate %d -> %d (method %s)",
-        a->rate, b->rate, pa_resample_method_to_string(r->method));
-    pa_log_debug("  format %s -> %s (intermediate %s)",
-        pa_sample_format_to_string(a->format), pa_sample_format_to_string(b->format),
-        pa_sample_format_to_string(r->work_format));
-    pa_log_debug("  channels %d -> %d (resampling %d)",
-        a->channels, b->channels, r->work_channels);
+    AUDIO_INFO_LOG("pa_resampler_new: rate %{public}d -> %{puiblic}d (method %{public}s), format %{public}s ->"
+       "%{public}s (intermediate %{public}s), channels %{public}d -> %{public}d (resampling %{public}d)",
+        a->rate, b->rate, pa_resample_method_to_string(r->method), pa_sample_format_to_string(a->format),
+        pa_sample_format_to_string(b->format), pa_sample_format_to_string(r->work_format), a->channels, b->channels,
+        r->work_channels);
 
     /* set up the remap structure */
     if (r->map_required)
@@ -458,8 +459,13 @@ pa_resampler* pa_resampler_new(
     }
 
     /* initialize implementation */
-    if (init_table[method](r) < 0)
+    if (method >= PA_PRORESAMPLER_BASE && method <= PA_PRORESAMPLER_MAX && ProResamlerInit(r) < 0) {
         goto fail;
+    } else {
+        if(init_table[method](r) < 0) {
+            goto fail;
+        }
+    }
 
     return r;
 
@@ -814,7 +820,18 @@ static const char * const resample_methods[] = {
     "peaks",
     "soxr-mq",
     "soxr-hq",
-    "soxr-vhq"
+    "soxr-vhq",
+    "proresampler-0",
+    "proresampler-1",
+    "proresampler-2",
+    "proresampler-3",
+    "proresampler-4",
+    "proresampler-5",
+    "proresampler-6",
+    "proresampler-7",
+    "proresampler-8",
+    "proresampler-9",
+    "proresampler-10",
 };
 
 const char *pa_resample_method_to_string(pa_resample_method_t m) {
