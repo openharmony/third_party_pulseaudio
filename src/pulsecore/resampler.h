@@ -61,6 +61,8 @@ typedef enum pa_resample_method {
     PA_RESAMPLER_SOXR_MQ,
     PA_RESAMPLER_SOXR_HQ,
     PA_RESAMPLER_SOXR_VHQ,
+    PA_PRORESAMPLER_BASE,
+    PA_PRORESAMPLER_MAX = PA_PRORESAMPLER_BASE + 10,
     PA_RESAMPLER_MAX
 } pa_resample_method_t;
 

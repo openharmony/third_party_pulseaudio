@@ -74,6 +74,7 @@ ohos_source_set("pulsecore_sources") {
     "../../../src/pulsecore/resampler/ffmpeg.c",
     "../../../src/pulsecore/resampler/peaks.c",
     "../../../src/pulsecore/resampler/trivial.c",
+    "../../../src/pulsecore/resampleLoader.c",
     "../../../src/pulsecore/rtpoll.c",
     "../../../src/pulsecore/sconv-s16be.c",
     "../../../src/pulsecore/sconv-s16le.c",
