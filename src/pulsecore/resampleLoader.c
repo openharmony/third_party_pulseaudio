@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "securec.h"
 #include "resampleLoader.h"
 #define LD_ABS_PATH_LEN 50
 #if (defined(__aarch64__) || defined(__x86_64__))
@@ -19,9 +20,8 @@
 #else
     static char absolutePath[LD_ABS_PATH_LEN] = "/system/lib/";
 #endif
-static char *libProResamplerName = "libaudio_proresampler.z.so";
 // TO DO: read ProResampler library name from system config file
-static const char *absolutePath = "PATH_TO_PROREAMPLER";
+static char *libProResamplerName = "libaudio_proresampler.z.so";
 bool LoadProResampler(int (**func_ptr_addr)(pa_resampler *r))
 {
     if(*func_ptr_addr != NULL) {

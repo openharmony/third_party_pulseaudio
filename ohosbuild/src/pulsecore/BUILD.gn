@@ -97,7 +97,11 @@ ohos_source_set("pulsecore_sources") {
 
   configs = [ ":pulsecore_config" ]
 
-  external_deps = [ "hilog:libhilog" ]
+  external_deps = [
+    "hilog:libhilog",
+    "init:libbegetutil",
+    "c_utils:utils",
+  ]
 
   defines = []
   if (defined(global_parts_info) &&
@@ -131,7 +135,11 @@ ohos_shared_library("pulsecore") {
 
   public_configs = [ ":export_pulsecore_include" ]
 
-  external_deps = [ "hilog:libhilog" ]
+  external_deps = [ 
+    "hilog:libhilog",
+    "init:libbegetutil",
+    "c_utils:utils",
+  ]
 
   defines = []
   if (defined(global_parts_info) &&
