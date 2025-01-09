@@ -440,8 +440,8 @@ pa_resampler* pa_resampler_new(
     }
     r->w_fz = pa_sample_size_of_format(r->work_format) * r->work_channels;
 
-    AUDIO_INFO_LOG("pa_resampler_new: rate %{public}d -> %{puiblic}d (method %{public}s), format %{public}s ->"
-       "%{public}s (intermediate %{public}s), channels %{public}d -> %{public}d (resampling %{public}d)",
+    AUDIO_INFO_LOG("pa_resampler_new: rate %{public}u -> %{puiblic}u (method %{public}s), format %{public}s ->"
+       "%{public}s (intermediate %{public}s), channels %{public}u -> %{public}u (resampling %{public}u)",
         a->rate, b->rate, pa_resample_method_to_string(r->method), pa_sample_format_to_string(a->format),
         pa_sample_format_to_string(b->format), pa_sample_format_to_string(r->work_format), a->channels, b->channels,
         r->work_channels);
@@ -459,14 +459,15 @@ pa_resampler* pa_resampler_new(
     }
 
     /* initialize implementation */
-    if (method >= PA_PRORESAMPLER_BASE && method <= PA_PRORESAMPLER_MAX && ProResamlerInit(r) < 0) {
-        goto fail;
+    if (method >= PA_PRORESAMPLER_BASE && method <= PA_PRORESAMPLER_MAX) {
+        if (ProResamlerInit(r) < 0) {
+            goto fail;
+        }
     } else {
-        if(init_table[method](r) < 0) {
+        if (init_table[method](r) < 0) {
             goto fail;
         }
     }
-
     return r;
 
 fail:
