@@ -45,7 +45,7 @@ bool LoadProResampler(int (**func_ptr_addr)(pa_resampler *r))
 
     void *handle = dlopen(absolutePath, 1);
     CHECK_AND_RETURN_RET_LOG(handle != NULL, false, "dlopen lib ProResampler fail!, error: [%{public}s]", dlerror());
-    
+
     AUDIO_INFO_LOG("dlopen lib ProResampler successful!");
 
     *func_ptr_addr = (int (*)(pa_resampler *r))(dlsym(handle, ProResamplerInit_SYM_AS_STR));
