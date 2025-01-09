@@ -12,43 +12,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "parameter.h"
 #include "securec.h"
 #include "resampleLoader.h"
-#define LD_ABS_PATH_LEN 50
+#define LD_ABS_PATH_LEN 80
 #if (defined(__aarch64__) || defined(__x86_64__))
     static char absolutePath[LD_ABS_PATH_LEN] = "/system/lib64/";
 #else
     static char absolutePath[LD_ABS_PATH_LEN] = "/system/lib/";
 #endif
-// TO DO: read ProResampler library name from system config file
-static char *libProResamplerName = "libaudio_proresampler.z.so";
+static char libProResamplerName[40] = {0};
 bool LoadProResampler(int (**func_ptr_addr)(pa_resampler *r))
 {
-    if(*func_ptr_addr != NULL) {
-        AUDIO_INFO_LOG("ProResampler has already been loaded!");
-        return true;
-    }
-    if (strcat_s(absolutePath, LD_ABS_PATH_LEN, libProResamplerName) != 0) {
-        AUDIO_ERR_LOG("LoadProResampler: strcat_s failed!");
-        return false;
-    }
-    if (access(absolutePath, F_OK) != 0) {
-        AUDIO_INFO_LOG("ProResampler does not exist! use SpeeX resampler!");
-        return false;
-    }
+    CHECK_AND_RETURN_RET_LOG(*func_ptr_addr == NULL, true, "ProResampler has already been loaded!");
+
+    int ret = GetParameter("const.multimedia.audio.lib_proresampler_name", "-1", libProResamplerName,
+        sizeof(libProResamplerName));
+    CHECK_AND_RETURN_RET_LOG(ret > 0, false, "LoadProResampler GetSysPara fail, use speeX!");
+
+    ret = strcat_s(absolutePath, LD_ABS_PATH_LEN, libProResamplerName);
+    CHECK_AND_RETURN_RET_LOG(ret == 0, false, "LoadProResampler: strcat_s failed!");
+
+    ret = access(absolutePath, F_OK);
+    CHECK_AND_RETURN_RET_LOG(ret == 0, false, "ProResampler does not exist! use SpeeX resampler!");
+
     void *handle = dlopen(absolutePath, 1);
-    if (!handle) {
-        AUDIO_ERR_LOG("dlopen lib ProResampler fail!, error: [%{public}s]", dlerror());
-        return false;
-    } else {
-        AUDIO_INFO_LOG("dlopen lib ProResampler successful!");
-    }
+    CHECK_AND_RETURN_RET_LOG(handle != NULL, false, "dlopen lib ProResampler fail!, error: [%{public}s]", dlerror());
+    
+    AUDIO_INFO_LOG("dlopen lib ProResampler successful!");
 
     *func_ptr_addr = (int (*)(pa_resampler *r))(dlsym(handle, ProResamplerInit_SYM_AS_STR));
-    if (*func_ptr_addr == NULL) {
-        AUDIO_ERR_LOG("dlsym lib ProResampler failed! error: [%{public}s]", dlerror());
-        return false;
-    }
+    CHECK_AND_RETURN_RET_LOG(*func_ptr_addr != NULL, false, "dlsym lib ProResampler failed! error: [%{public}s]",
+        dlerror());
+
     AUDIO_INFO_LOG("dlsym lib ProResampler success!");
     return true;
 }
