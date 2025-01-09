@@ -16,22 +16,29 @@
 #include "securec.h"
 #include "resampleLoader.h"
 #define LD_ABS_PATH_LEN 80
+#define PRO_RESAMPLER_NAME_LEN 40
 #if (defined(__aarch64__) || defined(__x86_64__))
-    static char absolutePath[LD_ABS_PATH_LEN] = "/system/lib64/";
+    const static char *libPath = "/system/lib64/";
 #else
-    static char absolutePath[LD_ABS_PATH_LEN] = "/system/lib/";
+    const static char *libPath = "/system/lib/";
 #endif
-static char libProResamplerName[40] = {0};
 bool LoadProResampler(int (**func_ptr_addr)(pa_resampler *r))
 {
     CHECK_AND_RETURN_RET_LOG(*func_ptr_addr == NULL, true, "ProResampler has already been loaded!");
 
+    char libProResamplerName[PRO_RESAMPLER_NAME_LEN];
+    char absolutePath[LD_ABS_PATH_LEN] = {0};
     int ret = GetParameter("const.multimedia.audio.lib_proresampler_name", "-1", libProResamplerName,
         sizeof(libProResamplerName));
     CHECK_AND_RETURN_RET_LOG(ret > 0, false, "LoadProResampler GetSysPara fail, use speeX!");
 
+    ret = strcat_s(absolutePath, LD_ABS_PATH_LEN, libPath);
+    CHECK_AND_RETURN_RET_LOG(ret == 0, false, "LoadProResampler: strcat_s libPath failed!");
+
     ret = strcat_s(absolutePath, LD_ABS_PATH_LEN, libProResamplerName);
-    CHECK_AND_RETURN_RET_LOG(ret == 0, false, "LoadProResampler: strcat_s failed!");
+    CHECK_AND_RETURN_RET_LOG(ret == 0, false, "LoadProResampler: strcat_s libProResamplerName failed!");
+
+    AUDIO_INFO_LOG("LoadProResampler: absolutePath is %{public}s", absolutePath);
 
     ret = access(absolutePath, F_OK);
     CHECK_AND_RETURN_RET_LOG(ret == 0, false, "ProResampler does not exist! use SpeeX resampler!");
