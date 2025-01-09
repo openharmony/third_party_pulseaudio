@@ -135,7 +135,7 @@ ohos_shared_library("pulsecore") {
 
   public_configs = [ ":export_pulsecore_include" ]
 
-  external_deps = [ 
+  external_deps = [
     "hilog:libhilog",
     "init:libbegetutil",
     "c_utils:utils",
