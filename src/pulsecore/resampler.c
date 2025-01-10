@@ -149,7 +149,7 @@ static pa_resample_method_t choose_auto_resampler(pa_resample_flags_t flags,
     pa_resample_method_t method;
     if (pa_resample_method_supported(PA_PRORESAMPLER_BASE + 1) && (rate_a != rate_b) &&
         LoadProResampler(&ProResamlerInit)) {
-            method = PA_PRORESAMPLER_BASE + 1;
+        method = PA_PRORESAMPLER_BASE + 1;
     } else if (pa_resample_method_supported(PA_RESAMPLER_SPEEX_FLOAT_BASE + 1) && (rate_a != rate_b)) {
         method = PA_RESAMPLER_SPEEX_FLOAT_BASE + 1;
     } else {
