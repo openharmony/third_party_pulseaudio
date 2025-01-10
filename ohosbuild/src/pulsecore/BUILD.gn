@@ -70,6 +70,7 @@ ohos_source_set("pulsecore_sources") {
     "../../../src/pulsecore/play-memblockq.c",
     "../../../src/pulsecore/play-memchunk.c",
     "../../../src/pulsecore/remap.c",
+    "../../../src/pulsecore/resampleLoader.c",
     "../../../src/pulsecore/resampler.c",
     "../../../src/pulsecore/resampler/ffmpeg.c",
     "../../../src/pulsecore/resampler/peaks.c",
@@ -96,7 +97,11 @@ ohos_source_set("pulsecore_sources") {
 
   configs = [ ":pulsecore_config" ]
 
-  external_deps = [ "hilog:libhilog" ]
+  external_deps = [
+    "c_utils:utils",
+    "hilog:libhilog",
+    "init:libbegetutil",
+  ]
 
   defines = []
   if (defined(global_parts_info) &&
@@ -130,7 +135,11 @@ ohos_shared_library("pulsecore") {
 
   public_configs = [ ":export_pulsecore_include" ]
 
-  external_deps = [ "hilog:libhilog" ]
+  external_deps = [
+    "c_utils:utils",
+    "hilog:libhilog",
+    "init:libbegetutil",
+  ]
 
   defines = []
   if (defined(global_parts_info) &&
