@@ -970,10 +970,10 @@ static int skipPitchPeriod(
         int downNewSamples = floor((float)period / (speed - 1.0f));
         if (remainingSamplesForSkip < 1) {
             newSamples = downNewSamples;
-            remainingSamplesForSkip += (float)period / (speed - 1.0f) - upNewSamples;
+            remainingSamplesForSkip += (float)period / (speed - 1.0f) - downNewSamples;
         } else {
             newSamples = upNewSamples;
-            remainingSamplesForInsert += (float)period / (speed - 1.0f) - upNewSamples;
+            remainingSamplesForSkip += (float)period / (speed - 1.0f) - upNewSamples;
         }
     } else {
 	newSamples = period;
@@ -1004,7 +1004,7 @@ static int insertPitchPeriod(
         int downNewSamples = floor((float)period * speed / (1.0f - speed));
         if (remainingSamplesForInsert < 1) {
             newSamples = downNewSamples;
-            remainingSamplesForSkip += (float)period * speed / (1.0f - speed) - downNewSamples;
+            remainingSamplesForInsert += (float)period * speed / (1.0f - speed) - downNewSamples;
         } else {
             newSamples = upNewSamples;
             remainingSamplesForInsert += (float)period * speed / (1.0f - speed) - upNewSamples;
