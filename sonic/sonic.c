@@ -47,6 +47,9 @@ struct sonicStreamStruct {
     int prevMinDiff;
 };
 
+static float remainingSamplesForSkip = 0.0f;
+static float remainingSamplesForInsert = 0.0f;
+
 /* Just used for debugging */
 /*
 void sonicMSG(char *format, ...)
@@ -963,7 +966,15 @@ static int skipPitchPeriod(
     int numChannels = stream->numChannels;
 
     if(speed >= 2.0f) {
-	newSamples = period/(speed - 1.0f);
+        int upNewSamples = ceil((float)period / (speed - 1.0f));
+        int downNewSamples = floor((float)period / (speed - 1.0f));
+        if (remainingSamplesForSkip < 1) {
+            newSamples = downNewSamples;
+            remainingSamplesForSkip += (float)period / (speed - 1.0f) - downNewSamples;
+        } else {
+            newSamples = upNewSamples;
+            remainingSamplesForSkip += (float)period / (speed - 1.0f) - upNewSamples;
+        }
     } else {
 	newSamples = period;
 	stream->remainingInputToCopy = period*(2.0f - speed)/(speed - 1.0f);
@@ -989,7 +1000,15 @@ static int insertPitchPeriod(
     int numChannels = stream->numChannels;
 
     if(speed < 0.5f) {
-        newSamples = period*speed/(1.0f - speed);
+        int upNewSamples = ceil((float)period * speed / (1.0f - speed));
+        int downNewSamples = floor((float)period * speed / (1.0f - speed));
+        if (remainingSamplesForInsert < 1) {
+            newSamples = downNewSamples;
+            remainingSamplesForInsert += (float)period * speed / (1.0f - speed) - downNewSamples;
+        } else {
+            newSamples = upNewSamples;
+            remainingSamplesForInsert += (float)period * speed / (1.0f - speed) - upNewSamples;
+        }
     } else {
         newSamples = period;
 	stream->remainingInputToCopy = period*(2.0f*speed - 1.0f)/(1.0f - speed);
