@@ -142,7 +142,7 @@ static void handle_get_index(DBusConnection *conn, DBusMessage *msg, void *userd
     pa_assert(conn);
     pa_assert(msg);
     pa_assert(s);
-    
+
     idx = s->sample->index;
 
     pa_dbus_send_basic_variant_reply(conn, msg, DBUS_TYPE_UINT32, &idx);
