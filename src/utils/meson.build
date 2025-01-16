@@ -72,11 +72,11 @@ if get_option('daemon')
       c_args : pa_c_args,
     )
   endif
-endif
 
-if dbus_dep.found() and fftw_dep.found()
+  if dbus_dep.found() and fftw_dep.found()
     install_data('qpaeq', install_dir : bindir)
   endif
+endif
 
 if get_option('client')
   if x11_dep.found()
