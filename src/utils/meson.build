@@ -74,6 +74,10 @@ if get_option('daemon')
   endif
 endif
 
+if dbus_dep.found() and fftw_dep.found()
+    install_data('qpaeq', install_dir : bindir)
+  endif
+
 if get_option('client')
   if x11_dep.found()
     pax11publish_sources = [
@@ -115,10 +119,6 @@ if get_option('client')
       install : true,
       install_dir : bindir,
     )
-  endif
-
-  if dbus_dep.found() and fftw_dep.found()
-    install_data('qpaeq', install_dir : bindir)
   endif
 
   install_data('pa-info', install_dir : bindir)
