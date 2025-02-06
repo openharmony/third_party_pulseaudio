@@ -86,6 +86,9 @@ Note:If the text contains special characters, please escape them according to th
                 <filteritem type="filename" name="wave.h" desc="sonic wave header file"/>
                 <filteritem type="filename" name="wave.c" desc="sonic wave source file"/>
             </filefilter>
+            <filefilter name="binaryFileTypePolicyFilter" desc="Filters for binary files">
+                <filteritem type="filename" name="sonic.odt" desc="sonic odt file"/>
+            </filefilter>
         </filefilterlist>
     </oatconfig>
 </configuration>
