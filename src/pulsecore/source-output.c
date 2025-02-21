@@ -1295,10 +1295,10 @@ bool pa_source_output_may_move(pa_source_output *o) {
     pa_assert_ctl_context();
     pa_assert(PA_SOURCE_OUTPUT_IS_LINKED(o->state));
 
-    if (o->flags & PA_SOURCE_OUTPUT_DONT_MOVE)
+    if (o->flags & PA_SOURCE_OUTPUT_DONT_MOVE) {
         pa_log_info("Refused move to new default source!");
         return false;
-
+    }
     if (o->direct_on_input)
         return false;
 
