@@ -326,8 +326,12 @@ void pa_tagstruct_put_proplist(pa_tagstruct *t, const pa_proplist *p) {
         if (!(k = pa_proplist_iterate(p, &state)))
             break;
 
+        if (pa_proplist_get(p, k, &d, &l) < 0) {
+            pa_log_error("pa_proplist_get k:%s error, continue", k);
+            continue;
+        }
+
         pa_tagstruct_puts(t, k);
-        pa_assert_se(pa_proplist_get(p, k, &d, &l) >= 0);
         pa_tagstruct_putu32(t, (uint32_t) l);
         pa_tagstruct_put_arbitrary(t, d, l);
     }
