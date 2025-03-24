@@ -208,6 +208,11 @@ static pa_resample_method_t fix_method(
             break;
     }
 
+    if (method != PA_RESAMPLER_AUTO) {
+        AUDIO_INFO_LOG("resampler method is not auto, reset to auto!");
+        method = PA_RESAMPLER_AUTO;
+    }
+
     if (method == PA_RESAMPLER_AUTO)
         method = choose_auto_resampler(flags, rate_a, rate_b);
 
