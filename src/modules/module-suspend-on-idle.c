@@ -32,6 +32,7 @@
 #include <pulsecore/modargs.h>
 #include <pulsecore/log.h>
 #include "log/audio_log.h"
+#include "parameter.h"
 
 PA_MODULE_AUTHOR("Lennart Poettering");
 PA_MODULE_DESCRIPTION("When a sink/source is idle for too long, suspend it");
@@ -44,6 +45,8 @@ static const char* const valid_modargs[] = {
     NULL,
 };
 
+static const char* SUSPEND_ON_IDEL_TIMEOUT_KEY = "const.audio.suspend_idle_timeout";
+static const char* SUSPEND_ON_IDEL_DEFAULT_TIMEOUT = "3";
 struct userdata {
     pa_core *core;
     pa_usec_t timeout;
@@ -332,6 +335,14 @@ static pa_hook_result_t device_new_hook_cb(pa_core *c, pa_object *o, struct user
     pa_assert(source || sink);
 
     timeout_str = pa_proplist_gets(sink ? sink->proplist : source->proplist, "module-suspend-on-idle.timeout");
+    char paraValue[30] = {0}; //30 for system parameter
+    int32_t res =
+        GetParameter(SUSPEND_ON_IDEL_TIMEOUT_KEY, SUSPEND_ON_IDEL_DEFAULT_TIMEOUT, paraValue, sizeof(paraValue));
+    if (res >0) {
+        AUDIO_INFO_LOG("Get timeout for system parameter, value is %{pubilc}s", paraValue);
+        timeout_str = paraValue;
+    }
+
     if (timeout_str && pa_atoi(timeout_str, &timeout) >= 0)
         timeout_valid = true;
     else
@@ -340,6 +351,7 @@ static pa_hook_result_t device_new_hook_cb(pa_core *c, pa_object *o, struct user
     if (timeout_valid && timeout < 0)
         return PA_HOOK_OK;
 
+    AUDIO_INFO_LOG("timeout_str : %{pubilc}s, timeout_valid : %{pubilc}d", timeout_str, timeout_valid);
     d = pa_xnew(struct device_info, 1);
     d->userdata = u;
     d->source = source ? pa_source_ref(source) : NULL;
