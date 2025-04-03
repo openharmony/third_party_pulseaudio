@@ -142,7 +142,10 @@ ohos_shared_library("module-suspend-on-idle") {
 
   configs = [ ":common_config" ]
   deps = [ ":common_deps" ]
-  external_deps = [ "hilog:libhilog" ]
+  external_deps = [
+    "init:libbegetutil",
+    "hilog:libhilog"
+  ]
   subsystem_name = "thirdparty"
   part_name = "pulseaudio"
 }
