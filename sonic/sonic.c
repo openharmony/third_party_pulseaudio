@@ -45,10 +45,9 @@ struct sonicStreamStruct {
     int sampleRate;
     int prevPeriod;
     int prevMinDiff;
+    float remainingSamplesForSkip;
+    float remainingSamplesForInsert;
 };
-
-static float remainingSamplesForSkip = 0.0f;
-static float remainingSamplesForInsert = 0.0f;
 
 /* Just used for debugging */
 /*
@@ -272,6 +271,8 @@ sonicStream sonicCreateStream(
     stream->newRatePosition = 0;
     stream->useChordPitch = 0;
     stream->quality = 0;
+    stream->remainingSamplesForSkip = 0.0f;
+    stream->remainingSamplesForInsert = 0.0f;
     return stream;
 }
 
@@ -968,12 +969,12 @@ static int skipPitchPeriod(
     if(speed >= 2.0f) {
         int upNewSamples = ceil((float)period / (speed - 1.0f));
         int downNewSamples = floor((float)period / (speed - 1.0f));
-        if (remainingSamplesForSkip < 1) {
+        if (stream->remainingSamplesForSkip < 1) {
             newSamples = downNewSamples;
-            remainingSamplesForSkip += (float)period / (speed - 1.0f) - downNewSamples;
+            stream->remainingSamplesForSkip += (float)period / (speed - 1.0f) - downNewSamples;
         } else {
             newSamples = upNewSamples;
-            remainingSamplesForSkip += (float)period / (speed - 1.0f) - upNewSamples;
+            stream->remainingSamplesForSkip += (float)period / (speed - 1.0f) - upNewSamples;
         }
     } else {
 	newSamples = period;
@@ -1002,12 +1003,12 @@ static int insertPitchPeriod(
     if(speed < 0.5f) {
         int upNewSamples = ceil((float)period * speed / (1.0f - speed));
         int downNewSamples = floor((float)period * speed / (1.0f - speed));
-        if (remainingSamplesForInsert < 1) {
+        if (stream->remainingSamplesForInsert < 1) {
             newSamples = downNewSamples;
-            remainingSamplesForInsert += (float)period * speed / (1.0f - speed) - downNewSamples;
+            stream->remainingSamplesForInsert += (float)period * speed / (1.0f - speed) - downNewSamples;
         } else {
             newSamples = upNewSamples;
-            remainingSamplesForInsert += (float)period * speed / (1.0f - speed) - upNewSamples;
+            stream->remainingSamplesForInsert += (float)period * speed / (1.0f - speed) - upNewSamples;
         }
     } else {
         newSamples = period;
