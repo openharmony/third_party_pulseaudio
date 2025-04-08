@@ -52,6 +52,7 @@
 
 #include "mainloop.h"
 #include "internal.h"
+#include "log/audio_log.h"
 
 struct pa_io_event {
     pa_mainloop *mainloop;
@@ -168,6 +169,7 @@ static pa_io_event* mainloop_io_new(
     pa_assert(a == &m->api);
 
     e = pa_xnew0(pa_io_event, 1);
+    CHECK_AND_RETURN_RET_LOG(e != NULL, NULL, "pa_xnew0 failed");
     e->mainloop = m;
 
     e->fd = fd;
