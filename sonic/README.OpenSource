@@ -1,0 +1,10 @@
+[
+  {
+    "Name": "sonic",
+    "License": "Apache V2",
+    "License File": "LICENSE",
+    "Version Number": "0.2",
+    "Upstream URL": "https://github.com/waywardgeek/sonic/tree/release-0.2.0",
+    "Description": "Sonic is a simple algorithm for speeding up or slowing down speech."
+  }
+]
