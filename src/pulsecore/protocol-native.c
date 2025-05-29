@@ -4454,7 +4454,7 @@ static void command_unload_module(pa_pdispatch *pd, uint32_t command, uint32_t t
     m = pa_idxset_get_by_index(c->protocol->core->modules, idx);
     CHECK_VALIDITY(c->pstream, m, tag, PA_ERR_NOENTITY);
 
-    pa_module_unload_request(m, false);
+    pa_module_unload(m, true);
     pa_pstream_send_simple_ack(c->pstream, tag);
 }
 
