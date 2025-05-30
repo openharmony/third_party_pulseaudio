@@ -3967,6 +3967,8 @@ static void command_flush_record_stream(pa_pdispatch *pd, uint32_t command, uint
     CHECK_VALIDITY(c->pstream, s, tag, PA_ERR_NOENTITY);
 
     pa_memblockq_flush_read(s->memblockq);
+    pa_memblockq_flush_read(s->source_output->thread_info.delay_memblockq);
+    pa_resampler_reset(s->source_output->thread_info.resampler);
     pa_pstream_send_simple_ack(c->pstream, tag);
 }
 
