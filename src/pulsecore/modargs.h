@@ -46,6 +46,7 @@ const char *pa_modargs_get_value(pa_modargs *ma, const char *key, const char *de
  * was not specified, *value remains unchanged. */
 int pa_modargs_get_value_u32(pa_modargs *ma, const char *key, uint32_t *value);
 int pa_modargs_get_value_s32(pa_modargs *ma, const char *key, int32_t *value);
+int pa_modargs_get_value_u64(pa_modargs *ma, const char *key, uint64_t *value);
 int pa_modargs_get_value_boolean(pa_modargs *ma, const char *key, bool *value);
 
 /* Return a module argument as double value in *value. If the argument was not
