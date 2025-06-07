@@ -351,7 +351,7 @@ int pa_modargs_get_value_u64(pa_modargs *ma, const char *key, uint64_t *value) {
         return 0;
     }
 
-    if (pa_atou64(v, value < 0)) {
+    if (pa_atou64(v, value) < 0) {
         return -1;
     }
 
