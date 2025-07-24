@@ -1299,6 +1299,7 @@ bool pa_source_output_may_move(pa_source_output *o) {
         pa_log_info("Refused move to new default source!");
         return false;
     }
+
     if (o->direct_on_input)
         return false;
 
