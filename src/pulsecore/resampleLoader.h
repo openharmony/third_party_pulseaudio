@@ -12,6 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#ifndef RESAMPLELOADER_H
+#define RESAMPLELOADER_H
 #include <dlfcn.h>
 #include <unistd.h>
 #include "log/audio_log.h"
@@ -19,3 +21,5 @@
 #include "resampler.h"
 #define PRORESAMPLERINIT_SYM_AS_STR "ProResamplerInit"
 bool LoadProResampler(int (**func_ptr)(pa_resampler *r));
+
+#endif // RESAMPLELOADER_H
