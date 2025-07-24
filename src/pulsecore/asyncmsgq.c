@@ -76,7 +76,7 @@ pa_asyncmsgq *pa_asyncmsgq_new(unsigned size) {
     pa_assert_se(a->mutex = pa_mutex_new(false, true));
     a->current = NULL;
     asyncmsgqNum += 1;
-    a->mark = asyncmsgqNum; 
+    a->mark = asyncmsgqNum;
 
     return a;
 }

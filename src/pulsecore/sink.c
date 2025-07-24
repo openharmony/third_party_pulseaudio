@@ -3367,7 +3367,7 @@ void pa_sink_set_fixed_latency(pa_sink *s, pa_usec_t latency) {
     pa_assert_ctl_context();
 
     if (s->flags & PA_SINK_DYNAMIC_LATENCY) {
-        //pa_assert(latency == 0);
+        pa_assert(latency == 0);
         return;
     }
 

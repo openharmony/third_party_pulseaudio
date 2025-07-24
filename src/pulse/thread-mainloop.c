@@ -168,7 +168,7 @@ void pa_threaded_mainloop_lock(pa_threaded_mainloop *m) {
     pa_assert(m);
 
     /* Make sure that this function is not called from the helper thread, unless it is unlocked */
-    //pa_assert(!m->thread || !pa_thread_is_running(m->thread) || !in_worker(m) || pa_atomic_load(&m->in_once_unlocked));
+    pa_assert(!m->thread || !pa_thread_is_running(m->thread) || !in_worker(m) || pa_atomic_load(&m->in_once_unlocked));
 
     pa_mutex_lock(m->mutex);
 }
@@ -177,7 +177,7 @@ void pa_threaded_mainloop_unlock(pa_threaded_mainloop *m) {
     pa_assert(m);
 
     /* Make sure that this function is not called from the helper thread, unless it is unlocked */
-    //pa_assert(!m->thread || !pa_thread_is_running(m->thread) || !in_worker(m) || pa_atomic_load(&m->in_once_unlocked));
+    pa_assert(!m->thread || !pa_thread_is_running(m->thread) || !in_worker(m) || pa_atomic_load(&m->in_once_unlocked));
 
     pa_mutex_unlock(m->mutex);
 }
@@ -216,9 +216,9 @@ void pa_threaded_mainloop_accept(pa_threaded_mainloop *m) {
     pa_assert(m);
 
     /* Make sure that this function is not called from the helper thread */
-    //pa_assert(!m->thread || !pa_thread_is_running(m->thread) || !in_worker(m));
+    pa_assert(!m->thread || !pa_thread_is_running(m->thread) || !in_worker(m));
 
-    //pa_assert(m->n_waiting_for_accept > 0);
+    pa_assert(m->n_waiting_for_accept > 0);
     m->n_waiting_for_accept --;
 
     pa_cond_signal(m->accept_cond, 0);
