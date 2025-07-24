@@ -344,6 +344,7 @@ int pa_modargs_get_value_s32(pa_modargs *ma, const char *key, int32_t *value) {
 
 int pa_modargs_get_value_u64(pa_modargs *ma, const char *key, uint64_t *value) {
     const char *v;
+
     pa_assert(value);
 
     if (!(v = pa_modargs_get_value(ma, key, NULL))) {

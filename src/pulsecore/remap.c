@@ -282,7 +282,7 @@ static void remap_channels_matrix_s16ne_c(pa_remap_t *m, int16_t *dst, const int
                     *d += *s;
             } else {
                 for (i = n; i > 0; i--, s += n_ic, d += n_oc)
-                    *d += (int16_t) (((int32_t)*s * vol) >> 16);
+                    *d += (int16_t) ((((int32_t)*s * vol) >> 16) * 0.99);
             }
         }
     }

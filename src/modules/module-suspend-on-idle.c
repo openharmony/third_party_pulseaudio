@@ -332,7 +332,6 @@ static pa_hook_result_t device_new_hook_cb(pa_core *c, pa_object *o, struct user
     pa_assert(source || sink);
 
     timeout_str = pa_proplist_gets(sink ? sink->proplist : source->proplist, "module-suspend-on-idle.timeout");
-
     if (timeout_str && pa_atoi(timeout_str, &timeout) >= 0)
         timeout_valid = true;
     else
