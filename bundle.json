@@ -27,7 +27,6 @@
                 "hilog",
                 "hitrace",
                 "init",
-                "libsnd",
                 "c_utils"
             ],
             "third_party": []
