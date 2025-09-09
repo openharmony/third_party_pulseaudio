@@ -412,16 +412,6 @@ void pa_log_levelv_meta(
         filename = file;
     }
 
-    if (level == PA_LOG_ERROR) {
-        AUDIO_ERR_LOG("%{public}s:%{public}u (%{public}s) %{public}s", filename, line, func, text);
-    } else if (level == PA_LOG_WARN) {
-        AUDIO_WARNING_LOG("%{public}s:%{public}u (%{public}s) %{public}s", filename, line, func, text);
-    } else if (level == PA_LOG_NOTICE || level == PA_LOG_INFO) {
-        AUDIO_INFO_LOG("%{public}s:%{public}u (%{public}s) %{public}s", filename, line, func, text);
-    } else if (level == PA_LOG_DEBUG) {
-        AUDIO_DEBUG_LOG("%{public}s:%{public}u (%{public}s) %{public}s", filename, line, func, text);
-    }
-
     if ((_flags & PA_LOG_PRINT_META) && file && line > 0 && func)
         pa_snprintf(location, sizeof(location), "[%s][%s:%i %s()] ",
                     pa_strnull(pa_thread_get_name(pa_thread_self())), file, line, func);
