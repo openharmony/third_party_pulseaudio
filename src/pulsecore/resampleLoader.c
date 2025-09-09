@@ -38,23 +38,17 @@ bool LoadProResampler(int (**func_ptr_addr)(pa_resampler *r))
     ret = strcat_s(absolutePath, LD_ABS_PATH_LEN, libProResamplerName);
     CHECK_AND_RETURN_RET_LOG(ret == 0, false, "LoadProResampler: strcat_s libProResamplerName failed!");
 
-    AUDIO_INFO_LOG("LoadProResampler: absolutePath is %{public}s", absolutePath);
-
     ret = access(absolutePath, F_OK);
     CHECK_AND_RETURN_RET_LOG(ret == 0, false, "ProResampler does not exist! use SpeeX resampler!");
 
     void *handle = dlopen(absolutePath, 1);
     CHECK_AND_RETURN_RET_LOG(handle != NULL, false, "dlopen lib ProResampler fail!, error: [%{public}s]", dlerror());
 
-    AUDIO_INFO_LOG("dlopen lib ProResampler successful!");
-
     *func_ptr_addr = (int (*)(pa_resampler *r))(dlsym(handle, PRORESAMPLERINIT_SYM_AS_STR));
     if (*func_ptr_addr == NULL) {
-        AUDIO_ERR_LOG("dlsym lib ProResampler failed! error: [%{public}s]", dlerror());
         CHECK_AND_RETURN_RET_LOG(dlclose(handle) == 0, false, "dlclose libProResampler fail!, error: [%{public}s]",
             dlerror());
         return false;
     }
-    AUDIO_INFO_LOG("dlsym lib ProResampler success!");
     return true;
 }
