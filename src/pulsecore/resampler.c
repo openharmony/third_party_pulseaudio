@@ -209,7 +209,6 @@ static pa_resample_method_t fix_method(
     }
 
     if (method != PA_RESAMPLER_AUTO) {
-        AUDIO_INFO_LOG("resampler method is not auto, reset to auto!");
         method = PA_RESAMPLER_AUTO;
     }
 
@@ -444,13 +443,6 @@ pa_resampler* pa_resampler_new(
         r->have_leftover = &r->leftover_in_to_work;
     }
     r->w_fz = pa_sample_size_of_format(r->work_format) * r->work_channels;
-
-    AUDIO_INFO_LOG("pa_resampler_new: rate %{public}u -> %{public}u (method %{public}s), "
-        "format %{public}s -> %{public}s (intermediate %{public}s), "
-        "channels %{public}u -> %{public}u (resampling %{public}u)",
-        a->rate, b->rate, pa_resample_method_to_string(r->method), pa_sample_format_to_string(a->format),
-        pa_sample_format_to_string(b->format), pa_sample_format_to_string(r->work_format), a->channels, b->channels,
-        r->work_channels);
 
     /* set up the remap structure */
     if (r->map_required)
