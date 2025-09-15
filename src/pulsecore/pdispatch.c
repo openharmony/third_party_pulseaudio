@@ -347,7 +347,6 @@ int pa_pdispatch_run(pa_pdispatch *pd, pa_packet *packet, pa_cmsg_ancil_data *an
 
         if (r)
             run_action(pd, r, command, ts);
-
     } else if (pd->callback_table && (command < pd->n_commands) && pd->callback_table[command]) {
         const pa_pdispatch_cb_t *cb = pd->callback_table+command;
         (*cb)(pd, command, tag, ts, userdata);
