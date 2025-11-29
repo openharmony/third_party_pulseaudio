@@ -95,12 +95,6 @@ ohos_shared_library("pulse") {
 
   defines = []
 
-  if (build_variant == "user") {
-    defines += [ "AUDIO_BUILD_VARIANT_USER" ]
-  } else if (build_variant == "root") {
-    defines += [ "AUDIO_BUILD_VARIANT_ROOT" ]
-  }
-
   if (defined(global_parts_info) &&
       defined(global_parts_info.hiviewdfx_hitrace)) {
     defines += [ "FEATURE_HITRACE_METER" ]
@@ -108,7 +102,10 @@ ohos_shared_library("pulse") {
   }
 
   subsystem_name = "thirdparty"
-  innerapi_tags = [ "platformsdk_indirect" ]
+  innerapi_tags = [
+    "chipsetsdk",
+    "platformsdk_indirect",
+  ]
   part_name = "pulseaudio"
 }
 

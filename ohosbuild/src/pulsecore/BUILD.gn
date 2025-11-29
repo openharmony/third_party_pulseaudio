@@ -150,7 +150,7 @@ ohos_shared_library("pulsecore") {
 
   subsystem_name = "thirdparty"
   innerapi_tags = [
-    "chipsetsdk_indirect",
+    "chipsetsdk",
     "platformsdk_indirect",
   ]
   part_name = "pulseaudio"
