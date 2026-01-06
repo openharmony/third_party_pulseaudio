@@ -98,6 +98,7 @@ ohos_source_set("pulsecore_sources") {
   configs = [ ":pulsecore_config" ]
 
   external_deps = [
+    "bounds_checking_function:libsec_shared",
     "c_utils:utils",
     "hilog:libhilog",
     "init:libbegetutil",
@@ -136,6 +137,7 @@ ohos_shared_library("pulsecore") {
   public_configs = [ ":export_pulsecore_include" ]
 
   external_deps = [
+    "bounds_checking_function:libsec_shared",
     "c_utils:utils",
     "hilog:libhilog",
     "init:libbegetutil",
