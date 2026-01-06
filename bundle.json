@@ -27,7 +27,8 @@
                 "hilog",
                 "hitrace",
                 "init",
-                "c_utils"
+                "c_utils",
+                "bounds_checking_function"
             ],
             "third_party": []
         },
