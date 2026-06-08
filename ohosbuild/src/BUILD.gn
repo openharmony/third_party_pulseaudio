@@ -38,6 +38,8 @@ config("pulsecommon_config") {
 }
 
 ohos_source_set("pulsecommon_sources") {
+  branch_protector_ret = "pac_ret"
+
   sources = [
     "../../src/pulse/channelmap.c",
     "../../src/pulse/client-conf.c",
