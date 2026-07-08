@@ -52,6 +52,7 @@ config("common_config") {
 }
 
 ohos_shared_library("module-native-protocol-fd") {
+  branch_protector_ret = "pac_ret"
   sources = [ "../../../src/modules/module-native-protocol-fd.c" ]
   cflags = [ "-DPA_MODULE_NAME=libmodule_native_protocol_fd_z_so" ]
   ldflags = [
@@ -69,6 +70,7 @@ ohos_shared_library("module-native-protocol-fd") {
 }
 
 ohos_shared_library("module-native-protocol-tcp") {
+  branch_protector_ret = "pac_ret"
   sources = [ "../../../src/modules/ohos_module-protocol-stub.c" ]
   cflags = [
     "-DPA_MODULE_NAME=libmodule_native_protocol_tcp_z_so",
@@ -90,6 +92,7 @@ ohos_shared_library("module-native-protocol-tcp") {
 }
 
 ohos_shared_library("module-native-protocol-unix") {
+  branch_protector_ret = "pac_ret"
   sources = [ "../../../src/modules/ohos_module-protocol-stub.c" ]
   cflags = [
     "-DPA_MODULE_NAME=libmodule_native_protocol_unix_z_so",
@@ -111,6 +114,7 @@ ohos_shared_library("module-native-protocol-unix") {
 }
 
 ohos_shared_library("module-cli-protocol-unix") {
+  branch_protector_ret = "pac_ret"
   sources = [ "../../../src/modules/ohos_module-protocol-stub.c" ]
   cflags = [
     "-DPA_MODULE_NAME=libmodule_cli_protocol_unix_z_so",
@@ -132,6 +136,7 @@ ohos_shared_library("module-cli-protocol-unix") {
 }
 
 ohos_shared_library("module-suspend-on-idle") {
+  branch_protector_ret = "pac_ret"
   sources = [ "../../../src/modules/module-suspend-on-idle.c" ]
   cflags = [ "-DPA_MODULE_NAME=libmodule_suspend_on_idle_z_so" ]
 
