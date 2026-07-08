@@ -37,6 +37,7 @@ config("pulsecore_config") {
 }
 
 ohos_source_set("pulsecore_sources") {
+  branch_protector_ret = "pac_ret"
   sources = [
     "../../../src/pulsecore/asyncmsgq.c",
     "../../../src/pulsecore/asyncq.c",
@@ -180,6 +181,7 @@ config("modules_internal_lib_config") {
 }
 
 ohos_shared_library("cli") {
+  branch_protector_ret = "pac_ret"
   sources = [ "../../../src/pulsecore/cli.c" ]
 
   configs = [ ":modules_internal_lib_config" ]
@@ -194,6 +196,7 @@ ohos_shared_library("cli") {
 }
 
 ohos_shared_library("protocol-cli") {
+  branch_protector_ret = "pac_ret"
   sources = [ "../../../src/pulsecore/protocol-cli.c" ]
 
   configs = [ ":modules_internal_lib_config" ]
@@ -209,6 +212,7 @@ ohos_shared_library("protocol-cli") {
 }
 
 ohos_shared_library("protocol-native") {
+  branch_protector_ret = "pac_ret"
   sources = [ "../../../src/pulsecore/protocol-native.c" ]
 
   configs = [ ":modules_internal_lib_config" ]
