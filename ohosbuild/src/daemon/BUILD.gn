@@ -33,6 +33,7 @@ config("daemon_config") {
 }
 
 ohos_source_set("pulseaudio_sources") {
+  branch_protector_ret = "pac_ret"
   sources = [
     "../../../src/daemon/caps.c",
     "../../../src/daemon/cmdline.c",

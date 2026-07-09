@@ -45,6 +45,7 @@ config("pulse_include_config") {
 }
 
 ohos_source_set("pulse_sources") {
+  branch_protector_ret = "pac_ret"
   sources = [
     "../../../src/pulse/channelmap.c",
     "../../../src/pulse/context.c",
@@ -109,6 +110,7 @@ ohos_shared_library("pulse") {
 }
 
 ohos_shared_library("pulse-simple") {
+  branch_protector_ret = "pac_ret"
   sources = [ "../../../src/pulse/simple.c" ]
 
   configs = [ ":pulse_config" ]
